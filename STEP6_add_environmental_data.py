@@ -18,7 +18,7 @@ def add_environmental_data(pud,aoi,variable_code,start_date,finish_date):
     
     #get meteogalicia data
     con=Meteogalicia()
-    datos=con.get_stations_data(variable_code,start_date,finish_date,frequency="daily")
+    datos=con.get_stations_data(variable_code,start_date,finish_date,frequency="monthly")
     datos=datos[datos.CodeValidation.isin([1,5])]
     datos["date"]=pd.to_datetime(datos.Dates)
     datos.date=datos.date.astype(str)

@@ -14,7 +14,7 @@ if __name__== "__main__":
     create_square_grid("/home/usuario/OneDrive/recreation/qgis/dissolvedaoi.shp",10000,"griddedaoi.shp")
 
     #compute photo-user
-    con=FlickrPhotos("cleaned_photos.csv")
+    con=FlickrPhotos("./cleaned_photos.csv")
     print(con.df)
     pu=con.photo_user()
     
@@ -33,8 +33,15 @@ if __name__== "__main__":
     pandemia=pd.date_range("2020-03-10","2021-09-01")
     newgeopud=newgeopud[~newgeopud.date.isin(pandemia)]
     newgeopud.loc[newgeopud.PUD.isna(),"PUD"]=0
+
+    #we group by months
+    newgeopud["Month"]=newgeopud.date.dt.month
+    newgeopud["Year"]=newgeopud.date.dt.year
+    newgeopud=newgeopud.groupby(by=["FID","Month","Year"],as_index=False).sum(numeric_only=True)
+
     gdfpud=newgeopud.merge(aoi[["FID","geometry"]],on="FID",how="left")
     gdfpud=gpd.GeoDataFrame(gdfpud,crs=aoi.crs,geometry=gdfpud.geometry)
+    gdfpud["date"]=pd.to_datetime(dict(year=gdfpud.Year,month=gdfpud.Month,day=1))
     print(gdfpud)
     gdfpud["date"]=gdfpud.date.astype(str)
     gdfpud[["FID","PUD","date"]].to_csv("PUD.csv",index=False)
