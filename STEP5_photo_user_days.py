@@ -11,7 +11,7 @@ from geo_funciones import create_square_grid
 if __name__== "__main__":
 
     #grid the area of interest
-    create_square_grid("/home/usuario/OneDrive/recreation/qgis/dissolvedaoi.shp",10000,"griddedaoi.shp")
+    create_square_grid("/home/usuario/OneDrive/recreation/qgis/dissolved_aoi_only_land.shp",5000,"griddedaoi.shp")
 
     #compute photo-user
     con=FlickrPhotos("cleaned_photos.csv")
