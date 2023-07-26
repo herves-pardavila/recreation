@@ -24,39 +24,35 @@ if __name__ =="__main__":
 
     print("Tamaño df=",len(df))
 
-    # #mse tunning
+    # #MSE tunning
     # mse=tune_mse(df,explanatory_variables,"PUD")
     # fig=plt.figure()
     # ax=fig.add_subplot(111)
     # ax.plot(explanatory_variables,mse)
     # plt.show()
     
-    
-    modelo,train,test,rsq=train_random_forest(df,1000,rho=len(explanatory_variables)/3,D=30,training=0.7,variables=explanatory_variables,y_variable="PUD",bootstrap=0.9)
-    mse=metrics.mean_squared_error(test["PUD"],test["yhat"])
-    print("MSE=",mse)
+    # # Tunning of D and T
 
-    fig2=plt.figure()
-    ax2=fig2.add_subplot(111)
-    ax2.plot(np.arange(1,len(test[variable_y])+1,1),test[variable_y],label="test data")
-    ax2.plot(np.arange(1,len(test["yhat"])+1,1),test["yhat"],label="predicted data")
-    fig2.suptitle("Rsquared=%f"%rsq)
-    fig2.legend()
-    plt.show()
+    # Ds=[10,20,30,40,50]
+    # Ts=[50,60,70,80,90]
+    # xx=np.zeros((len(Ds),len(Ts)))
+    # for i in range(len(Ds)):
+    #     print(Ds[i])
+    #     for j in range(len(Ts)):
+    #         print(Ts[j])
+    #         modelo,train,test,rsq=train_random_forest(df,Ts[j],rho=len(explanatory_variables)/3,D=Ds[i],training=0.7,variables=explanatory_variables,y_variable="PUD",bootstrap=0.9)
+    #         conf_mat = confusion_matrix(test[variable_y], test["yhat"],normalize="true")
+    #         xx[i,j]=conf_mat[1][1]
+    #print(xx)
 
+    modelo,train,test,rsq=train_random_forest(df,T=50,rho=len(explanatory_variables)/3,D=20,training=0.7,variables=explanatory_variables,y_variable="PUD",bootstrap=0.9)
+    conf_mat = confusion_matrix(test[variable_y], test["yhat"],normalize="true")
+    print(conf_mat)
     importance=variable_importance(df,explanatory_variables,variable_y)
     print(importance/importance.loc["random"]["Importance"])
 
-    print(test.yhat.unique())
-    print(test[variable_y].unique())
-    conf_mat = confusion_matrix(test[variable_y], test["yhat"],normalize="true")
-    print(conf_mat)
+    # print(test.yhat.unique())
+    # print(test[variable_y].unique())
+    # conf_mat = confusion_matrix(test[variable_y], test["yhat"],normalize="true")
+    # print(conf_mat)
     
-    #Partial dependence plots
-   
-    # fig=plt.figure()
-    # ax=fig.add_subplot(111)
-    # ax.set_xlabel("Dias de Cierre ")
-    # PartialDependenceDisplay.from_estimator(modelo, train, features=[15],ax=ax)
-    # ax.title.set_text("Dias de Cierre ")
-    # plt.show()
