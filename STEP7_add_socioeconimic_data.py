@@ -27,7 +27,7 @@ if __name__== "__main__":
     aoi=gpd.read_file("griddedaoi.shp")
     print(aoi)
 
-    #add leng of trial routes and roads
+    #add leng of trial routes and bicycle routes
     grid=length_of_lines("/home/usuario/OneDrive/geo_data/caminos_naturales/all_trial_network.shp",aoi,spatial_indicator="FID",name="trial_len",output_file="/home/usuario/OneDrive/recreation/qgis/recreation_sdata.shp",save=False)
     grid=length_of_lines("/home/usuario/OneDrive/geo_data/caminos_naturales/bicycle_routesOSM.shp",grid,spatial_indicator="FID",name="bike_len",output_file="/home/usuario/OneDrive/recreation/qgis/recreation_sdata.shp",save=False)
     print(grid)

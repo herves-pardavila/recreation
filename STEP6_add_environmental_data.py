@@ -69,7 +69,7 @@ if __name__== "__main__":
     pud=add_environmental_data(pud,aoi,"PP_SUM_1.5m","01/08/2019","31/12/2022")
     pud=add_environmental_data(pud,aoi,"VV_AVG_2m","01/08/2019","31/12/2022")
     pud=add_environmental_data(pud,aoi,"HSOL_SUM_1.5m","01/08/2019","31/12/2022")
-    pud=add_environmental_data(pud,aoi,"PRED_AVG_1.5m","01/08/2019","31/12/2022")
+    pud=add_environmental_data(pud,aoi,"PR_AVG_1.5m","01/08/2019","31/12/2022")
     print(pud)
     #print(gdf.columns)
     pud.to_csv("PUD.csv",index=False)

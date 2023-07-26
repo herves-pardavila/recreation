@@ -37,14 +37,16 @@ if __name__== "__main__":
     #we group by months
     newgeopud["Month"]=newgeopud.date.dt.month
     newgeopud["Year"]=newgeopud.date.dt.year
-    newgeopud=newgeopud.groupby(by=["FID","Month","Year"],as_index=False).sum(numeric_only=True)
+    newgeopud=newgeopud.groupby(by=["FID","Month","Year"],as_index=False).mean(numeric_only=True)
 
     gdfpud=newgeopud.merge(aoi[["FID","geometry"]],on="FID",how="left")
     gdfpud=gpd.GeoDataFrame(gdfpud,crs=aoi.crs,geometry=gdfpud.geometry)
     gdfpud["date"]=pd.to_datetime(dict(year=gdfpud.Year,month=gdfpud.Month,day=1))
     print(gdfpud)
     gdfpud["date"]=gdfpud.date.astype(str)
-    gdfpud[["FID","PUD","date"]].to_csv("PUD.csv",index=False)
+    df=pd.DataFrame(gdfpud[["FID","PUD","date"]])
+    print(df)
+    df.to_csv("PUD.csv",index=False)
 
 
 
