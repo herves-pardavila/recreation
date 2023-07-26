@@ -37,5 +37,7 @@ if __name__ =="__main__":
             modelo,train,test=train_gradient_boost_classifier(data=df,M=Ms[j],D=Ds[i],training=0.7,variables=explanatory_variables,y_variable="PUD")
             conf_mat = confusion_matrix(test[variable_y], test["yhat"],normalize="true")
             xx[i,j]=conf_mat[1][1]
-    print(xx)        
+    print(xx)   
+    modelo,train,test=train_gradient_boost_classifier(data=df,M=250,D=50,training=0.7,variables=explanatory_variables,y_variable="PUD")
+    conf_mat = confusion_matrix(test[variable_y], test["yhat"],normalize="true")
 
