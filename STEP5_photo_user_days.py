@@ -37,7 +37,7 @@ if __name__== "__main__":
     #we group by months
     newgeopud["Month"]=newgeopud.date.dt.month
     newgeopud["Year"]=newgeopud.date.dt.year
-    newgeopud=newgeopud.groupby(by=["FID","Month","Year"],as_index=False).mean(numeric_only=True)
+    newgeopud=newgeopud.groupby(by=["FID","Month","Year"],as_index=False).sum(numeric_only=True)
 
     gdfpud=newgeopud.merge(aoi[["FID","geometry"]],on="FID",how="left")
     gdfpud=gpd.GeoDataFrame(gdfpud,crs=aoi.crs,geometry=gdfpud.geometry)
