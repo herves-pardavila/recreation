@@ -35,9 +35,11 @@ if __name__== "__main__":
     newgeopud.loc[newgeopud.PUD.isna(),"PUD"]=0
     gdfpud=newgeopud.merge(aoi[["FID","geometry"]],on="FID",how="left")
     gdfpud=gpd.GeoDataFrame(gdfpud,crs=aoi.crs,geometry=gdfpud.geometry)
-    print(gdfpud)
-    gdfpud["date"]=gdfpud.date.astype(str)
-    gdfpud[["FID","PUD","date"]].to_csv("PUD.csv",index=False)
+    gdfpud.plot()
+    plt.show()
+    #print(gdfpud)
+    #gdfpud["date"]=gdfpud.date.astype(str)
+    #gdfpud[["FID","PUD","date"]].to_csv("PUD.csv",index=False)
 
 
 

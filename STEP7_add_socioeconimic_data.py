@@ -62,7 +62,7 @@ if __name__== "__main__":
     grid.rename(columns={"area (m2)":"Protected area (m2)"},inplace=True)
 
     #add beach area
-    beach=gpd.read_file("/home/usuario/OneDrive/geo_data/2021_03_26_GEAMA_PIMA_Universidades/vector_data/playas_GEAMA.shp")
+    beach=gpd.read_file("/home/usuario/OneDrive/geo_data/2021_03_26_GEAMA_PIMA_Universidades/2021_03_26_GEAMA_PIMA_Universidades/vector_data/playas_GEAMA.shp")
     overlay=gpd.overlay(aoi,beach,how="intersection")
     overlay["area (m2)"]=overlay.geometry.area
     grid=grid.merge(overlay [["FID","area (m2)"]],on="FID",how="left")

@@ -12,7 +12,8 @@ if __name__== "__main__":
     for variable in columns:
         pud[variable]=1+(pud[variable]-pud[variable].mean())/pud[variable].mean()
     
-    print(pud.describe())
+    print(pud.describe().T)
+    pud.describe().T.to_csv("summary_statistics.csv")
     pud.date=pd.to_datetime(pud.date)
     pud["Month"]=pud.date.dt.month
-    pud.to_csv("PUD.csv",index=False)
+    pud.to_csv("PUD_normalized.csv",index=False)
