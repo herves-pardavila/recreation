@@ -37,9 +37,9 @@ if __name__== "__main__":
     gdfpud=gpd.GeoDataFrame(gdfpud,crs=aoi.crs,geometry=gdfpud.geometry)
     gdfpud.plot()
     plt.show()
-    #print(gdfpud)
-    #gdfpud["date"]=gdfpud.date.astype(str)
-    #gdfpud[["FID","PUD","date"]].to_csv("PUD.csv",index=False)
+    print(gdfpud)
+    gdfpud["date"]=gdfpud.date.astype(str)
+    gdfpud[["FID","PUD","date"]].to_csv("PUD.csv",index=False)
 
 
 

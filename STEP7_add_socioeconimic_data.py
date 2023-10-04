@@ -27,29 +27,33 @@ if __name__== "__main__":
     aoi=gpd.read_file("griddedaoi.shp")
     print(aoi)
 
-    #add leng of trial routes and roads
-    grid=length_of_lines("/home/usuario/OneDrive/geo_data/caminos_naturales/all_trial_network.shp",aoi,spatial_indicator="FID",name="trial_len",output_file="/home/usuario/OneDrive/recreation/qgis/recreation_sdata.shp",save=False)
-    grid=length_of_lines("/home/usuario/OneDrive/geo_data/caminos_naturales/bicycle_routesOSM.shp",grid,spatial_indicator="FID",name="bike_len",output_file="/home/usuario/OneDrive/recreation/qgis/recreation_sdata.shp",save=False)
+    #add length of natural trails
+
+    grid=length_of_lines("./data/natural_trails.shp",aoi,spatial_indicator="FID",name="Trails",output_file="/home/usuario/OneDrive/recreation/qgis/recreation_sdata.shp",save=False)
+    #grid=length_of_lines("/home/usuario/OneDrive/geo_data/caminos_naturales/all_trial_network.shp",aoi,spatial_indicator="FID",name="trial_len",output_file="/home/usuario/OneDrive/recreation/qgis/recreation_sdata.shp",save=False)
+    #grid=length_of_lines("/home/usuario/OneDrive/geo_data/caminos_naturales/bicycle_routesOSM.shp",grid,spatial_indicator="FID",name="bike_len",output_file="/home/usuario/OneDrive/recreation/qgis/recreation_sdata.shp",save=False)
     print(grid)
+
     #add distance to point layers
+
     grid=distance_to_points("/home/usuario/OneDrive/geo_data/OpenStreetMaps/tnodes.shp",grid,"Com-nodes (m)",output_file="/home/usuario/OneDrive/recreation/qgis/recreation_sdata.shp",save=False)
-    grid=distance_to_points("/home/usuario/OneDrive/geo_data/transport/railway_network.shp",grid,"dist-train",output_file="/home/usuario/OneDrive/recreation/qgis/recreation_sdata.shp",save=False)
-    
-    grid=distance_to_points("/home/usuario/OneDrive/geo_data/OpenStreetMaps/lighthouse_galicia.shp",grid,"lighthouse (m)",output_file="/home/usuario/OneDrive/recreation/qgis/recreation_sdata.shp",save=False)
+    #grid=distance_to_points("/home/usuario/OneDrive/geo_data/transport/railway_network.shp",grid,"dist-train",output_file="/home/usuario/OneDrive/recreation/qgis/recreation_sdata.shp",save=False)
+    #grid=distance_to_points("/home/usuario/OneDrive/geo_data/OpenStreetMaps/lighthouse_galicia.shp",grid,"lighthouse (m)",output_file="/home/usuario/OneDrive/recreation/qgis/recreation_sdata.shp",save=False)
     grid=distance_to_points("/home/usuario/OneDrive/geo_data/OpenStreetMaps/cities_galicia.shp",grid,"city (m)",output_file="/home/usuario/OneDrive/recreation/qgis/recreation_sdata.shp",save=False)
     grid=distance_to_points("/home/usuario/OneDrive/geo_data/OpenStreetMaps/towns_galicia.shp",grid,"town (m)",output_file="/home/usuario/OneDrive/recreation/qgis/recreation_sdata.shp",save=False)
     print(grid)
 
   
     
-    #add number of restuarants in each cell
-    restaurants=gpd.read_file("/home/usuario/OneDrive/geo_data/OpenStreetMaps/restaurants_galicia.shp")
-    grid=point_count(grid,restaurants,"FID","Value")
-    grid.loc[grid.restaurant.isna(),"restaurant"]=0
-    viewpoints=gpd.read_file("/home/usuario/OneDrive/geo_data/OpenStreetMaps/viewpoints_galicia.shp")
-    grid=point_count(grid,viewpoints,"FID","Value")
+    #add number of points in each cell
+
+    #restaurants=gpd.read_file("/home/usuario/OneDrive/geo_data/OpenStreetMaps/restaurants_galicia.shp")
+    #grid=point_count(grid,restaurants,"FID","Value")
+    #grid.loc[grid.restaurant.isna(),"restaurant"]=0
+    viewpoints=gpd.read_file("scenic.shp")
+    grid=point_count(grid,viewpoints,"FID","Value_1")
     hotels=gpd.read_file("/home/usuario/OneDrive/recreation/qgis/OSMtourism.shp")
-    grid=point_count(grid,hotels,"FID","name")
+    grid=point_count(grid,hotels,"FID","type")
 
 
     
