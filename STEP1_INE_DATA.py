@@ -8,8 +8,7 @@ if __name__== "__main__":
     #load geometries and general info of municipalities
     df=pd.read_csv("/home/usuario/OneDrive/geo_data/Concellos/MUNICIPIOS.csv") #important data of each municipality: population, mean altitude, surface...
     gdf_peninsula=gpd.read_file("/home/usuario/OneDrive/geo_data/Concellos/SHP_ETRS89/recintos_municipales_inspire_peninbal_etrs89/recintos_municipales_inspire_peninbal_etrs89.shp")
-    gdf_canarias=gpd.read_file("/home/usuario/OneDrive/geo_data/Concellos/SHP_REGCAN95/recintos_municipales_inspire_canarias_regcan95/recintos_municipales_inspire_canarias_regcan95.shp")
-
+    
     #fix codes for general info
     new_codes= lambda x: str(x)[:-6]
     df["new_codes"]=list(map(new_codes,df.COD_INE))
@@ -23,18 +22,13 @@ if __name__== "__main__":
     ine_codes= lambda x : str(x)[6:]
     gdf_peninsula["new_codes"]=list(map(ine_codes,gdf_peninsula.NATCODE))
     gdf_peninsula.new_codes=gdf_peninsula.new_codes.astype(int)
-    gdf_canarias["new_codes"]=list(map(ine_codes,gdf_canarias.NATCODE))
-    gdf_canarias.new_codes=gdf_canarias.new_codes.astype(int)
+
    
     #merge geometries and general info
     gdf_peninsula=gdf_peninsula[["NAMEUNIT","new_codes","geometry"]].merge(df[["COD_PROV","PROVINCIA","NOMBRE_ACTUAL","POBLACION_MUNI","SUPERFICIE","PERIMETRO","ALTITUD","new_codes"]],on="new_codes",how="left")
-    gdf_canarias=gdf_canarias[["NAMEUNIT","new_codes","geometry"]].merge(df[["COD_PROV","PROVINCIA","NOMBRE_ACTUAL","POBLACION_MUNI","SUPERFICIE","PERIMETRO","ALTITUD","new_codes"]],on="new_codes",how="left")
-    
-    
     gdf_peninsula["POBLACION_MUNI"]=gdf_peninsula["POBLACION_MUNI"].astype(float)
-    gdf_canarias["POBLACION_MUNI"]=gdf_canarias["POBLACION_MUNI"].astype(float)
     print(gdf_peninsula.info())
-    print(gdf_canarias.info())
+    
 
     #datos ine 2022
     df_receptor=pd.read_excel("/home/usuario/Documentos/recreation/exp_tmov_receptor_mun_2022.xlsx",sheet_name=None)
@@ -104,20 +98,15 @@ if __name__== "__main__":
 
     df_peninsula=pd.merge(df_ine,gdf_peninsula,left_on="dest_cod",right_on="new_codes",how="right")
     df_peninsula.dropna(subset="NOMBRE_ACTUAL",inplace=True)
-    df_canarias=pd.merge(df_ine,gdf_canarias,left_on="dest_cod",right_on="new_codes",how="right")
-    df_canarias.dropna(subset="NOMBRE_ACTUAL",inplace=True)
     print("\n")
     print("==================================================================================")
     print(df_peninsula)
     print(df_peninsula.info())
     print("\n")
     print("==================================================================================")
-    print(df_canarias)
-    print(df_canarias.info())
-
+ 
     #save raw data
     df_peninsula.drop(columns="geometry",inplace=True)
-    df_canarias.drop(columns="geometry",inplace=True)
-    df=pd.concat([df_peninsula,df_canarias])
+    df=df_peninsula
     print(df)
-    df.to_csv("/home/usuario/Documentos/recreation/turismo.csv",index=False)
+    df.to_csv("/home/usuario/Documentos/recreation/PCCMMG/turismo.csv",index=False)
