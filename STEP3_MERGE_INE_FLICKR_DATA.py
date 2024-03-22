@@ -42,7 +42,7 @@ if __name__=="__main__":
 
     #plotting
     df=df.groupby(by="new_codes",as_index=False).mean(numeric_only=True)
-    geometrias=gpd.read_file("/home/usuario/OneDrive/geo_data/Concellos/concellos_costeiros.shp")
+    geometrias=gpd.read_file("/home/usuario/OneDrive/geo_data/Concellos/Concellos_IGN.shp")
     geometrias.CODIGOINE=geometrias.CODIGOINE.astype(float)
     geometrias=pd.merge(geometrias,df,left_on="CODIGOINE",right_on="new_codes",how="inner")
     

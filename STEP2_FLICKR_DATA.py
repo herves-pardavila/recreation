@@ -9,7 +9,7 @@ if __name__ == "__main__":
 
     con=FlickrPhotos("/home/usuario/github/recreationdb/photos_GZ_estatico.csv")
     #clip by mask of the area of interest
-    con.clip("/home/usuario/OneDrive/geo_data/Concellos/concellos_costeiros.shp")
+    con.clip("/home/usuario/OneDrive/geo_data/Concellos/Concellos_IGN.shp")
     clipped_df=con.gdf
     con.print_general_info()
     con.df=clipped_df
@@ -18,7 +18,7 @@ if __name__ == "__main__":
     df_autores=con.author_information(100)
     print(df_autores[["Name","Photos"]])
     df_autores[["Name","Photos"]].to_csv("autores.csv",index=False)
-    df=con.delete_users(["Alberto Segade","Bibliotecas Municipais da Coruña","SINDO MOSTEIRO"])
+    df=con.delete_users(["Alberto Segade","Bibliotecas Municipais da Coruña","SINDO MOSTEIRO","https://adventuresportsmedia.com","Festival Atlantica","PLANIFICACIÓN DEPOURENSE"])
     
     # #tag info
     # tags=con.get_tags(con.df)
@@ -38,7 +38,7 @@ if __name__ == "__main__":
     # print(df.info())
 
     pu=con.photo_user()
-    aoi=gpd.read_file("/home/usuario/OneDrive/geo_data/Concellos/concellos_costeiros.shp")
+    aoi=gpd.read_file("/home/usuario/OneDrive/geo_data/Concellos/Concellos_IGN.shp")
     pud=con.photo_user_days(pu,aoi,"CODIGOINE")
     pud=pud[["CODIGOINE","Date","views","PUD"]]
     print(pud.info())
