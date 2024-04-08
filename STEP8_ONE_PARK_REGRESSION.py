@@ -10,13 +10,15 @@ if __name__== "__main__":
 
     #prepare the data
     df=pd.read_csv("/home/usuario/Documentos/recreation/recreation_ready.csv")
-    #df=df[df.SITE_NAME.isin(["Sierra de Guadarrama","Sierra Nevada","Monfragüe","Tablas de Daimiel","Cabañeros"])]
+    #choose one specific park
+    df=df[df.SITE_NAME=="Tablas de Daimiel"]
+    
     df.Date=df.Date.astype("category")
     df.Month=df.Month.astype("category")
     df.Year=df.Year.astype("category")
-    df.SITE_NAME=df.SITE_NAME.astype("category")
+    
     df.Season=df.Season.astype("category")
-    df.Visitantes=df.Visitantes-1
+    
 
 
     print(df)
@@ -24,39 +26,31 @@ if __name__== "__main__":
     print(df[["Visitantes","logPUD","turistas_total","turistas_corregido"]].describe())
     print(df[["Visitantes","logPUD","turistas_total","turistas_corregido"]].corr("spearman"))
 
-    dfmean=df[["SITE_NAME","Visitantes"]].groupby(by="SITE_NAME",as_index=False).mean()
-    dfvar=df[["SITE_NAME","Visitantes"]].groupby(by="SITE_NAME",as_index=False).var()
-    dfmean=dfmean.merge(dfvar,on="SITE_NAME",how="inner")
-    dfmean["mu/sigma"]=dfmean.Visitantes_x/dfmean.Visitantes_y
-    print(dfmean)
 
-    #choose one specific park
+
     
-    print(df)
+
     #divide between training set and test set
     df.dropna(subset=["Visitantes","turistas_total"],inplace=True)
     df.Visitantes=df.Visitantes.astype(int)
-    #df.PUD=df.PUD.astype(int)
-    df.turistas_total=df.turistas_total.astype(int)
+    df.PUD=df.PUD.astype(int)
+    #df.turistas_total=df.turistas_total.astype(int)
     df["log_Summer_turistas_corregido"]=np.log(df.Summer_turistas_corregido+1)
     df["log_Summer_turistas"]=np.log(df.Summer_turistas+1)
     print(df.info())
-    np.random.seed(seed=1)
-    mask=np.random.rand(len(df))<0.7
-    df_train=df[mask]
-    #df_train=df
-    df_test=df[~mask]
+
+    df_train=df
+    
 
 
     #poisson model
-    expr1="""Visitantes ~ logPUD + SITE_NAME"""
-    expr2="""Visitantes ~ turistas_total+ SITE_NAME + Summer_turistas_corregido"""
+    expr1="""Visitantes ~ logPUD + SITE_NAME + Season + Summer_logPUD"""
+    expr2="""Visitantes ~ turistas_total"""
     expr=expr2
     y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
-    y_test, X_test = dmatrices(expr, df_test, return_type='dataframe')
     poisson_training_results = sm.GLM(y_train, X_train, family=sm.families.Poisson()).fit()
-    print(poisson_training_results.summary())
-    #print("Mean mu=",poisson_training_results.mu)
+    #print(poisson_training_results.summary())
+    print("Mean mu=",np.mean(poisson_training_results.mu))
 
 
     #auxiliary regression model
@@ -64,7 +58,7 @@ if __name__== "__main__":
     df_train['AUX_OLS_DEP'] = df_train.apply(lambda x: ((x['Visitantes'] - x['BB_LAMBDA'])**2 - x['BB_LAMBDA']) / x['BB_LAMBDA'], axis=1)
     ols_expr = """AUX_OLS_DEP ~ BB_LAMBDA -1"""
     aux_olsr_results = smf.ols(ols_expr, df_train).fit()
-    print(aux_olsr_results.summary())
+    #print(aux_olsr_results.summary())
     print("Value of alpha=",aux_olsr_results.params[0])
 
 
@@ -75,11 +69,10 @@ if __name__== "__main__":
     print("AIC=",nb2_training_results.aic)
 
 
-    nb2_predictions = nb2_training_results.get_prediction(X_test)
-    predictions_summary_frame = nb2_predictions.summary_frame()
-    df_test["yhat"]=predicted_counts=predictions_summary_frame['mean']
-    #chi_cuadrado=np.sum(df_test.yhat-df_test.)
-    print(df_test.info())
+    # nb2_predictions = nb2_training_results.get_prediction(X_test)
+    # predictions_summary_frame = nb2_predictions.summary_frame()
+    # df_test["yhat"]=predicted_counts=predictions_summary_frame['mean']
+    # print(df_test.info())
 
 
     # #influence plots
