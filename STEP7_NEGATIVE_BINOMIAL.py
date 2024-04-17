@@ -6,17 +6,17 @@ import matplotlib.pyplot as plt
 import statsmodels.formula.api as smf
 import statsmodels.graphics as smg
 from sklearn.metrics import r2_score
+from scipy import stats
 if __name__== "__main__":
 
     #prepare the data
     df=pd.read_csv("/home/usuario/Documentos/recreation/recreation_ready.csv")
-    #df=df[df.SITE_NAME.isin(["Sierra de Guadarrama","Sierra Nevada","Monfragüe","Tablas de Daimiel","Cabañeros"])]
+    #df=df[df.IdOAPN.isin(["Timanfaya","Islas Atlánticas de Galicia","Tablas de Daimiel"])]
     df.Date=df.Date.astype("category")
     df.Month=df.Month.astype("category")
     df.Year=df.Year.astype("category")
-    df.SITE_NAME=df.SITE_NAME.astype("category")
+    df.IdOAPN=df.IdOAPN.astype("category")
     df.Season=df.Season.astype("category")
-    df.Visitantes=df.Visitantes-1
 
 
     print(df)
@@ -24,38 +24,40 @@ if __name__== "__main__":
     print(df[["Visitantes","logPUD","turistas_total","turistas_corregido"]].describe())
     print(df[["Visitantes","logPUD","turistas_total","turistas_corregido"]].corr("spearman"))
 
-    dfmean=df[["SITE_NAME","Visitantes"]].groupby(by="SITE_NAME",as_index=False).mean()
-    dfvar=df[["SITE_NAME","Visitantes"]].groupby(by="SITE_NAME",as_index=False).var()
-    dfmean=dfmean.merge(dfvar,on="SITE_NAME",how="inner")
+    dfmean=df[["IdOAPN","Visitantes","Month"]].groupby(by=["IdOAPN","Month"],as_index=False).mean()
+    dfvar=df[["IdOAPN","Visitantes","Month"]].groupby(by=["IdOAPN","Month"],as_index=False).var()
+    dfmean=dfmean.merge(dfvar,on=["IdOAPN","Month"],how="inner")
     dfmean["mu/sigma"]=dfmean.Visitantes_x/dfmean.Visitantes_y
     print(dfmean)
+    print(dfmean.describe())
 
-    #choose one specific park
+
     
-    print(df)
+
     #divide between training set and test set
     df.dropna(subset=["Visitantes","turistas_total"],inplace=True)
     df.Visitantes=df.Visitantes.astype(int)
-    #df.PUD=df.PUD.astype(int)
-    df.turistas_total=df.turistas_total.astype(int)
+    #df.turistas_total=df.turistas_total.astype(int)
     df["log_Summer_turistas_corregido"]=np.log(df.Summer_turistas_corregido+1)
-    df["log_Summer_turistas"]=np.log(df.Summer_turistas+1)
-    print(df.info())
+    #df["logIUD"]=np.log(df.IUD+1)
     np.random.seed(seed=1)
-    mask=np.random.rand(len(df))<0.7
+    mask=np.random.rand(len(df))<0.99
     df_train=df[mask]
     #df_train=df
     df_test=df[~mask]
 
 
     #poisson model
-    expr1="""Visitantes ~ logPUD + SITE_NAME"""
-    expr2="""Visitantes ~ turistas_total+ SITE_NAME + Summer_turistas_corregido"""
-    expr=expr2
+    expr1="""Visitantes ~ logPUD + IdOAPN + Season"""
+    expr2="""Visitantes ~ turistas_total+ IdOAPN + Season + log_Summer_turistas_corregido"""
+    expr3="""Visitantes ~ logIUD + IdOAPN + Season"""
+    null_expr="""Visitantes ~ 1"""
+    expr=null_expr
     y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
     y_test, X_test = dmatrices(expr, df_test, return_type='dataframe')
     poisson_training_results = sm.GLM(y_train, X_train, family=sm.families.Poisson()).fit()
     print(poisson_training_results.summary())
+    print("AIC=",poisson_training_results.aic)
     #print("Mean mu=",poisson_training_results.mu)
 
 
@@ -70,16 +72,23 @@ if __name__== "__main__":
 
     #negative_binomial regression
     print("=========================Negative Binomial Regression===================== ")
-    nb2_training_results = sm.GLM(y_train, X_train,family=sm.families.NegativeBinomial(alpha=aux_olsr_results.params[0])).fit()
+    nb2_training_results = sm.GLM(y_train, X_train,family=sm.families.NegativeBinomial(alpha= 0.158 )).fit()
     print(nb2_training_results.summary())
     print("AIC=",nb2_training_results.aic)
 
 
-    nb2_predictions = nb2_training_results.get_prediction(X_test)
-    predictions_summary_frame = nb2_predictions.summary_frame()
-    df_test["yhat"]=predicted_counts=predictions_summary_frame['mean']
-    #chi_cuadrado=np.sum(df_test.yhat-df_test.)
-    print(df_test.info())
+    #nb2_predictions = nb2_training_results.get_prediction(X_test)
+    # print(nb2_predictions)
+    #predictions_summary_frame = nb2_predictions.summary_frame()
+    # print(predictions_summary_frame)
+    #df_test["yhat"]=predictions_summary_frame['mean']
+    # res=stats.cramervonmises_2samp(df_test.Visitantes,df_test.yhat)
+    # print(res)
+    # print(res.pvalue > 0.05)
+
+    # # df_test["chi cuadrado"]=((df_test.Visitantes-df_test.yhat)**2)/df_test.yhat
+    # # print(df_test[["Visitantes","yhat","chi cuadrado"]])
+    # # print("Para un test set con %f observaciones el estadístico X²=%f" %(len(df_train),df_train["chi cuadrado"].sum()))
 
 
     # #influence plots
@@ -107,7 +116,7 @@ if __name__== "__main__":
     # ax3.plot(df_test.index,df_test.yhat,"-*",label="Predicted by INE")
     # ax3.plot(df_test.index,df_test.Visitantes,"-*",label="Park visitors")
     # ax3.set_ylabel("Visitors")
-    # ax3.set_xlabel("Index")
+    # ax3.set_xlabel("Observation")
     # fig3.legend()
 
 
@@ -115,9 +124,9 @@ if __name__== "__main__":
 
 
 
-    # newdf=df_test[["SITE_NAME","Month","Season","Visitantes","yhat"]]
+    # newdf=df_test[["IdOAPN","Month","Season","Visitantes","yhat"]]
     # print(newdf)
-    # newdf=newdf.groupby(by=["SITE_NAME"],as_index=False).mean(numeric_only=True)
+    # newdf=newdf.groupby(by=["IdOAPN"],as_index=False).mean(numeric_only=True)
     
     # fig2 = plt.figure()
     # fig2.suptitle('Predicted versus actual visitors')
@@ -126,8 +135,8 @@ if __name__== "__main__":
     # ax2.loglog(np.arange(1e2,8e7,10),np.arange(1e2,8e7,10),label="1-1 line")
     # ax2.set_ylabel("Predicted visitors")
     # ax2.set_ylabel("Actual visitors")
-    # [plt.text(i,j,f"{k}") for (i,j,k) in zip(newdf.Visitantes,newdf.yhat,newdf["SITE_NAME"])]
-    # plt.show()
+    # [plt.text(i,j,f"{k}") for (i,j,k) in zip(newdf.Visitantes,newdf.yhat,newdf["IdOAPN"])]
+    #plt.show()
 
 
 

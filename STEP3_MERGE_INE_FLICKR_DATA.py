@@ -7,7 +7,7 @@ if __name__=="__main__":
 
     #datos fotos de flickr
     pud=pd.read_csv("/home/usuario/Documentos/recreation/pud.csv")
-    pud.Date=pd.to_datetime(pud.Date)
+    pud.Date=pd.to_datetime(pud.Date).dt.to_period("M")
     print(pud.info())
     #datos de turismo del INE
     turismo=pd.read_csv("/home/usuario/Documentos/recreation/turismo.csv")
@@ -37,8 +37,23 @@ if __name__=="__main__":
     turismo=turismo.groupby(by=["Date","SITE_NAME"],as_index=False).sum(numeric_only=True)
     #remove unnecessary columns
     turismo.drop(columns=["dest_cod","COD_PROV","PERIMETRO","% Natural area","Natural area (km2)","ALTITUD","SUPERFICIE","POBLACION_MUNI","new_codes"],inplace=True)
-    print(turismo.info())
+    turismo.Date=turismo.Date.dt.to_period("M")
+    print(turismo)
 
+    #add missing data as zeros
+    date_idx=pd.date_range("7-2019","01-2023",freq="M").to_period("M") #we create a fully complete date range index
+    print(date_idx)
+    arrays=[date_idx,turismo.SITE_NAME.unique()] #names of the parks
+    index=pd.MultiIndex.from_product(arrays,names=["Date","SITE_NAME"]) #we create a double index: parks and month
+    turismo.set_index(["Date","SITE_NAME"],inplace=True) #set date and park columns as index in the df
+    turismo=turismo.reindex(index) #peform reindex
+    turismo.reset_index(inplace=True) #recover the columns
+    print(turismo.info())
+    turismo.loc[turismo.turistas_total.isna(),"turistas_total"]=0 #set missing observations as zero
+    turismo.loc[turismo.turistas_corregido.isna(),"turistas_corregido"]=0 
+    print(turismo)
+    
+    print(pud)
     #merge tourism data with pud data of flickr
     df=pd.merge(turismo,pud,on=["Date","SITE_NAME"],how="outer")
     print(df)

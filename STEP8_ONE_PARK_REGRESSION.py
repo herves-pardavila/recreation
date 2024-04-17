@@ -6,12 +6,13 @@ import matplotlib.pyplot as plt
 import statsmodels.formula.api as smf
 import statsmodels.graphics as smg
 from sklearn.metrics import r2_score
+from scipy import stats
 if __name__== "__main__":
 
     #prepare the data
     df=pd.read_csv("/home/usuario/Documentos/recreation/recreation_ready.csv")
     #choose one specific park
-    df=df[df.SITE_NAME=="Tablas de Daimiel"]
+    df=df[df.SITE_NAME=="Teide National Park"]
     
     df.Date=df.Date.astype("category")
     df.Month=df.Month.astype("category")
@@ -31,7 +32,7 @@ if __name__== "__main__":
     
 
     #divide between training set and test set
-    df.dropna(subset=["Visitantes","turistas_total"],inplace=True)
+    df.dropna(subset=["Visitantes","PUD"],inplace=True)
     df.Visitantes=df.Visitantes.astype(int)
     df.PUD=df.PUD.astype(int)
     #df.turistas_total=df.turistas_total.astype(int)
@@ -44,9 +45,9 @@ if __name__== "__main__":
 
 
     #poisson model
-    expr1="""Visitantes ~ logPUD + SITE_NAME + Season + Summer_logPUD"""
-    expr2="""Visitantes ~ turistas_total"""
-    expr=expr2
+    expr1="""Visitantes ~ logPUD + SITE_NAME + Season """
+    expr2="""Visitantes ~ turistas_total + Season"""
+    expr=expr1
     y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
     poisson_training_results = sm.GLM(y_train, X_train, family=sm.families.Poisson()).fit()
     #print(poisson_training_results.summary())
@@ -69,9 +70,12 @@ if __name__== "__main__":
     print("AIC=",nb2_training_results.aic)
 
 
-    # nb2_predictions = nb2_training_results.get_prediction(X_test)
-    # predictions_summary_frame = nb2_predictions.summary_frame()
-    # df_test["yhat"]=predicted_counts=predictions_summary_frame['mean']
+    nb2_predictions = nb2_training_results.get_prediction(X_train)
+    predictions_summary_frame = nb2_predictions.summary_frame()
+    df_train["yhat"]=predicted_counts=predictions_summary_frame['mean']
+    res=stats.cramervonmises_2samp(df_train.Visitantes,df_train.yhat)
+    print(res)
+    print(res.pvalue > 0.05)
     # print(df_test.info())
 
 
