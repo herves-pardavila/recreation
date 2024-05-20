@@ -1,5 +1,6 @@
 import pandas as pd
 import numpy as np
+from datetime import datetime
 if __name__=="__main__":
 
     df=pd.read_csv("/home/usuario/Documentos/recreation/recreation_INE_FUD_IUD.csv")
@@ -29,9 +30,12 @@ if __name__=="__main__":
     #df.loc[df.Season=="Summer","Summer_logIUD"]=df.logIUD
     df.loc[df.Season=="Summer","Summer_turistas_total"]=df.turistas_total
     df.loc[df.Season=="Summer","Summer_turistas_corregido"]=df.turistas_corregido
-    
-    df=df[df.Year>2014]
-    
-    print(df)
+
+    #add covid
+    df["covid"]=0
+    df.loc[((df.Date > datetime(2020,2,1)) & (df.Date < datetime(2021,6,1))),"covid"]=1
+    print(df.covid.unique())
+    df=df[~((df.Date > datetime(2020,2,1)) & (df.Date < datetime(2020,8,1)))]
     print(df.info())
+    print(df.covid.unique())
     df.to_csv("/home/usuario/Documentos/recreation/recreation_ready.csv",index=False)

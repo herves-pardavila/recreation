@@ -33,6 +33,7 @@ if __name__=="__main__":
     turismo["turistas_total"]=turismo.turistas+turismo.turistas_extranjeros
     #add new variable
     turismo["turistas_corregido"]=turismo.turistas_total*turismo["% Natural area"]
+    turismo.to_csv("/home/usuario/Documentos/recreation/municipalities_info.csv",index=False)
     #group
     turismo=turismo.groupby(by=["Date","SITE_NAME"],as_index=False).sum(numeric_only=True)
     #remove unnecessary columns
