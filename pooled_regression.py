@@ -12,7 +12,7 @@ if __name__== "__main__":
 
     #prepare the data
     df=pd.read_csv("/home/usuario/Documentos/recreation/recreation_ready.csv")
-    df=df[df.IdOAPN.isin(["Timanfaya","Islas Atlánticas de Galicia","Tablas de Daimiel"])]
+    #df=df[df.IdOAPN.isin(["Timanfaya","Islas Atlánticas de Galicia","Tablas de Daimiel"])]
     #df=df[df.Year.isin([2015,2016,2017,2018])]
     df.Date=df.Date.astype("category")
     df.Month=df.Month.astype("category")
@@ -49,7 +49,7 @@ if __name__== "__main__":
     #divide between training set and test set
     df.dropna(subset=["Visitantes","IUD","PUD"],inplace=True)
     df.Visitantes=df.Visitantes.astype(int)
-    #df.turistas_total=df.turistas_total.astype(int)
+    df.turistas_total=df.turistas_total.astype(int)
     #df["log_Summer_turistas_corregido"]=np.log(df.Summer_turistas_corregido+1)
     df["logIUD"]=np.log(df.IUD+1)
     np.random.seed(seed=1)
