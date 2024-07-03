@@ -3,8 +3,7 @@ from scipy.stats import mannwhitneyu
 
 # Definir las frecuencias relativas observadas para ambas fuentes de datos
 # Fuente A
-observed_A = np.array([0.49, 0.49, 0.02])
-
+observed_A = 83126*np.array([0.862,0.06,0.015])
 # Fuente B
 observed_B = np.array([0.01, 0.01, 0.98])
 
