@@ -40,7 +40,7 @@ if __name__== "__main__":
 
     #divide between training set and test set
     df.turistas=df.turistas.astype(int)
-    df["Vrate"]=df.turistas/df.Poblacion
+    df["Vrate"]=100*df.turistas/df.Poblacion
     np.random.seed(seed=1)
     mask=np.random.rand(len(df))<0.999
     df_train=df[mask]
@@ -52,7 +52,7 @@ if __name__== "__main__":
     print(df)
     
     
-    expr="""turistas ~ Poblacion + distance + Season + covid"""
+    expr="""turistas ~ + distance + Season + covid"""
     # # #null_expr="""Visitantes ~ IdOAPN + Season + covid """
     
     y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
