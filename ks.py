@@ -2,8 +2,8 @@ import numpy as np
 from scipy.stats import ks_2samp
 
 # Frecuencias relativas de las dos fuentes
-fuente_a = np.array([0.2,0.2,0.2,0.2])
-fuente_b = np.array([0.01,0.01,0.01,0.97])
+fuente_a = np.array([0.9])
+fuente_b = np.array([0.01])
 
 # Realizar el test KS
 ks_statistic, p_value = ks_2samp(fuente_a, fuente_b,alternative="two-sided",method="exact")
