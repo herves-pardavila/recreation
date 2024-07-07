@@ -22,7 +22,8 @@ if __name__=="__main__":
     overlay["Natural area (km2)"]=overlay.geometry.area/1e6
     overlay["% Natural area"]=overlay["Natural area (km2)"]/overlay["area munic"]
     overlay.sort_values(by="% Natural area",inplace=True)
-
+    print(overlay.info())
+    print(overlay[overlay.SITE_NAME=="Picos de Europa"][["NAMEUNIT","new_codes"]])
     #merge tourism data with obverlay, identifying each municipality with its natural park
     turismo=pd.merge(turismo,overlay[["new_codes","SITE_NAME","Natural area (km2)","% Natural area"]],on="new_codes",how="right")
     print(turismo.info())
