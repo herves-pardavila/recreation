@@ -22,12 +22,12 @@ if __name__== "__main__":
 
  
 
-    park="Monfragüe"
+    park="Islas Atlánticas de Galicia"
     test_df=test_df[test_df.SITE_NAME.isin([park])]
     print(test_df)
     year=2022
     test_df=test_df[test_df.Year==year]
-    municipality="Vigo"
+    municipality="Bueu"
     test_df=test_df[test_df.NAMEUNIT==municipality]
     test_df["Visitantes"]=1
     test_df.rename(columns={"SITE_NAME":"IdOAPN","turistas":"turistas_total"},inplace=True)
@@ -113,4 +113,4 @@ if __name__== "__main__":
   'Cataluña', 'Comunitat Valenciana', 'Extremadura', 'Galicia', 'Madrid, Comunidad de', 
   'Melilla', 'Murcia, Región de', 'Navarra, Comunidad Foral de' ,'País Vasco', 'Rioja, La','Total' ])]
     print(test_df.Origen.unique())
-    print(test_df[test_df.Origen=='Total']["yhat"].sum()/test_df["yhat"].sum())
+    print(test_df[test_df.Origen=='Galicia']["yhat"].sum()/test_df["yhat"].sum())
