@@ -12,7 +12,7 @@ from datetime import datetime
 def ajuste(df,expr,name):
     log_likelihood=[]
     newdf=pd.DataFrame()
-    null_expr="""Visitantes ~ 1 """
+    null_expr="""Visitantes ~ Season + covid """
     for park in df.IdOAPN.unique():
         #print("===========================================")
         #print("Park=",park)
