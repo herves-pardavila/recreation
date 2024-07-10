@@ -4,6 +4,10 @@ from datetime import datetime
 if __name__=="__main__":
 
     df=pd.read_csv("/home/usuario/Documentos/recreation/testchi2.csv")
+    df=df[df.NAMEUNIT=="Bueu"]
+    print(df)
+    df=df.groupby(by=["Date","SITE_NAME","Origen"],as_index=False).sum(numeric_only=True)
+    print(df)
     df.Date=pd.to_datetime(df.Date)
     df["Month"]=df.Date.dt.month
     df["Year"]=df.Date.dt.year

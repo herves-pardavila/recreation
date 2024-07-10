@@ -38,6 +38,17 @@ if __name__== "__main__":
 
     # turismo receptor
 
+    #datos ine 2023
+    df_receptor=pd.read_excel("/home/usuario/Documentos/recreation/exp_tmov_receptor_mun_2023.xlsx",sheet_name=None)
+    df_receptor=pd.concat([df_receptor["m01_2023"],df_receptor["m02_2023"],df_receptor["m03_2023"],df_receptor["m04_2023"],df_receptor["m05_2023"],df_receptor["m06_2023"],df_receptor["m07_2023"],df_receptor["m08_2023"],df_receptor["m09_2023"],df_receptor["m10_2023"],df_receptor["m11_2023"],df_receptor["m12_2023"]])
+    #df_receptor=df_receptor.groupby(["mes","mun_dest_cod"],as_index=False).sum(numeric_only=True)
+    df_receptor.rename(columns={"mun_dest_cod":"dest_cod","turistas":"turistas_extranjeros","pais_orig":"Origen","mun_dest":"Destino"},inplace=True)
+    df_ine_2023=df_receptor
+    print(df_ine_2023)
+    print(df_ine_2023.info())
+    
+    
+    
     #datos ine 2022
     df_receptor=pd.read_excel("/home/usuario/Documentos/recreation/exp_tmov_receptor_mun_2022.xlsx",sheet_name=None)
     df_receptor=pd.concat([df_receptor["m01_2022"],df_receptor["m02_2022"],df_receptor["m03_2022"],df_receptor["m04_2022"],df_receptor["m05_2022"],df_receptor["m06_2022"],df_receptor["m07_2022"],df_receptor["m08_2022"],df_receptor["m09_2022"],df_receptor["m10_2022"],df_receptor["m11_2022"],df_receptor["m12_2022"]])
@@ -71,7 +82,7 @@ if __name__== "__main__":
     print(df_ine_2019.info())
 
     #concatenate all outer tourism
-    df_ine=pd.concat([df_ine_2022,df_ine_2021,df_ine_2020,df_ine_2019])
+    df_ine=pd.concat([df_ine_2023,df_ine_2022,df_ine_2021,df_ine_2020,df_ine_2019])
     df_ine.mes=pd.to_datetime(df_ine.mes).dt.to_period("M")
     
     print(df_ine)

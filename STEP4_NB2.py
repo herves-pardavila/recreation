@@ -19,22 +19,24 @@ if __name__== "__main__":
     test_df.SITE_NAME=test_df.SITE_NAME.astype("category")
     test_df.Season=test_df.Season.astype("category")
     test_df.covid=test_df.covid.astype("category")
-
+    test_df.turistas=test_df.turistas.astype(int)
  
 
     park="Islas Atlánticas de Galicia"
     test_df=test_df[test_df.SITE_NAME.isin([park])]
-    print(test_df)
-    year=2022
+    year=2023
+    
     test_df=test_df[test_df.Year==year]
-    municipality="Bueu"
-    test_df=test_df[test_df.NAMEUNIT==municipality]
+    print(test_df.Year.unique())
+    print(test_df)
+ 
     test_df["Visitantes"]=1
     test_df.rename(columns={"SITE_NAME":"IdOAPN","turistas":"turistas_total"},inplace=True)
 
-    print(test_df)
+    
     print(test_df.info())
     print(test_df.describe())
+    
 
    
     #train data (no origin info)
@@ -85,6 +87,7 @@ if __name__== "__main__":
     print("=========================Negative Binomial Regression===================== ")
     nb2_training_results = sm.GLM(y_train, X_train,family=sm.families.NegativeBinomial(alpha= aux_olsr_results.params[0] )).fit()
     summary=nb2_training_results.summary()
+    print(summary)
     
     summary_as_html=summary.tables[1].as_html()
     summary_as_df=pd.read_html(summary_as_html,header=0,index_col=0)[0]
@@ -98,7 +101,7 @@ if __name__== "__main__":
     nb2_intercept_only= sm.GLM(y_train, X_train,family=sm.families.NegativeBinomial(alpha= aux_olsr_results.params[0] )).fit()
     summary_as_df.loc["R2dev","coef"]=1-(nb2_training_results.deviance/nb2_intercept_only.deviance)
     print(summary_as_df)
-    print(summary_as_df)
+
 
     #predictions
     print(X_test)
@@ -111,6 +114,14 @@ if __name__== "__main__":
     test_df=test_df[test_df.Origen.isin(['Andalucía', 'Aragón', 'Asturias, Principado de',
  'Balears, Illes', 'Canarias', 'Cantabria','Castilla - La Mancha' ,'Castilla y León',
   'Cataluña', 'Comunitat Valenciana', 'Extremadura', 'Galicia', 'Madrid, Comunidad de', 
-  'Melilla', 'Murcia, Región de', 'Navarra, Comunidad Foral de' ,'País Vasco', 'Rioja, La','Total' ])]
-    print(test_df.Origen.unique())
-    print(test_df[test_df.Origen=='Galicia']["yhat"].sum()/test_df["yhat"].sum())
+  'Melilla', 'Murcia, Región de', 'Navarra, Comunidad Foral de' ,'País Vasco', 'Rioja, La',"Ceuta",'Total' ])]
+
+#     test_df=test_df[test_df.Origen.isin(['Alemania', 'Andalucía', 'Austria' ,'Bélgica' ,'Canarias', 'Cataluña',
+#  'Dinamarca', 'Filipinas' ,'Finlandia', 'Francia', 'Galicia', 'Irlanda',
+#  'Islandia', 'Italia' ,'Madrid, Comunidad de', 'Noruega' ,'Países Bajos',
+#  'Polonia', 'Reino Unido', 'República Checa' ,'Suecia' ,'Suiza','Comunitat Valenciana' ,'Estonia', 'Indonesia' ,
+#  'Portugal', 'Balears, Illes', 'EE.UU.'])]
+
+    #print(test_df[test_df.Origen=='Total'])
+    print(test_df[~test_df.Origen.isin(["Total","Galicia"])]["turistas_total"].sum()/test_df["turistas_total"].sum())
+    #print(test_df[test_df.Origen.isin(["Galicia"])]["yhat"].sum())
