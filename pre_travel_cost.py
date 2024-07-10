@@ -22,23 +22,24 @@ if __name__ == "__main__":
     df.loc[df.origen=="Grecia","Poblacion"]=10716322
     print(df[pd.isna(df.Poblacion)]["CNTR_ID"].unique())
     print(df[df.CNTR_ID=="UK"])
-    # #add other important columns
-    # df.Date=pd.to_datetime(df.Date)
-    # df["Month"]=df.Date.dt.month
-    # df["Year"]=df.Date.dt.year
-    # df.loc[df.Month.isin([1,2,3]),"Season"]="Winter"
-    # df.loc[df.Month.isin([3,4,5]),"Season"]="Spring"
-    # df.loc[df.Month.isin([6,7,8,9]),"Season"]="Summer"
-    # df.loc[df.Month.isin([10,11,12]),"Season"]="Fall"
+    #add other important columns
+    df.Date=pd.to_datetime(df.Date)
+    df["Month"]=df.Date.dt.month
+    df["Year"]=df.Date.dt.year
+    df.loc[df.Month.isin([1,2,3]),"Season"]="Winter"
+    df.loc[df.Month.isin([3,4,5]),"Season"]="Spring"
+    df.loc[df.Month.isin([6,7,8,9]),"Season"]="Summer"
+    df.loc[df.Month.isin([10,11,12]),"Season"]="Fall"
 
-    # #add covid
-    # df["covid"]=0
-    # df.loc[((df.Date > datetime(2020,2,1)) & (df.Date < datetime(2021,6,1))),"covid"]=1
-    # print(df.covid.unique())
-    # df=df[~((df.Date > datetime(2020,2,1)) & (df.Date < datetime(2020,8,1)))]
-    # print(df)
+    #add covid
+    df["covid"]=0
+    df.loc[((df.Date > datetime(2020,2,1)) & (df.Date < datetime(2021,6,1))),"covid"]=1
+    print(df.covid.unique())
+    df=df[~((df.Date > datetime(2020,2,1)) & (df.Date < datetime(2020,8,1)))]
+    print(df)
+    print(df.info())
 
-    # df.to_csv("travel_cost.csv",index=False)
+    df.to_csv("travel_cost.csv",index=False)
 
 
     

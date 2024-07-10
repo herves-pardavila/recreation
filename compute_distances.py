@@ -15,7 +15,7 @@ if __name__ == "__main__":
     #print(gdf.info())
     #print(gdf.crs)
 
-    df=pd.merge(df,gdf[["provincia","cd_prov","nut2","centroid","geometry"]],on="provincia")
+    df=pd.merge(df,gdf[["provincia","cd_prov","nut2","centroid","geometry","Income"]],on="provincia")
     
     #print(df.cd_prov.unique())
 
@@ -38,8 +38,8 @@ if __name__ == "__main__":
     ax=fig.add_subplot(111)
     df.plot(ax=ax, column="distance (km)")
     islas_cies.plot(ax=ax,color="red")
-    #df.plot(ax=ax, column="centroid",color="black")
-    #plt.show()
+    df.plot(ax=ax, column="centroid",color="black")
+    plt.show()
 
 
     #add population
@@ -51,7 +51,7 @@ if __name__ == "__main__":
     newdf["cd_prov"]=list(map(codes,newdf.Provincia))
     newdf=newdf[["cd_prov","Poblacion"]]
 
-    newdf=pd.merge(df[["Date","provincia","turistas","cd_prov","distance (km)"]],newdf,on="cd_prov",how="left")
+    newdf=pd.merge(df[["Date","provincia","turistas","cd_prov","distance (km)","Income"]],newdf,on="cd_prov",how="left")
     newdf.rename(columns={"provincia":"origen"},inplace=True)
     newdf.Date=pd.to_datetime(newdf.Date,format="%YM%m").dt.to_period("M")
     #print(newdf)
@@ -100,7 +100,10 @@ if __name__ == "__main__":
 
     gdf_world["centroid"]=gdf_world.geometry.centroid
     gdf_world["distance (km)"]=1e-3*np.array(list(map(compute_distances,gdf_world["centroid"])))
-    gdf_world=gdf_world[["CNTR_ID","PAIS","distance (km)","geometry"]]
+    gdf_world["Income"]=gdf_world["Income ($)"]*1/1.137
+    gdf_world=gdf_world[["CNTR_ID","PAIS","distance (km)","Income","geometry"]]
+    
+
     print(gdf_world[["PAIS","distance (km)"]])
 
     centroides_mundo=gpd.GeoDataFrame(data=gdf_world,crs="EPSG:3857",geometry=gdf_world.centroid)
@@ -118,15 +121,15 @@ if __name__ == "__main__":
     dfreceptor.loc[dfreceptor.pais_orig=="Sudafrica","pais_orig"]="Sudáfrica"
     dfreceptor.loc[dfreceptor.pais_orig=="Turquia","pais_orig"]="Turquía"
 
-    dfreceptor=dfreceptor.merge(gdf_world[["CNTR_ID","PAIS","distance (km)"]],left_on="pais_orig",right_on="PAIS",how="left")
+    dfreceptor=dfreceptor.merge(gdf_world[["CNTR_ID","PAIS","distance (km)","Income"]],left_on="pais_orig",right_on="PAIS",how="left")
     dfreceptor["Date"]=pd.to_datetime(dfreceptor.mes).dt.to_period("M")
     dfreceptor.rename(columns={"pais_orig":"origen"},inplace=True)
-    dfreceptor=dfreceptor[["Date","origen","CNTR_ID","turistas","distance (km)"]]
+    dfreceptor=dfreceptor[["Date","origen","CNTR_ID","turistas","distance (km)","Income"]]
 
     print(dfreceptor)
     print(newdf)
 
-    final_df=pd.concat([newdf[["Date","origen","turistas","distance (km)","Poblacion"]],dfreceptor])
+    final_df=pd.concat([newdf[["Date","origen","turistas","distance (km)","Poblacion","Income"]],dfreceptor])
     print(final_df)
     final_df.to_csv("tourist_origins_distances.csv",index=False)
 
