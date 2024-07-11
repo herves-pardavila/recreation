@@ -143,6 +143,3 @@ if __name__ == "__main__":
     # #centroides_españa.plot(ax=ax2,column="distance (km)")
     # gdf.plot(ax=ax2)
     # plt.show()
-
-    
-

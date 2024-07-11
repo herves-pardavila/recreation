@@ -102,44 +102,31 @@ if __name__== "__main__":
 
     print(newdf.describe())
     print(newdf)
+    
+    
+    
+    #divide between training set and test set
+    df.turistas=df.turistas.astype(int)
+    df["Vrate"]=100*df.turistas/df.Poblacion
+    np.random.seed(seed=1)
+    mask=np.random.rand(len(df))<0.999
+    df_train=df[mask]
+    df_train=df
+    df_test=df[~mask]
 
+    #poisson model
+    
+    print(df.Vrate.unique())
     
     
+    expr="""Vrate ~ + distance + Season + covid + Income"""
+    # # #null_expr="""Visitantes ~ IdOAPN + Season + covid """
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    # #divide between training set and test set
-    # df.turistas=df.turistas.astype(int)
-    # df["Vrate"]=100*df.turistas/df.Poblacion
-    # np.random.seed(seed=1)
-    # mask=np.random.rand(len(df))<0.999
-    # df_train=df[mask]
-    # df_train=df
-    # df_test=df[~mask]
-
-    # #poisson model
-    
-    # print(df.Vrate.unique())
-    
-    
-    # expr="""Vrate ~ + distance + Season + covid + Income"""
-    # # # #null_expr="""Visitantes ~ IdOAPN + Season + covid """
-    
-    # y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
-    # y_test, X_test = dmatrices(expr, df_test, return_type='dataframe')
-    # ols_training_results = sm.OLS(y_train, X_train, family=sm.families.Gaussian()).fit()
-    # print(ols_training_results.summary())
-    # print("AIC=",ols_training_results.aic)
+    y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
+    y_test, X_test = dmatrices(expr, df_test, return_type='dataframe')
+    ols_training_results = sm.OLS(y_train, X_train, family=sm.families.Gaussian()).fit()
+    print(ols_training_results.summary())
+    print("AIC=",ols_training_results.aic)
 
     # #auxiliary regression model
     # df_train['BB_LAMBDA'] = poisson_training_results.mu
