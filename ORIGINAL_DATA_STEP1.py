@@ -63,10 +63,10 @@ if __name__ == "__main__":
     df=pd.concat([df_galicia[["Año","Isla","Lugar","Porcentaje","Porcentaje corregido","Numero","Income","Población","distance (km)"]],
                   df_españa[["Año","Isla","Lugar","Porcentaje","Porcentaje corregido","Numero","Income","Población","distance (km)"]],
                   df_resto[["Año","Isla","Lugar","Porcentaje","Porcentaje corregido","Numero","Income","Población","distance (km)"]]])
-    print(df)
+    print(df[df.Isla=="Ons"][["Lugar","Numero"]])
     print(df.info())
 
-    df.to_csv("tourist_origins_distances.csv",index=False)
+    #df.to_csv("tourist_origins_distances.csv",index=False)
 
     
 

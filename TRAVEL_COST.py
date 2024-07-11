@@ -13,7 +13,11 @@ if __name__== "__main__":
     
     #load the data
     df=pd.read_csv("tourist_origins_distances.csv")
-    #remove rows with no tourist dat
+    #remove nans
+    df.dropna(subset=["Lugar","Numero","distance (km)","Población","Income"],inplace=True)
+
+    
+
 
     #set data types
     df.Año=df.Año.astype("category")
@@ -26,9 +30,7 @@ if __name__== "__main__":
     print(df.info())
     
     
-    #remove nans
-    df.dropna(subset=["Lugar","Numero","distance","Población","Income"],inplace=True)
-    
+
     #summary statistics
     sum_statistics=df.describe()
     print(sum_statistics)
