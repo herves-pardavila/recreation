@@ -8,7 +8,8 @@ if __name__ == "__main__":
 
     #visitor origins, given by park authority
     df=pd.read_csv("/home/usuario/Documentos/recreation/turismo_with_origins.csv")
-    df=df[df.NAMEUNIT=="Bueu"]
+    df=df[df.NAMEUNIT.isin(["Bueu","Portonovo","Sanxenxo"])]
+    print(df)
     df.mes=pd.to_datetime(df.mes,format="%Y-%m").dt.to_period("M")
     df["Año"]=df.mes.dt.year
     df=df[df.Año==2023]
@@ -78,6 +79,6 @@ if __name__ == "__main__":
     df=pd.concat([df_españa[["Año","Lugar","Numero","Income","Población","distance (km)"]],
                    df_resto[["Año","Lugar","Numero","Income","Población","distance (km)"]]])
     print(df[["Lugar","Numero"]])
-    print(df.info())
+    print(df)
 
     df.to_csv("tourist_origins_distances.csv",index=False)
