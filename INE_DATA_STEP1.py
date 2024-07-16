@@ -8,14 +8,14 @@ if __name__ == "__main__":
 
     #visitor origins, given by park authority
     df=pd.read_csv("/home/usuario/Documentos/recreation/turismo_with_origins.csv")
-    df=df[df.NAMEUNIT.isin(["Bueu","Portonovo","Sanxenxo"])]
+    df=df[df.NAMEUNIT.isin(["Bueu","Portonvo","Sanxenxo"])]
     print(df)
     df.mes=pd.to_datetime(df.mes,format="%Y-%m").dt.to_period("M")
     df["Año"]=df.mes.dt.year
     df=df[df.Año==2023]
     df["Numero"]=np.nansum([df.turistas,df.turistas_extranjeros],axis=0)
     df.loc[pd.isna(df.turistas_extranjeros),"Zona"]="España"
-    df.loc[~pd.isna(df.turistas_extranjeros),"Zona"]="Mundo"
+    df.loc[~pd.isna(df.turistas_extranjeros),"Zona"]="Europa"
     df.rename(columns={"Origen":"Lugar"},inplace=True)  
     df=df[["mes","Año","Lugar","Zona","Numero"]]
     df=df.groupby(by=["Lugar","Año","Zona"],as_index=False).sum(numeric_only=True)
@@ -76,9 +76,8 @@ if __name__ == "__main__":
 
 
     #concatenate back
-    df=pd.concat([df_españa[["Año","Lugar","Numero","Income","Población","distance (km)"]],
-                   df_resto[["Año","Lugar","Numero","Income","Población","distance (km)"]]])
+    df=pd.concat([df_españa[["Año","Zona","Lugar","Numero","Income","Población","distance (km)"]],
+                   df_resto[["Año","Zona","Lugar","Numero","Income","Población","distance (km)"]]])
     print(df[["Lugar","Numero"]])
     print(df)
-
-    df.to_csv("tourist_origins_distances.csv",index=False)
+    df.to_csv("INE_data.csv",index=False)

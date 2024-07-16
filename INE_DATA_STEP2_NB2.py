@@ -11,70 +11,62 @@ from datetime import datetime
 
 if __name__== "__main__":
     
-    #load the data
-    dfINE=pd.read_csv("tourist_origins_distances.csv")
+    #load the INE  data
+    dfINE=pd.read_csv("INE_data.csv")
     print(dfINE)
-    #remove rows with no tourist data
-  
+    #set data types
+    dfINE["turistasINE"]=dfINE.Numero.astype(int)
+    dfINE.Zona=dfINE.Zona.astype("category")
+    #load the real data
+    df=pd.read_csv("data_original.csv")
+    df.Numero=df.Numero.astype(int)
+    df.Zona=df.Zona.astype("category")
+    print(df)
 
-    # #set data types
-    # df.Date=df.Date.astype("category")
-    # df.Month=df.Month.astype("category")
-    # df.Year=df.Year.astype("category")
-    # df.Season=df.Season.astype("category")
-    # df.covid=df.covid.astype("category")
-    # df.turistas=df.turistas.astype(int)
-    # #df.Poblacion=df.Poblacion.astype(int)
-    # df["distance"]=df["distance (km)"].astype(float)
-    # print(df)
-    # print(df.info())
-    # #remove nans
-    # df=df[["Date","origen","turistas","distance","Poblacion","Income","Season","covid"]]
-    # df.dropna(subset=["origen","turistas","distance","Poblacion","Income"],inplace=True)
-    
-    # #summary statistics
-    # sum_statistics=df[["turistas","distance","Poblacion"]].describe()
-    # print(sum_statistics)
-    # #correlations
-    # print(df[["turistas","distance","Poblacion"]].corr("spearman"))
+    #merge both
+    df=pd.merge(df,dfINE[["Lugar","turistasINE","Zona"]],on=["Lugar","Zona"],how="inner")
+    print(df)
+    #df=df[df.Lugar!="Galicia"]
 
-    # #divide between training set and test set
-    # df.turistas=df.turistas.astype(int)
-    # df["Vrate"]=100*df.turistas/df.Poblacion
-    # np.random.seed(seed=1)
-    # mask=np.random.rand(len(df))<0.999
-    # df_train=df[mask]
-    # df_train=df
-    # df_test=df[~mask]
-
-    # #poisson model
+    #poisson model
     
-    # print(df.Vrate.unique())
+    expr="""Numero~ turistasINE + Zona"""
+    null_expr="""Numero ~ 1 """
     
-    
-    # expr="""turistas~ + distance + Season + covid + Income"""
-    # # # #null_expr="""Visitantes ~ IdOAPN + Season + covid """
-    
-    # y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
-    # y_test, X_test = dmatrices(expr, df_test, return_type='dataframe')
-    # poisson_training_results = sm.GLM(y_train, X_train, family=sm.families.Poisson()).fit()
-    # print(poisson_training_results.summary())
+    y_train, X_train = dmatrices(expr, df, return_type='dataframe')
+    y_test, X_test = dmatrices(expr, df, return_type='dataframe')
+    poisson_training_results = sm.GLM(y_train, X_train, family=sm.families.Poisson()).fit()
+    print(poisson_training_results.summary())
     # print("AIC=",poisson_training_results.aic)
     # print("Mean mu=",poisson_training_results.mu)
 
-    # #auxiliary regression model
-    # df_train['BB_LAMBDA'] = poisson_training_results.mu
-    # df_train['AUX_OLS_DEP'] = df_train.apply(lambda x: ((x['turistas'] - x['BB_LAMBDA'])**2 - x['BB_LAMBDA']) / x['BB_LAMBDA'], axis=1)
-    # ols_expr = """AUX_OLS_DEP ~ BB_LAMBDA -1"""
-    # aux_olsr_results = smf.ols(ols_expr, df_train).fit()
-    # print(aux_olsr_results.summary())
+    #auxiliary regression model
+    df['BB_LAMBDA'] = poisson_training_results.mu
+    df['AUX_OLS_DEP'] = df.apply(lambda x: ((x['Numero'] - x['BB_LAMBDA'])**2 - x['BB_LAMBDA']) / x['BB_LAMBDA'], axis=1)
+    ols_expr = """AUX_OLS_DEP ~ BB_LAMBDA -1"""
+    aux_olsr_results = smf.ols(ols_expr, df).fit()
+    print(aux_olsr_results.summary())
     # print("Value of alpha=",aux_olsr_results.params[0])
 
-    # #negative_binomial regression
-    # print("=========================Negative Binomial Regression===================== ")
-    # nb2_training_results = sm.GLM(y_train, X_train,family=sm.families.NegativeBinomial(alpha= aux_olsr_results.params[0] )).fit()
-    # summary=nb2_training_results.summary()
-    # print(summary)
-    # print("AIC=",nb2_training_results.aic)
+    #negative_binomial regression
+    print("=========================Negative Binomial Regression===================== ")
+    nb2_training_results = sm.GLM(y_train, X_train,family=sm.families.NegativeBinomial(alpha= aux_olsr_results.params[0] )).fit()
+    summary=nb2_training_results.summary()
+    print(summary)
+    print("AIC=",nb2_training_results.aic)
    
     # print(df.Poblacion.unique())
+
+    #predctions
+    nb2_predictions=nb2_training_results.get_prediction(X_train)
+    prediction_summary_frame=nb2_predictions.summary_frame()
+    df["yhat_full"]=prediction_summary_frame["mean"]
+
+    #regression with intercept only to compute pseudo R2 using deviance
+    y_train, X_train = dmatrices(null_expr, df, return_type='dataframe')
+    intercept_only= sm.GLM(y_train, X_train,family=sm.families.NegativeBinomial(alpha=aux_olsr_results.params[0])).fit()
+    df["R2dev"]=1-(nb2_training_results.deviance/intercept_only.deviance)
+    print(df)
+    print(df[["Lugar","Numero","turistasINE","yhat_full"]])
+    df[["Año","Lugar","Numero","turistasINE","yhat_full","Income","Población","distance (km)"]].to_csv("3travel_cost.csv",index=False)
+    

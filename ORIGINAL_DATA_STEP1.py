@@ -8,24 +8,31 @@ if __name__ == "__main__":
 
     #visitor origins, given by park authority
     df=pd.read_csv("/home/usuario/Documentos/recreation/Islas Atlánticas/travel_cost_2023.csv")
+    df=df[df.Isla=="Ons"]
     print(df.Lugar.unique())
     
     df_galicia=df[df.Zona=="Galicia"]
-    df_españa=df[df.Zona=="España"]
+    df_galicia=df_galicia[df.Lugar!="Pontevedra"]
+    df_galicia["Lugar"]="Galicia"
+    df_galicia=df_galicia.groupby(by=["Año","Lugar","Zona","Isla"],as_index=False).sum(numeric_only=True)
+    df_galicia["Zona"]="España"
+    print(df_galicia)
+    df_españa=df[df.Zona.isin(["España"])]
+    df_españa=pd.concat([df_galicia,df_españa])
     df_resto=df[df.Zona.isin(["Europa","Mundo"])]
 
-    islas_cies=gpd.GeoSeries([Point(-8.7,42.2)],crs="EPSG:4326")
+    islas_cies=gpd.GeoSeries([Point(-8.7,42.3)],crs="EPSG:4326")
     compute_distances = lambda x: x.distance(islas_cies)[0]
 
  
     
-    #geomtries of spanish provinces for galician data
-    gdf=gpd.read_file("/home/usuario/OneDrive/curso_qgis/P05.09/provincias.shp")
-    gdf["centroid"]=gdf.geometry.centroid
-    islas_cies= islas_cies.to_crs(gdf.crs)
-    gdf["distance (km)"]=1e-3*np.array(list(map(compute_distances,gdf["centroid"])))
-    df_galicia=pd.merge(df_galicia,gdf[["provincia","cd_prov","nut2","centroid","geometry","Income","Población","distance (km)"]],left_on="Lugar",right_on="provincia",how="left")
-    print(df_galicia)
+    # #geomtries of spanish provinces for galician data
+    # gdf=gpd.read_file("/home/usuario/OneDrive/curso_qgis/P05.09/provincias.shp")
+    # gdf["centroid"]=gdf.geometry.centroid
+    # islas_cies= islas_cies.to_crs(gdf.crs)
+    # gdf["distance (km)"]=1e-3*np.array(list(map(compute_distances,gdf["centroid"])))
+    # df_galicia=pd.merge(df_galicia,gdf[["provincia","cd_prov","nut2","centroid","geometry","Income","Población","distance (km)"]],left_on="Lugar",right_on="provincia",how="left")
+    # print(df_galicia)
 
     #geometries of autonomous communities for spanish data
     gdf=gpd.read_file("/home/usuario/OneDrive/geo_data/Concellos/CCAA.shp")
@@ -60,13 +67,13 @@ if __name__ == "__main__":
 
 
     #concatenate back
-    df=pd.concat([df_galicia[["Año","Isla","Lugar","Porcentaje","Porcentaje corregido","Numero","Income","Población","distance (km)"]],
-                  df_españa[["Año","Isla","Lugar","Porcentaje","Porcentaje corregido","Numero","Income","Población","distance (km)"]],
-                  df_resto[["Año","Isla","Lugar","Porcentaje","Porcentaje corregido","Numero","Income","Población","distance (km)"]]])
+    df=pd.concat([df_españa[["Año","Zona","Isla","Lugar","Porcentaje","Porcentaje corregido","Numero","Income","Población","distance (km)"]],
+                  df_resto[["Año","Zona","Isla","Lugar","Porcentaje","Porcentaje corregido","Numero","Income","Población","distance (km)"]]])
     print(df[df.Isla=="Ons"][["Lugar","Numero"]])
     print(df.info())
+    print(df)
 
-    #df.to_csv("tourist_origins_distances.csv",index=False)
+    df.to_csv("data_original.csv",index=False)
 
     
 
