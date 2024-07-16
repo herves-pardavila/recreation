@@ -28,9 +28,33 @@ if __name__== "__main__":
     vud=con.video_user_days(period="M")
     df=pd.concat([pud,vud])
     df_daimiel=df.groupby(by=["date","SITE_NAME"],as_index=False).sum(numeric_only=True)
+
+    path="/home/usuario/Imágenes/4K Stogram/Monfragüe"
+    con=Stogram(path,"Monfragüe")
+    pud=con.photo_user_days(period="M")
+    vud=con.video_user_days(period="M")
+    df=pd.concat([pud,vud])
+    df_mongrague=df.groupby(by=["date","SITE_NAME"],as_index=False).sum(numeric_only=True)
+    print(df_mongrague)
+
+    path="/home/usuario/Imágenes/4K Stogram/Cabañeros"
+    con=Stogram(path,"Cabañeros")
+    pud=con.photo_user_days(period="M")
+    vud=con.video_user_days(period="M")
+    df=pd.concat([pud,vud])
+    df_cabañeros=df.groupby(by=["date","SITE_NAME"],as_index=False).sum(numeric_only=True)
+    print(df_cabañeros)
+
+    path="/home/usuario/Imágenes/4K Stogram/Cabrera"
+    con=Stogram(path,"Archipiélago de Cabrera")
+    pud=con.photo_user_days(period="M")
+    vud=con.video_user_days(period="M")
+    df=pd.concat([pud,vud])
+    df_cabrera=df.groupby(by=["date","SITE_NAME"],as_index=False).sum(numeric_only=True)
+    print(df_cabrera)
     
     #concatenate all df's of each park in a single one
-    df_instagram=pd.concat([df_islas_atlanticas,df_Timanfaya,df_daimiel])
+    df_instagram=pd.concat([df_islas_atlanticas,df_Timanfaya,df_daimiel,df_mongrague,df_cabañeros,df_cabrera])
     
     #some rows are missing, let us substitute this missin data with zeros
     date_idx=pd.date_range("01-01-2015","31-12-2022",freq="M").to_period("M") #we create a fully complete date range index
