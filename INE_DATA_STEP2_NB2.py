@@ -67,6 +67,9 @@ if __name__== "__main__":
     intercept_only= sm.GLM(y_train, X_train,family=sm.families.NegativeBinomial(alpha=aux_olsr_results.params[0])).fit()
     df["R2dev"]=1-(nb2_training_results.deviance/intercept_only.deviance)
     print(df)
-    print(df[["Lugar","Numero","turistasINE","yhat_full"]])
+    print(df[["Zona","Lugar","Numero","turistasINE","yhat_full"]])
+
+    print(df[df.Lugar=="Galicia"].yhat_full.sum())
+    print(df.yhat_full.sum())
     df[["Año","Lugar","Numero","turistasINE","yhat_full","Income","Población","distance (km)"]].to_csv("3travel_cost.csv",index=False)
     
