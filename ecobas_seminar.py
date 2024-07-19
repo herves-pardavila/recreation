@@ -80,24 +80,24 @@ if __name__== "__main__":
     print(dataframe.info()) 
     
     #model 1
-    expr1="""Visitantes ~ logPUD + Season + covid"""
+    expr1="""Visitantes ~ logPUD + Season + covid - 1"""
     df1=dataframe.dropna(subset=["Visitantes","PUD"])
     newdf1=ajuste(df1,expr1,"model1")
     
     #model2
-    expr2="""Visitantes ~ turistas_total+ Season + covid"""
+    expr2="""Visitantes ~ turistas_total+ Season + covid - 1"""
     df2=dataframe.dropna(subset=["Visitantes","turistas_total"])
     df2.turistas_total=df2.turistas_total.astype(int)
     newdf2=ajuste(df2,expr2,"model2")
     
     #model4
-    expr4="""Visitantes ~ logPUD + logIUD + Season + covid"""
+    expr4="""Visitantes ~ logPUD + logIUD + Season + covid - 1"""
     df4=dataframe.dropna(subset=["Visitantes","IUD","PUD"])
     df4["logIUD"]=np.log(df4.IUD+1)
     newdf4=ajuste(df4,expr4,"model4")
 
     #model 5
-    expr5="""Visitantes ~ logPUD + turistas_total+ Season + covid"""
+    expr5="""Visitantes ~ logPUD + turistas_total+ Season + covid - 1"""
     df5=dataframe.dropna(subset=["Visitantes","turistas_total","PUD"])
     df5.turistas_total=df5.turistas_total.astype(int)
     newdf5=ajuste(df5,expr5,"model5")
