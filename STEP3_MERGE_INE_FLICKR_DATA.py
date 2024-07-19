@@ -45,12 +45,16 @@ if __name__=="__main__":
     geometrias=gpd.read_file("/home/usuario/OneDrive/geo_data/Concellos/Concellos_IGN.shp")
     geometrias.CODIGOINE=geometrias.CODIGOINE.astype(float)
     geometrias=pd.merge(geometrias,df,left_on="CODIGOINE",right_on="new_codes",how="inner")
+
+    print(geometrias.info())
+    #geometrias=geometrias.groupby(by="Concello",as_index=False).mean(numeric_only=True)
     
     fig=plt.figure()
-    ax1=fig.add_subplot(121)
-    ax2=fig.add_subplot(122)
-    geometrias.plot(ax=ax1,column="indicador_turismo",legend=True)
-    geometrias.plot(ax=ax2,column="indicador_PUD",legend=True)
+    fig.suptitle("Mean Number of tourist based in the position of their phones")
+    ax1=fig.add_subplot(111)
+    
+    geometrias.plot(ax=ax1,column="turistas_total",legend=True)
+    
     plt.show()
 
     
