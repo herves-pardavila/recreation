@@ -36,7 +36,8 @@ if __name__=="__main__":
     turismo["turistas_corregido"]=turismo.turistas_total*turismo["% Natural area"]
     turismo.to_csv("/home/usuario/Documentos/recreation/municipalities_info.csv",index=False)
     #group
-    turismo=turismo.groupby(by=["Date","SITE_NAME"],as_index=False).sum(numeric_only=True)
+    #turismo=turismo.groupby(by=["Date","SITE_NAME"],as_index=False).sum(numeric_only=True)
+    turismo=turismo[turismo.NAMEUNIT.isin(["Posada de Valdeón","Fanlo","La Vall de Boí","La orotava","El Paso","Daimiel"])]
     #remove unnecessary columns
     turismo.drop(columns=["dest_cod","COD_PROV","PERIMETRO","% Natural area","Natural area (km2)","ALTITUD","SUPERFICIE","POBLACION_MUNI","new_codes"],inplace=True)
     turismo.Date=turismo.Date.dt.to_period("M")
@@ -59,7 +60,7 @@ if __name__=="__main__":
     #merge tourism data with pud data of flickr
     df=pd.merge(turismo,pud,on=["Date","SITE_NAME"],how="outer")
     print(df)
-    df.to_csv("/home/usuario/Documentos/recreation/recreation_INE_flickr.csv",index=False)
+    df.to_csv("/home/usuario/Documentos/recreation/recreation_INE_flickr_1concello.csv",index=False)
 
     
 

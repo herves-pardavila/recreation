@@ -68,7 +68,7 @@ if __name__== "__main__":
 
 
     #load reacreation data
-    df=pd.read_csv("/home/usuario/Documentos/recreation/recreation.csv")
+    df=pd.read_csv("/home/usuario/Documentos/recreation/recreation_1concello.csv")
     df.Date=pd.to_datetime(df.Date)
     df.Date=df.Date.dt.to_period("M")
     print(df.info())
@@ -77,6 +77,6 @@ if __name__== "__main__":
     df=df.merge(df_instagram,left_on=["SITE_NAME","Date"],right_on=["SITE_NAME","date"],how="left")
     df.drop(columns=["SITE_NAME","views","date"],inplace=True) #drop irrelevant columns
     print(df.info())
-    df.to_csv("/home/usuario/Documentos/recreation/recreation_INE_FUD_IUD.csv",index=False)
+    df.to_csv("/home/usuario/Documentos/recreation/recreation_INE_FUD_IUD_1concello.csv",index=False)
 
 

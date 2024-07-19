@@ -3,7 +3,7 @@ import numpy as np
 from datetime import datetime
 if __name__=="__main__":
 
-    df=pd.read_csv("/home/usuario/Documentos/recreation/recreation_INE_FUD_IUD.csv")
+    df=pd.read_csv("/home/usuario/Documentos/recreation/recreation_INE_FUD_IUD_1concello.csv")
     df.Date=pd.to_datetime(df.Date)
     df["Month"]=df.Date.dt.month
     df["Year"]=df.Date.dt.year
@@ -38,4 +38,4 @@ if __name__=="__main__":
     df=df[~((df.Date > datetime(2020,2,1)) & (df.Date < datetime(2020,8,1)))]
     print(df.info())
     print(df.covid.unique())
-    df.to_csv("/home/usuario/Documentos/recreation/recreation_ready.csv",index=False)
+    df.to_csv("/home/usuario/Documentos/recreation/recreation_ready_1concello.csv",index=False)

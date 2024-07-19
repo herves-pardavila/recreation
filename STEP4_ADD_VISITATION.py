@@ -8,7 +8,7 @@ if __name__=="__main__":
     visitantes.Date=pd.to_datetime(visitantes.Date).dt.to_period("M")
     print(visitantes)
     #load tourist data
-    df=pd.read_csv("/home/usuario/Documentos/recreation/recreation_INE_flickr.csv")
+    df=pd.read_csv("/home/usuario/Documentos/recreation/recreation_INE_flickr_1concello.csv")
     print(df)
     df.Date=pd.to_datetime(df.Date).dt.to_period("M")
     
@@ -16,7 +16,7 @@ if __name__=="__main__":
     df=df.merge(visitantes,left_on=["SITE_NAME","Date"],right_on=["IdOAPN","Date"],how="right")
     print(df.info())
     print("=========================================================================")
-    df.to_csv("/home/usuario/Documentos/recreation/recreation.csv",index=False)
+    df.to_csv("/home/usuario/Documentos/recreation/recreation_1concello.csv",index=False)
     print(df)
 
 
