@@ -71,5 +71,5 @@ if __name__== "__main__":
 
     print(df[df.Lugar=="Galicia"].yhat_full.sum())
     print(df.yhat_full.sum())
-    df[["Año","Lugar","Numero","turistasINE","yhat_full","Income","Población","distance (km)"]].to_csv("3travel_cost.csv",index=False)
+    df[["Año","Lugar","Zona","Numero","turistasINE","yhat_full","median_inc","Población","distance (km)"]].to_csv("3travel_cost.csv",index=False)
     

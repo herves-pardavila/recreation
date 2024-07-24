@@ -22,6 +22,7 @@ if __name__ == "__main__":
     df_resto=df[df.Zona.isin(["Europa","Mundo"])]
 
     islas_cies=gpd.GeoSeries([Point(-8.7,42.3)],crs="EPSG:4326")
+    islas_cies= islas_cies.to_crs("EPSG:3857")
     compute_distances = lambda x: x.distance(islas_cies)[0]
 
  
@@ -29,7 +30,7 @@ if __name__ == "__main__":
     # #geomtries of spanish provinces for galician data
     # gdf=gpd.read_file("/home/usuario/OneDrive/curso_qgis/P05.09/provincias.shp")
     # gdf["centroid"]=gdf.geometry.centroid
-    # islas_cies= islas_cies.to_crs(gdf.crs)
+    # 
     # gdf["distance (km)"]=1e-3*np.array(list(map(compute_distances,gdf["centroid"])))
     # df_galicia=pd.merge(df_galicia,gdf[["provincia","cd_prov","nut2","centroid","geometry","Income","Población","distance (km)"]],left_on="Lugar",right_on="provincia",how="left")
     # print(df_galicia)
@@ -39,7 +40,7 @@ if __name__ == "__main__":
     gdf=gdf.to_crs(islas_cies.crs)
     gdf["centroid"]=gdf.geometry.centroid
     gdf["distance (km)"]=1e-3*np.array(list(map(compute_distances,gdf["centroid"])))
-    df_españa=pd.merge(df_españa,gdf[["text","centroid","geometry","Income","Población","distance (km)"]],left_on="Lugar",right_on="text",how="left")
+    df_españa=pd.merge(df_españa,gdf[["text","centroid","geometry","median_inc","Población","distance (km)"]],left_on="Lugar",right_on="text",how="left")
     print(df_españa)
 
     #geometry of countries for world data
@@ -48,8 +49,9 @@ if __name__ == "__main__":
     gdf=gdf.to_crs("EPSG:3857")
     gdf["centroid"]=gdf.geometry.centroid
     gdf["distance (km)"]=1e-3*np.array(list(map(compute_distances,gdf["centroid"])))
-    gdf["Income"]=gdf["Income ($)"]*1/1.137
-    gdf=gdf[["CNTR_ID","PAIS","distance (km)","Income","geometry"]]
+    gdf["median_inc"]=gdf["Median Inc"]*1/1.137
+    print(gdf)
+    gdf=gdf[["CNTR_ID","PAIS","distance (km)","median_inc","geometry"]]
     df_resto=pd.merge(df_resto,gdf,left_on="Lugar",right_on="PAIS",how="left")
     #add population of countries
     for code in df_resto.CNTR_ID.unique():
@@ -67,11 +69,13 @@ if __name__ == "__main__":
 
 
     #concatenate back
-    df=pd.concat([df_españa[["Año","Zona","Isla","Lugar","Porcentaje","Porcentaje corregido","Numero","Income","Población","distance (km)"]],
-                  df_resto[["Año","Zona","Isla","Lugar","Porcentaje","Porcentaje corregido","Numero","Income","Población","distance (km)"]]])
-    print(df[df.Isla=="Ons"][["Lugar","Numero"]])
+    df=pd.concat([df_españa[["Año","Zona","Isla","Lugar","Porcentaje","Numero","median_inc","Población","distance (km)"]],
+                  df_resto[["Año","Zona","Isla","Lugar","Porcentaje","Numero","median_inc","Población","distance (km)"]]])
+    print(df[["Lugar","Numero"]])
     print(df.info())
-    print(df)
+    print(df[df.Año==2021])
+    print(df[df.Año==2022])
+    print(df[df.Año==2023])
 
     df.to_csv("data_original.csv",index=False)
 
