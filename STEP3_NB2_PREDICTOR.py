@@ -12,7 +12,7 @@ from datetime import datetime
 if __name__== "__main__":
     
     #load the INE  data
-    dfINE=pd.read_csv("INE_data.csv")
+    dfINE=pd.read_csv("INE_data_Aiguestortes.csv")
     print(dfINE)
     #set data types
     dfINE["turistasINE"]=dfINE.Numero.astype(int)

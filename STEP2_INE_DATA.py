@@ -5,12 +5,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pypopulation
 if __name__ == "__main__":
-
+    
+    path="/media/david/EXTERNAL_USB/doctorado/"
     #visitor origins, given by park authority
-    df=pd.read_csv("/home/usuario/Documentos/recreation/turismo_with_origins.csv")
+    df=pd.read_csv(path+"recreation/turismo_with_origins.csv")
     #df=df[df.NAMEUNIT.isin(["Bueu","Portonvo","Sanxenxo"])] #concellos para la isla de oNs
-    #df=df[df.NAMEUNIT.isin(["La Vall de Boí","Espot","Alt Àneu","Naut Aran","Vilaller","La Torre de Cabdella","Sort"])] #concellos para Aigüestortes
-    df=df[df.NAMEUNIT.isin(["Manzaneda"])]
+    df=df[df.NAMEUNIT.isin(["La Vall de Boí","Espot"])] #concellos para Aigüestortes
+    #df=df[df.NAMEUNIT.isin(["Manzaneda"])]
     print(df.NAMEUNIT.unique())
     df.mes=pd.to_datetime(df.mes,format="%Y-%m").dt.to_period("M")
     df["Año"]=df.mes.dt.year
@@ -19,8 +20,9 @@ if __name__ == "__main__":
     df.loc[pd.isna(df.turistas_extranjeros),"Zona"]="España"
     df.loc[~pd.isna(df.turistas_extranjeros),"Zona"]="Europa"
     df.rename(columns={"Origen":"Lugar"},inplace=True)  
-    df=df[["mes","Año","Lugar","Zona","Numero"]]
-    df=df.groupby(by=["Lugar","Año","Zona"],as_index=False).sum(numeric_only=True)
+    df=df[["mes","Año","Lugar","Zona","Numero","NAMEUNIT"]]
+    df=df.groupby(by=["Lugar","Año","Zona","NAMEUNIT"],as_index=False).sum(numeric_only=True) #convertimos en datos anuales
+    df=df.groupby(by=["Lugar","Año","Zona"],as_index=False).mean(numeric_only=True) #promedio de los conellos más representativos del parque
     df.replace({"Madrid, Comunidad de":"Madrid","Asturias, Principado de":"Asturias","Balears, Illes":"Illes Balears","Comunitat Valenciana":"Comunidade Valenciana","Murcia, Región de":"Murcia","Navarra, Comunidad Foral de":"Navarra","Rioja, La": "La Rioja","EE.UU.":"Estados Unidos"},inplace=True)
     print(df)
 
@@ -34,8 +36,8 @@ if __name__ == "__main__":
 
     #ACORDARSE DE CAMBIAR LAS COORDENADAS DEL DESTINO
     #destino=gpd.GeoSeries([Point(-8.775,42.32)],crs="EPSG:4326") #destino Ons
-    #destino=gpd.GeoSeries([Point(0.9203,42.5759)],crs="EPSG:4326") #destino Aiguestortes
-    destino=gpd.GeoSeries([Point(-9.097,42.828)],crs="EPSG:4326") #Carnota
+    destino=gpd.GeoSeries([Point(0.9203,42.5759)],crs="EPSG:4326") #destino Aiguestortes
+    #destino=gpd.GeoSeries([Point(-9.097,42.828)],crs="EPSG:4326") #Carnota
     destino=gpd.GeoSeries([Point(-7.293,42.274)],crs="EPSG:4326")
     destino= destino.to_crs("EPSG:3857")
     compute_distances = lambda x: x.distance(destino)[0]
@@ -51,7 +53,7 @@ if __name__ == "__main__":
     # print(df_galicia)
 
     #geometries of autonomous communities for spanish data
-    gdf=gpd.read_file("/home/usuario/OneDrive/geo_data/Concellos/CCAA.shp")
+    gdf=gpd.read_file(path+"OneDrive/geo_data/Concellos/CCAA.shp")
     gdf=gdf.to_crs(destino.crs)
     gdf["centroid"]=gdf.geometry.centroid
     gdf["distance (km)"]=1e-3*np.array(list(map(compute_distances,gdf["centroid"])))
@@ -59,7 +61,7 @@ if __name__ == "__main__":
     print(df_españa)
 
     #geometry of countries for world data
-    gdf=gpd.read_file("/home/usuario/OneDrive/geo_data/shp_mapa_paises_mundo_2014/Mapa_paises_mundo.shp")
+    gdf=gpd.read_file(path+"OneDrive/geo_data/shp_mapa_paises_mundo_2014/Mapa_paises_mundo.shp")
     destino=destino.to_crs("EPSG:3857")
     gdf=gdf.to_crs("EPSG:3857")
     gdf["centroid"]=gdf.geometry.centroid
@@ -89,9 +91,9 @@ if __name__ == "__main__":
     
     df.loc[df.Lugar.isin(["Brasil","Estados Unidos"]),"Zona"]="Mundo"
    
-    print(df[df.Año==2023])
-    print(df[df.Año==2022])
-    print(df[df.Año==2020])
-    print(df[df.Año==2021])
+    #print(df[df.Año==2023])
+    #print(df[df.Año==2022])
+    #print(df[df.Año==2020])
+    #print(df[df.Año==2021])
     print(df[df.Año==2019])
-    df.to_csv("INE_data_Manzaneda.csv",index=False)
+    df.to_csv("INE_data_Aiguestortes.csv",index=False)

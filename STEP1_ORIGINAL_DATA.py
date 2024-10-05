@@ -5,9 +5,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pypopulation
 if __name__ == "__main__":
+    
+    path="/media/david/EXTERNAL_USB/doctorado/"
 
     #visitor origins, given by park authority
-    df=pd.read_csv("/home/usuario/Documentos/recreation/aiguestortes/procedencias_aiguestortes.csv") #cambiar el nombre del archivo aqui
+    df=pd.read_csv(path+"recreation/aiguestortes/procedencias_aiguestortes.csv") #cambiar el nombre del archivo aqui
     #df=df[df.Isla=="Ons"]
     print(df.Lugar.unique())
     
@@ -40,7 +42,7 @@ if __name__ == "__main__":
     # print(df_galicia)
 
     #geometries of autonomous communities for spanish data
-    gdf=gpd.read_file("/home/usuario/OneDrive/geo_data/Concellos/CCAA.shp")
+    gdf=gpd.read_file(path+"/OneDrive/geo_data/Concellos/CCAA.shp")
     gdf=gdf.to_crs(destino.crs)
     gdf["centroid"]=gdf.geometry.centroid
     gdf["distance (km)"]=1e-3*np.array(list(map(compute_distances,gdf["centroid"])))
@@ -48,7 +50,7 @@ if __name__ == "__main__":
     print(df_españa)
 
     #geometry of countries for world data
-    gdf=gpd.read_file("/home/usuario/OneDrive/geo_data/shp_mapa_paises_mundo_2014/Mapa_paises_mundo.shp")
+    gdf=gpd.read_file(path+"OneDrive/geo_data/shp_mapa_paises_mundo_2014/Mapa_paises_mundo.shp")
     destino=destino.to_crs("EPSG:3857")
     gdf=gdf.to_crs("EPSG:3857")
     gdf["centroid"]=gdf.geometry.centroid
