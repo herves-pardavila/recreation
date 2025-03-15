@@ -9,37 +9,38 @@ if __name__ == "__main__":
     path="/media/david/EXTERNAL_USB/doctorado/"
 
     #visitor origins, given by park authority
-    df=pd.read_csv(path+"recreation/aiguestortes/procedencias_aiguestortes.csv") #cambiar el nombre del archivo aqui
-    #df=df[df.Isla=="Ons"]
+    df=pd.read_csv(path+"recreation/Islas Atlánticas/travel_cost_2023.csv") #cambiar el nombre del archivo aqui
+    df=df[df.Isla=="Ons"]
     print(df.Lugar.unique())
     
-    # #Para las islas atlánticas de Galicia hay que agrupar los datos de las 3 provincias gallegas (no sale Pontevedra)
-    # df_galicia=df[df.Zona=="Galicia"]
-    # df_galicia=df_galicia[df.Lugar!="Pontevedra"]
-    # df_galicia["Lugar"]="Galicia"
-    # df_galicia=df_galicia.groupby(by=["Año","Lugar","Zona","Isla"],as_index=False).sum(numeric_only=True)
-    # df_galicia["Zona"]="España"
-    # print(df_galicia)
+    #Para las islas atlánticas de Galicia hay que agrupar los datos de las 3 provincias gallegas (no sale Pontevedra)
+    df_galicia=df[df.Zona=="Galicia"]
+    df_galicia=df_galicia[df.Lugar!="Pontevedra"]
+    #df_galicia["Lugar"]="Galicia"
+    df_galicia=df_galicia.groupby(by=["Año","Lugar","Zona","Isla"],as_index=False).sum(numeric_only=True)
+    df_galicia["Zona"]="España"
+    print(df_galicia)
 
     df_españa=df[df.Zona.isin(["España"])]
-    #df_españa=pd.concat([df_galicia,df_españa]) # solo necesario para islas atlanticas de galicia
+    df_españa=pd.concat([df_galicia,df_españa]) # solo necesario para islas atlanticas de galicia
     df_resto=df[df.Zona.isin(["Europa","Mundo"])]
 
     #ACORDARSE DE CAMBIAR LAS COORDENADAS DEL DESTINO
-    #destino=gpd.GeoSeries([Point(-8.775,42.32)],crs="EPSG:4326") #destino Ons
-    destino=gpd.GeoSeries([Point(0.9203,42.5759)],crs="EPSG:4326") #destino Aiguestortes
+    destino=gpd.GeoSeries([Point(-8.775,42.32)],crs="EPSG:4326") #destino Ons
+    #destino=gpd.GeoSeries([Point(0.9203,42.5759)],crs="EPSG:4326") #destino Aiguestortes
     destino= destino.to_crs("EPSG:3857")
     compute_distances = lambda x: x.distance(destino)[0]
 
  
     
-    # geomtries of spanish provinces for galician data, SOLO NECESARIO PARA ISLAS ATLANTICAS DE GALICIA
-    # gdf=gpd.read_file("/home/usuario/OneDrive/curso_qgis/P05.09/provincias.shp")
-    # gdf["centroid"]=gdf.geometry.centroid
+    #geomtries of spanish provinces for galician data, SOLO NECESARIO PARA ISLAS ATLANTICAS DE GALICIA
+    gdf=gpd.read_file(path+"OneDrive/curso_qgis/P05.09/provincias.shp")
+    gdf["centroid"]=gdf.geometry.centroid
     
-    # gdf["distance (km)"]=1e-3*np.array(list(map(compute_distances,gdf["centroid"])))
-    # df_galicia=pd.merge(df_galicia,gdf[["provincia","cd_prov","nut2","centroid","geometry","Income","Población","distance (km)"]],left_on="Lugar",right_on="provincia",how="left")
-    # print(df_galicia)
+    gdf["distance (km)"]=1e-3*np.array(list(map(compute_distances,gdf["centroid"])))
+    df_galicia=pd.merge(df_galicia,gdf[["provincia","cd_prov","nut2","centroid","geometry","Income","Población","distance (km)"]],left_on="Lugar",right_on="provincia",how="left")
+    df_galicia.rename(columns={"Income":"median_inc"},inplace=True)
+    print(df_galicia)
 
     #geometries of autonomous communities for spanish data
     gdf=gpd.read_file(path+"/OneDrive/geo_data/Concellos/CCAA.shp")
@@ -76,14 +77,16 @@ if __name__ == "__main__":
 
     #concatenate back
     df=pd.concat([df_españa[["Año","Zona","Lugar","Porcentaje","Numero","median_inc","Población","distance (km)"]],
+                  df_galicia[["Año","Zona","Lugar","Porcentaje","Numero","median_inc","Población","distance (km)"]],
                   df_resto[["Año","Zona","Lugar","Porcentaje","Numero","median_inc","Población","distance (km)"]]])
     print(df[["Lugar","Numero"]])
     print(df.info())
+    df.dropna(subset="distance (km)",inplace=True)
     #print(df[df.Año==2023])
     #print(df[df.Año==2022])
-    print(df[df.Año==2019])
+    #print(df[df.Año==2019])
 
-    df.to_csv("data_original.csv",index=False)
+    df.to_csv("data_original_Ons.csv",index=False)
 
     
 

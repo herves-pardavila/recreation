@@ -12,13 +12,13 @@ from datetime import datetime
 if __name__== "__main__":
     
     #load the INE  data
-    dfINE=pd.read_csv("INE_data_Aiguestortes.csv")
+    dfINE=pd.read_csv("INE_data_Bueu.csv")
     print(dfINE)
     #set data types
     dfINE["turistasINE"]=dfINE.Numero.astype(int)
     dfINE.Zona=dfINE.Zona.astype("category")
     #load the real data
-    df=pd.read_csv("data_original.csv")
+    df=pd.read_csv("data_original_Ons.csv")
     df.Numero=df.Numero.astype(int)
     df.Zona=df.Zona.astype("category")
     print(df)
@@ -78,5 +78,5 @@ if __name__== "__main__":
 
     # print(df[df.Lugar=="Galicia"].yhat_full.sum())
     # print(df.yhat_full.sum())
-    df[["Año","Lugar","Zona","Numero","turistasINE","yhat_full","median_inc","Población","distance (km)"]].to_csv("3travel_cost.csv",index=False)
+    df[["Año","Lugar","Zona","Numero","turistasINE","yhat_full","median_inc","Población","distance (km)"]].to_csv("3travel_cost_Ons.csv",index=False)
     

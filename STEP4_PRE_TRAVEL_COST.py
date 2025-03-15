@@ -12,7 +12,7 @@ from datetime import datetime
 if __name__== "__main__":
     
     #load the data
-    df=pd.read_csv("3travel_cost.csv")
+    df=pd.read_csv("INE_data_Carnota.csv")
     #df=df[df.Año==2019]
     print(df)
     
@@ -35,7 +35,7 @@ if __name__== "__main__":
     print(df)
     print(df.info())
     df["TC"]=df["CT_(€)"]+df["OC_(€)"]
-    df.to_csv("3travel_cost_aiguestortes.csv",index=False)
+    df.to_csv("3travel_cost_Carnota.csv",index=False)
 
     fig=plt.figure()
     fig.suptitle("Demand Curve")
@@ -44,7 +44,7 @@ if __name__== "__main__":
     ax.set_xlabel("Trips (Q)")
     ax.plot(df.Numero,df["TC"],"o",color="black",label="Real Data")
     #ax.plot(df.Numero,df["TC"],color="black",label="Poisson or NB")
-    ax.plot(df.turistasINE,df["CT_(€)"]+df["OC_(€)"],"o",color="red",label="INE Data")
+    #ax.plot(df.turistasINE,df["CT_(€)"]+df["OC_(€)"],"o",color="red",label="INE Data")
     #ax.plot(df.yhat_full,df["CT_(€)"]+df["OC_(€)"],"o",color="blue",label="Predictor")
     fig.legend() 
     plt.show()
