@@ -1,14 +1,14 @@
 import pandas as pd
 import geopandas as gpd
-import matplotlib.pyplot as plt
 import numpy as np
 
 if __name__== "__main__":
-
+    
+    main_path="/media/david/EXTERNAL_USB/doctorado/"
     #load geometries and general info of municipalities
-    df=pd.read_csv("/home/usuario/OneDrive/geo_data/Concellos/MUNICIPIOS.csv") #important data of each municipality: population, mean altitude, surface...
-    gdf_peninsula=gpd.read_file("/home/usuario/OneDrive/geo_data/Concellos/SHP_ETRS89/recintos_municipales_inspire_peninbal_etrs89/recintos_municipales_inspire_peninbal_etrs89.shp")
-    gdf_canarias=gpd.read_file("/home/usuario/OneDrive/geo_data/Concellos/SHP_REGCAN95/recintos_municipales_inspire_canarias_regcan95/recintos_municipales_inspire_canarias_regcan95.shp")
+    df=pd.read_csv(main_path+"OneDrive/geo_data/Concellos/MUNICIPIOS.csv") #important data of each municipality: population, mean altitude, surface...
+    gdf_peninsula=gpd.read_file(main_path+"OneDrive/geo_data/Concellos/SHP_ETRS89/recintos_municipales_inspire_peninbal_etrs89/recintos_municipales_inspire_peninbal_etrs89.shp")
+    gdf_canarias=gpd.read_file(main_path+"OneDrive/geo_data/Concellos/SHP_REGCAN95/recintos_municipales_inspire_canarias_regcan95/recintos_municipales_inspire_canarias_regcan95.shp")
 
     #fix codes for general info
     new_codes= lambda x: str(x)[:-6]
@@ -37,9 +37,16 @@ if __name__== "__main__":
     print(gdf_canarias.info())
 
     # turismo receptor
+    
+    #datos ine 2022
+    df_receptor=pd.read_excel(main_path+"recreation/exp_tmov_receptor_mun_2023.xlsx",sheet_name=None)
+    df_receptor=pd.concat([df_receptor["m01_2023"],df_receptor["m02_2023"],df_receptor["m03_2023"],df_receptor["m04_2023"],df_receptor["m05_2023"],df_receptor["m06_2023"],df_receptor["m07_2023"],df_receptor["m08_2023"],df_receptor["m09_2023"],df_receptor["m10_2023"],df_receptor["m11_2023"],df_receptor["m12_2023"]])
+    df_recpetor=df_receptor[df_receptor.pais_orig=="Total"]
+    df_receptor=df_receptor.groupby(["mes","mun_dest_cod"],as_index=False).sum(numeric_only=True)
+    df_receptor.rename(columns={"mun_dest_cod":"dest_cod","turistas":"turistas_extranjeros"},inplace=True)
 
     #datos ine 2022
-    df_receptor=pd.read_excel("/home/usuario/Documentos/recreation/exp_tmov_receptor_mun_2022.xlsx",sheet_name=None)
+    df_receptor=pd.read_excel(main_path+"recreation/exp_tmov_receptor_mun_2022.xlsx",sheet_name=None)
     df_receptor=pd.concat([df_receptor["m01_2022"],df_receptor["m02_2022"],df_receptor["m03_2022"],df_receptor["m04_2022"],df_receptor["m05_2022"],df_receptor["m06_2022"],df_receptor["m07_2022"],df_receptor["m08_2022"],df_receptor["m09_2022"],df_receptor["m10_2022"],df_receptor["m11_2022"],df_receptor["m12_2022"]])
     df_recpetor=df_receptor[df_receptor.pais_orig=="Total"]
     df_receptor=df_receptor.groupby(["mes","mun_dest_cod"],as_index=False).sum(numeric_only=True)
@@ -56,7 +63,7 @@ if __name__== "__main__":
     print(df_ine_2022.info())
 
     #datos ine 2021
-    df_receptor=pd.read_excel("/home/usuario/Documentos/recreation/exp_tmov_receptor_mun_2021.xlsx",sheet_name=None)
+    df_receptor=pd.read_excel(main_path+"recreation/exp_tmov_receptor_mun_2021.xlsx",sheet_name=None)
     df_receptor=pd.concat([df_receptor["m01_2021"],df_receptor["m02_2021"],df_receptor["m03_2021"],df_receptor["m04_2021"],df_receptor["m05_2021"],df_receptor["m06_2021"],df_receptor["m07_2021"],df_receptor["m08_2021"],df_receptor["m09_2021"],df_receptor["m10_2021"],df_receptor["m11_2021"],df_receptor["m12_2021"]])
     df_recpetor=df_receptor[df_receptor.pais_orig=="Total"]
     df_receptor=df_receptor.groupby(["mes","mun_dest_cod"],as_index=False).sum(numeric_only=True)
@@ -72,7 +79,7 @@ if __name__== "__main__":
     print(df_ine_2021.info())
 
     #datos ine 2020
-    df_receptor=pd.read_excel("/home/usuario/Documentos/recreation/exp_tmov_receptor_mun_2020.xlsx",sheet_name=None)
+    df_receptor=pd.read_excel(main_path+"recreation/exp_tmov_receptor_mun_2020.xlsx",sheet_name=None)
     df_receptor=pd.concat([df_receptor["m01_2020"],df_receptor["m02_2020"],df_receptor["m03_2020"],df_receptor["m04_2020"],df_receptor["m05_2020"],df_receptor["m06_2020"],df_receptor["m07_2020"],df_receptor["m08_2020"],df_receptor["m09_2020"],df_receptor["m10_2020"],df_receptor["m11_2020"],df_receptor["m12_2020"]])
     df_recpetor=df_receptor[df_receptor.pais_orig=="Total"]
     df_receptor=df_receptor.groupby(["mes","mun_dest_cod"],as_index=False).sum(numeric_only=True)
@@ -88,7 +95,7 @@ if __name__== "__main__":
     # print(df_ine_2020.info())
 
     # #datos ine 2019
-    df_receptor=pd.read_excel("/home/usuario/Documentos/recreation/exp_tmov_receptor_mun_2019.xlsx",sheet_name=None)
+    df_receptor=pd.read_excel(main_path+"recreation/exp_tmov_receptor_mun_2019.xlsx",sheet_name=None)
     df_receptor=pd.concat([df_receptor["m07_2019"],df_receptor["m08_2019"],df_receptor["m09_2019"],df_receptor["m10_2019"],df_receptor["m11_2019"],df_receptor["m12_2019"]])
     df_recpetor=df_receptor[df_receptor.pais_orig=="Total"]
     df_receptor=df_receptor.groupby(["mes","mun_dest_cod"],as_index=False).sum(numeric_only=True)
@@ -110,13 +117,15 @@ if __name__== "__main__":
     print(df_ine)
     print(df_ine.info())
 
-    #Load inner tourism
-    df_interno=pd.read_csv("../../Documentos/turismo_interno2019-2023.csv",thousands=".")
+    #Load inner tourism. 16-Marzo-2025 Nos quedamos aqui
+    df_interno=pd.read_csv(main_path+"recreation/turismo_interno_2019_2024_OrigenTotal_DestinoMunicipio_dots_replaced.csv",sep=";", na_values=[""," "])
+
     print(df_interno.info())
-    df_interno["mes"]=pd.to_datetime(df_interno.Date,format="%YM%m").dt.to_period("M")
+    df_interno["mes"]=pd.to_datetime(df_interno.Periodo,format="%YM%m").dt.to_period("M")
     codes=lambda x : x[0:6]
-    df_interno["dest_cod"]=list(map(codes,df_interno.Destino))
-    df_interno.turistas=df_interno.turistas.astype(int)
+    df_interno["dest_cod"]=list(map(codes,df_interno["Municipio de destino"]))
+    #df_interno.turistas=df_interno.Total.astype(int)
+    df_interno["turistas"]=df_interno.Total
     df_interno=df_interno[["mes","dest_cod","turistas"]].groupby(by=["dest_cod","mes"],as_index=False).sum(numeric_only=True)
     df_interno=df_interno[df_interno.dest_cod!='Total ']
     df_interno.dest_cod=df_interno.dest_cod.astype(int)
@@ -144,4 +153,4 @@ if __name__== "__main__":
     df_canarias.drop(columns="geometry",inplace=True)
     df=pd.concat([df_peninsula,df_canarias])
     print(df)
-    df.to_csv("/home/usuario/Documentos/recreation/turismo.csv",index=False)
+    df.to_csv(main_path+"/recreation/turismo.csv",index=False)

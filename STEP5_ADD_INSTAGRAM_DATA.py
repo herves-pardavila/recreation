@@ -1,12 +1,13 @@
 import pandas as pd
 import sys
-sys.path.append("../4kstogram")
+sys.path.append("/media/david/EXTERNAL_USB/doctorado//4K Stogram")
 from stogram import Stogram
 
 if __name__== "__main__":
+    main_path="/media/david/EXTERNAL_USB/doctorado/"
 
     #get Instagram user days for each park
-    path="/home/usuario/Imágenes/4K Stogram/Islas Atlánticas de Galicia"
+    path=main_path+"4K Stogram/Islas Atlánticas de Galicia"
     con=Stogram(path,"Islas Atlánticas de Galicia")
     pud=con.photo_user_days(period="M")
     vud=con.video_user_days(period="M")
@@ -14,7 +15,7 @@ if __name__== "__main__":
     df_islas_atlanticas=df.groupby(by=["date","SITE_NAME"],as_index=False).sum(numeric_only=True)
     
 
-    path="/home/usuario/Imágenes/4K Stogram/Timanfaya"
+    path=main_path+"4K Stogram/Timanfaya"
     con=Stogram(path,"Timanfaya")
     pud=con.photo_user_days(period="M")
     vud=con.video_user_days(period="M")
@@ -22,14 +23,14 @@ if __name__== "__main__":
     df_Timanfaya=df.groupby(by=["date","SITE_NAME"],as_index=False).sum(numeric_only=True)
     
 
-    path="/home/usuario/Imágenes/4K Stogram/Tablas de Daimiel"
+    path=main_path+"4K Stogram/Tablas de Daimiel"
     con=Stogram(path,"Tablas de Daimiel")
     pud=con.photo_user_days(period="M")
     vud=con.video_user_days(period="M")
     df=pd.concat([pud,vud])
     df_daimiel=df.groupby(by=["date","SITE_NAME"],as_index=False).sum(numeric_only=True)
 
-    path="/home/usuario/Imágenes/4K Stogram/Monfragüe"
+    path=main_path+"4K Stogram/Monfragüe"
     con=Stogram(path,"Monfragüe")
     pud=con.photo_user_days(period="M")
     vud=con.video_user_days(period="M")
@@ -37,7 +38,7 @@ if __name__== "__main__":
     df_mongrague=df.groupby(by=["date","SITE_NAME"],as_index=False).sum(numeric_only=True)
     print(df_mongrague)
 
-    path="/home/usuario/Imágenes/4K Stogram/Cabañeros"
+    path=main_path+"4K Stogram/Cabañeros"
     con=Stogram(path,"Cabañeros")
     pud=con.photo_user_days(period="M")
     vud=con.video_user_days(period="M")
@@ -45,7 +46,7 @@ if __name__== "__main__":
     df_cabañeros=df.groupby(by=["date","SITE_NAME"],as_index=False).sum(numeric_only=True)
     print(df_cabañeros)
 
-    path="/home/usuario/Imágenes/4K Stogram/Cabrera"
+    path=main_path+"4K Stogram/Cabrera"
     con=Stogram(path,"Archipiélago de Cabrera")
     pud=con.photo_user_days(period="M")
     vud=con.video_user_days(period="M")
@@ -64,11 +65,11 @@ if __name__== "__main__":
     df_instagram=df_instagram.reindex(index) #peform reindex
     df_instagram.reset_index(inplace=True) #recover the columns
     df_instagram.loc[df_instagram.IUD.isna(),"IUD"]=0 #set missing observations as zero
-    df_instagram.to_csv("/home/usuario/Documentos/recreation/IUD.csv",index=False)
+    df_instagram.to_csv(main_path+"/recreation/IUD.csv",index=False)
 
 
     #load reacreation data
-    df=pd.read_csv("/home/usuario/Documentos/recreation/recreation_1concello.csv")
+    df=pd.read_csv(main_path+"recreation/recreation.csv")
     df.Date=pd.to_datetime(df.Date)
     df.Date=df.Date.dt.to_period("M")
     print(df.info())
@@ -77,6 +78,6 @@ if __name__== "__main__":
     df=df.merge(df_instagram,left_on=["SITE_NAME","Date"],right_on=["SITE_NAME","date"],how="left")
     df.drop(columns=["SITE_NAME","views","date"],inplace=True) #drop irrelevant columns
     print(df.info())
-    df.to_csv("/home/usuario/Documentos/recreation/recreation_INE_FUD_IUD_1concello.csv",index=False)
+    df.to_csv(main_path+"recreation/recreation_INE_FUD_IUD.csv",index=False)
 
 
