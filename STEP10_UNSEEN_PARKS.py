@@ -9,9 +9,11 @@ from sklearn.metrics import r2_score
 from scipy import stats
 from datetime import datetime
 if __name__== "__main__":
+    
+    main_path="/media/david/EXTERNAL_USB/doctorado/"
 
     #prepare the data
-    df=pd.read_csv("/home/usuario/Documentos/recreation/recreation_ready.csv")
+    df=pd.read_csv(main_path+"recreation/recreation_ready.csv")
     
     #df=df[df.Year.isin([2015,2016,2017,2018])]
     df.Date=df.Date.astype("category")
@@ -27,7 +29,7 @@ if __name__== "__main__":
     sum_statistics=df[["Visitantes","PUD","IUD","turistas_total","turistas_corregido"]].describe()
     sum_statistics=sum_statistics.round({"Visitantes":0,"PUD":1,"IUD":1,"turistas_total":0,"turistas_corregido":0})
     print(sum_statistics)
-    sum_statistics.to_csv("/home/usuario/Documentos/recreation/imagenes_paper/summary_statistics.csv",index=True)
+    #sum_statistics.to_csv("/home/usuario/Documentos/recreation/imagenes_paper/summary_statistics.csv",index=True)
 
     print(df[["Visitantes","PUD","IUD","turistas_total","turistas_corregido"]].corr("spearman"))
 
@@ -42,7 +44,7 @@ if __name__== "__main__":
     dfmean=dfmean.round({"Visitors (mu)":0,"FUD":1,"IUD":1,"MPUD":0,"correctedMPUD":0,"mu/sigma":4})
     dfmean.sort_values(by="Visitors (mu)",inplace=True,ascending=False)
     print(dfmean)
-    dfmean.to_csv("/home/usuario/Documentos/recreation/imagenes_paper/tabla_overdispersion.csv",index=False)
+    #dfmean.to_csv("/home/usuario/Documentos/recreation/imagenes_paper/tabla_overdispersion.csv",index=False)
 
     
 

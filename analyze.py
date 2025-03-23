@@ -14,10 +14,14 @@ from sklearn.svm import SVR
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.model_selection import cross_val_score
-if __name__== "__main__":
 
+
+if __name__== "__main__":
+    
+    main_path="/media/david/EXTERNAL_USB/doctorado/"
+    
     #prepare the data
-    df=pd.read_csv("/home/usuario/Documentos/recreation/recreation_ready.csv")
+    df=pd.read_csv(main_path+"recreation/recreation_ready.csv")
     df=df[df.IdOAPN=="Timanfaya"]
     df.Date=df.Date.astype("category")
     df.Month=df.Month.astype("category")

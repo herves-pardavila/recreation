@@ -76,9 +76,10 @@ def ajuste(df,expr,name):
     newdf=newdf.round({"R2dev"+name:2})
     return newdf
 if __name__== "__main__":
-
+    
+    main_path="/media/david/EXTERNAL_USB/doctorado/"
     #prepare the data
-    dataframe=pd.read_csv("/home/usuario/Documentos/recreation/recreation_ready.csv")
+    dataframe=pd.read_csv(main_path+"recreation/recreation_ready.csv")
     dataframe.Date=dataframe.Date.astype("category")
     dataframe.Month=dataframe.Month.astype("category")
     dataframe.Year=dataframe.Year.astype("category")

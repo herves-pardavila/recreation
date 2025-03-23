@@ -65,9 +65,9 @@ def ajuste(df,expr,name):
     newdf=newdf.round({"R2dev"+name:2})
     return newdf
 if __name__== "__main__":
-
+    main_path="/media/david/EXTERNAL_USB/doctorado/"
     #prepare the data
-    dataframe=pd.read_csv("/home/usuario/Documentos/recreation/recreation_ready.csv")
+    dataframe=pd.read_csv(main_path+"recreation/recreation_ready.csv")
     dataframe.Date=dataframe.Date.astype("category")
     dataframe.Month=dataframe.Month.astype("category")
     dataframe.Year=dataframe.Year.astype("category")
@@ -78,24 +78,24 @@ if __name__== "__main__":
     print(dataframe.info()) 
     
     #model 1
-    expr1="""Visitantes ~ logPUD  """
+    expr1="""Visitantes ~ logPUD + Season + covid - 1 """
     df1=dataframe.dropna(subset=["Visitantes","PUD"])
     newdf1=ajuste(df1,expr1,"model1")
     
     #model2
-    expr2="""Visitantes ~ turistas_corregido """
+    expr2="""Visitantes ~ turistas_corregido + Season + covid - 1"""
     df2=dataframe.dropna(subset=["Visitantes","turistas_total"])
     df2.turistas_total=df2.turistas_total.astype(int)
     newdf2=ajuste(df2,expr2,"model2")
     
     #model4
-    expr4="""Visitantes ~ logPUD + logIUD """
+    expr4="""Visitantes ~ logPUD + logIUD + Season + covid - 1"""
     df4=dataframe.dropna(subset=["Visitantes","IUD","PUD"])
     df4["logIUD"]=np.log(df4.IUD+1)
     newdf4=ajuste(df4,expr4,"model4")
 
     #model 5
-    expr5="""Visitantes ~ logPUD + turistas_corregido"""
+    expr5="""Visitantes ~ logPUD + turistas_corregido + Season + covid - 1"""
     df5=dataframe.dropna(subset=["Visitantes","turistas_total","PUD"])
     df5.turistas_total=df5.turistas_total.astype(int)
     newdf5=ajuste(df5,expr5,"model5")

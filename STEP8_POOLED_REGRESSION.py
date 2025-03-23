@@ -51,9 +51,11 @@ def ajuste(df,expr,name):
     newdf=newdf.round({"R2dev"+name:2})
     return newdf
 if __name__== "__main__":
-
+    
+    
+    main_path="/media/david/EXTERNAL_USB/doctorado/"
     #prepare the data
-    df=pd.read_csv("/home/usuario/Documentos/recreation/recreation_ready.csv")
+    df=pd.read_csv(main_path+"recreation/recreation_ready.csv")
     #df=df[df.IdOAPN.isin(["Timanfaya","Islas Atlánticas de Galicia","Tablas de Daimiel"])]
     df.Date=df.Date.astype("category")
     df.Month=df.Month.astype("category")

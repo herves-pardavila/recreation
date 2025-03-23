@@ -1,3 +1,8 @@
+"""
+Saca los ajustes parque a parque
+"""
+
+
 import pandas as pd
 from patsy import dmatrices
 import numpy as np
@@ -67,9 +72,11 @@ def ajuste(df,expr,name):
     newdf=newdf.round({"R2dev1"+name:2,"R2dev2"+name:2})
     return newdf
 if __name__== "__main__":
+    
+    main_path="/media/david/EXTERNAL_USB/doctorado/"
 
     #prepare the data
-    dataframe=pd.read_csv("/home/usuario/Documentos/recreation/recreation_ready.csv")
+    dataframe=pd.read_csv(main_path+"recreation/recreation_ready.csv")
     dataframe.Date=dataframe.Date.astype("category")
     dataframe.Month=dataframe.Month.astype("category")
     dataframe.Year=dataframe.Year.astype("category")
@@ -151,6 +158,6 @@ if __name__== "__main__":
     ax2.tick_params(axis='both',labelsize=15)
     fig2.legend(loc="upper center", ncols=5, fontsize=10,mode="expand")
     plt.show()
-    fig2.savefig("/home/usuario/Documentos/recreation/imagenes_paper/"+newdfA.IdOAPN.unique()[0]+".png")
+    #fig2.savefig("/home/usuario/Documentos/recreation/imagenes_paper/"+newdfA.IdOAPN.unique()[0]+".png")
 
     
