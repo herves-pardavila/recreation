@@ -3,9 +3,10 @@ import pandas as pd
 import numpy as np
 
 if __name__== "__main__":
-
+    
+    main_path="/media/david/EXTERNAL_USB/doctorado/"
     #anual visitors
-    df=pd.read_csv("/home/usuario/Documentos/recreation/recreation_ready.csv")
+    df=pd.read_csv(main_path+"/recreation/recreation_ready.csv")
     print(df.Month.unique())
     dfanual=df.groupby(by=["IdOAPN"],as_index=False).sum(numeric_only=True)
     print(dfanual.Month.unique())
