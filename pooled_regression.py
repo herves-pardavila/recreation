@@ -15,7 +15,7 @@ if __name__== "__main__":
     #prepare the data
     df=pd.read_csv(main_path+"recreation/recreation_ready.csv")
     df=df[df.Visitantes != 0]
-    df=df[df.IdOAPN.isin(["Timanfaya","Islas Atlánticas de Galicia","Tablas de Daimiel","Monfragüe","Cabañeros","Archipiélago de Cabrera"])]
+    #df=df[df.IdOAPN.isin(["Timanfaya","Islas Atlánticas de Galicia","Tablas de Daimiel","Monfragüe","Cabañeros","Archipiélago de Cabrera"])]
     #df=df[df.Year.isin([2015,2016,2017,2018])]
     df.Date=df.Date.astype("category")
     df.Month=df.Month.astype("category")
@@ -23,29 +23,6 @@ if __name__== "__main__":
     df.IdOAPN=df.IdOAPN.astype("category")
     df.Season=df.Season.astype("category")
     df.covid=df.covid.astype("category")
-
-
-    print(df)
-    print(df.info())
-    sum_statistics=df[["Visitantes","PUD","IUD","turistas_total","turistas_corregido"]].describe()
-    sum_statistics=sum_statistics.round({"Visitantes":0,"PUD":1,"IUD":1,"turistas_total":0,"turistas_corregido":0})
-    print(sum_statistics)
-    #sum_statistics.to_csv("/home/usuario/Documentos/recreation/imagenes_paper/summary_statistics.csv",index=True)
-
-    print(df[["Visitantes","PUD","IUD","turistas_total","turistas_corregido"]].corr("spearman"))
-
-    dfmean=df[["IdOAPN","Visitantes","PUD","IUD","turistas_total","turistas_corregido","Month"]].groupby(by=["IdOAPN","Month"],as_index=False).mean()
-    dfvar=df[["IdOAPN","Visitantes","Month"]].groupby(by=["IdOAPN","Month"],as_index=False).var()
-    dfmean=dfmean.merge(dfvar,on=["IdOAPN","Month"],how="inner")
-    dfmean["mu/sigma"]=dfmean.Visitantes_x/dfmean.Visitantes_y
-    print(dfmean)
-    print(dfmean.describe())
-    dfmean=dfmean.groupby(by="IdOAPN",as_index=False).mean(numeric_only=True)
-    dfmean.rename(columns={"Visitantes_x":"Visitors (mu)","PUD":"FUD","turistas_total":"MPUD","turistas_corregido":"correctedMPUD"},inplace=True)
-    dfmean=dfmean.round({"Visitors (mu)":0,"FUD":1,"IUD":1,"MPUD":0,"correctedMPUD":0,"mu/sigma":4})
-    dfmean.sort_values(by="Visitors (mu)",inplace=True,ascending=False)
-    print(dfmean)
-    #dfmean.to_csv("/home/usuario/Documentos/recreation/imagenes_paper/tabla_overdispersion.csv",index=False)
 
     
 
@@ -69,7 +46,7 @@ if __name__== "__main__":
     expr4="""Visitantes ~ logPUD + logIUD + IdOAPN + Season + covid"""
     expr5="""Visitantes ~ logPUD + turistas_total+ IdOAPN + Season + covid"""
     null_expr="""Visitantes ~ IdOAPN + Season + covid """
-    expr=expr3
+    expr=expr1
     y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
     #y_test, X_test = dmatrices(expr, df_test, return_type='dataframe')
     poisson_training_results = sm.GLM(y_train, X_train, family=sm.families.Poisson()).fit()
@@ -101,12 +78,12 @@ if __name__== "__main__":
     summary_as_df.loc["chi2","coef"]=int(nb2_training_results.pearson_chi2)
     #summary_as_df.loc["AIC","coef"]=int(nb2_training_results.aic)
  
-    # #average marginal effects
-    # betas=nb2_training_results.params
-    # Z=X_train.dot(betas)
-    # ey=np.exp(Z)
-    # print("AME of variable %s ="%str(betas.index[-1]),betas.iloc[-1]*ey.mean())
-    # print("AME of variable %s ="%str(betas.index[-2]),betas.iloc[-2]*ey.mean())
+    #average marginal effects
+    betas=nb2_training_results.params
+    Z=X_train.dot(betas)
+    ey=np.exp(Z)
+    print("AME of variable %s ="%str(betas.index[-1]),betas.iloc[-1]*ey.mean())
+    print("AME of variable %s ="%str(betas.index[-2]),betas.iloc[-2]*ey.mean())
 
     #negative binomial regression with intercept only to compute pseudo R2 using deviance
     y_train, X_train = dmatrices(null_expr, df_train, return_type='dataframe')
@@ -119,66 +96,66 @@ if __name__== "__main__":
 
 
 
-    #nb2_predictions = nb2_training_results.get_prediction(X_test)
+    # nb2_predictions = nb2_training_results.get_prediction(X_test)
     # print(nb2_predictions)
-    #predictions_summary_frame = nb2_predictions.summary_frame()
+    # predictions_summary_frame = nb2_predictions.summary_frame()
     # print(predictions_summary_frame)
-    #df_test["yhat"]=predictions_summary_frame['mean']
+    # df_test["yhat"]=predictions_summary_frame['mean']
     # res=stats.cramervonmises_2samp(df_test.Visitantes,df_test.yhat)
     # print(res)
     # print(res.pvalue > 0.05)
 
-    # # df_test["chi cuadrado"]=((df_test.Visitantes-df_test.yhat)**2)/df_test.yhat
-    # # print(df_test[["Visitantes","yhat","chi cuadrado"]])
-    # # print("Para un test set con %f observaciones el estadístico X²=%f" %(len(df_train),df_train["chi cuadrado"].sum()))
+    df_test["chi cuadrado"]=((df_test.Visitantes-df_test.yhat)**2)/df_test.yhat
+    print(df_test[["Visitantes","yhat","chi cuadrado"]])
+    print("Para un test set con %f observaciones el estadístico X²=%f" %(len(df_train),df_train["chi cuadrado"].sum()))
 
 
-    # #influence plots
-    # fig1=plt.figure()
-    # ax1=fig1.add_subplot(111)
-    # smg.regressionplots.influence_plot(nb2_training_results,external=False,ax=ax1)
-    # ax1.hlines(y=[-2]*100,xmin=0,xmax=5)
-    # ax1.hlines(y=[2]*100,xmin=0,xmax=5)
-    # ax1.set_xlim(0,5)
-    # ax1.set_ylim(-4,5)
-    # plt.show()
+    #influence plots
+    fig1=plt.figure()
+    ax1=fig1.add_subplot(111)
+    smg.regressionplots.influence_plot(nb2_training_results,external=False,ax=ax1)
+    ax1.hlines(y=[-2]*100,xmin=0,xmax=5)
+    ax1.hlines(y=[2]*100,xmin=0,xmax=5)
+    ax1.set_xlim(0,5)
+    ax1.set_ylim(-4,5)
+    plt.show()
 
-    # #plotting
+    #plotting
 
-    # fig2 = plt.figure()
-    # fig2.suptitle('Predicted versus actual visitors R²=%f'%r2_score(df_test.Visitantes,df_test.yhat))
-    # ax2=fig2.add_subplot(111)
-    # ax2.plot(df_test.Visitantes,df_test.yhat,"*")
-    # ax2.set_ylabel("Predicted visitors")
-    # ax2.set_xlabel("Actual visitors")
+    fig2 = plt.figure()
+    fig2.suptitle('Predicted versus actual visitors R²=%f'%r2_score(df_test.Visitantes,df_test.yhat))
+    ax2=fig2.add_subplot(111)
+    ax2.plot(df_test.Visitantes,df_test.yhat,"*")
+    ax2.set_ylabel("Predicted visitors")
+    ax2.set_xlabel("Actual visitors")
 
-    # fig3 = plt.figure()
-    # fig3.suptitle('Predicted versus actual visitors R²=%f'%r2_score(df_test.Visitantes,df_test.yhat))
-    # ax3=fig3.add_subplot(111)
-    # ax3.plot(df_test.index,df_test.yhat,"-*",label="Predicted by INE")
-    # ax3.plot(df_test.index,df_test.Visitantes,"-*",label="Park visitors")
-    # ax3.set_ylabel("Visitors")
-    # ax3.set_xlabel("Observation")
-    # fig3.legend()
-
-
-
+    fig3 = plt.figure()
+    fig3.suptitle('Predicted versus actual visitors R²=%f'%r2_score(df_test.Visitantes,df_test.yhat))
+    ax3=fig3.add_subplot(111)
+    ax3.plot(df_test.index,df_test.yhat,"-*",label="Predicted by INE")
+    ax3.plot(df_test.index,df_test.Visitantes,"-*",label="Park visitors")
+    ax3.set_ylabel("Visitors")
+    ax3.set_xlabel("Observation")
+    fig3.legend()
 
 
 
-    # newdf=df_test[["IdOAPN","Month","Season","Visitantes","yhat"]]
-    # print(newdf)
-    # newdf=newdf.groupby(by=["IdOAPN"],as_index=False).mean(numeric_only=True)
+
+
+
+    newdf=df_test[["IdOAPN","Month","Season","Visitantes","yhat"]]
+    print(newdf)
+    newdf=newdf.groupby(by=["IdOAPN"],as_index=False).mean(numeric_only=True)
     
-    # fig2 = plt.figure()
-    # fig2.suptitle('Predicted versus actual visitors')
-    # ax2=fig2.add_subplot(111)
-    # ax2.loglog(newdf.Visitantes,newdf.yhat,"*")
-    # ax2.loglog(np.arange(1e2,8e7,10),np.arange(1e2,8e7,10),label="1-1 line")
-    # ax2.set_ylabel("Predicted visitors")
-    # ax2.set_ylabel("Actual visitors")
-    # [plt.text(i,j,f"{k}") for (i,j,k) in zip(newdf.Visitantes,newdf.yhat,newdf["IdOAPN"])]
-    #plt.show()
+    fig2 = plt.figure()
+    fig2.suptitle('Predicted versus actual visitors')
+    ax2=fig2.add_subplot(111)
+    ax2.loglog(newdf.Visitantes,newdf.yhat,"*")
+    ax2.loglog(np.arange(1e2,8e7,10),np.arange(1e2,8e7,10),label="1-1 line")
+    ax2.set_ylabel("Predicted visitors")
+    ax2.set_ylabel("Actual visitors")
+    [plt.text(i,j,f"{k}") for (i,j,k) in zip(newdf.Visitantes,newdf.yhat,newdf["IdOAPN"])]
+    plt.show()
 
     
 

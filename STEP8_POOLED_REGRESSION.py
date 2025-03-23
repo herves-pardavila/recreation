@@ -8,6 +8,9 @@ import statsmodels.graphics as smg
 from sklearn.metrics import r2_score
 from scipy import stats
 from sklearn.metrics import mean_absolute_percentage_error
+
+import warnings
+warnings.filterwarnings("ignore")
 def ajuste(df,expr,name):
     
    
@@ -35,6 +38,8 @@ def ajuste(df,expr,name):
     #negative_binomial regression
     #print("=========================Negative Binomial Regression===================== ")
     nb2_training_results = sm.GLM(y_train, X_train,family=sm.families.NegativeBinomial(alpha=aux_olsr_results.params[0])).fit()
+    
+    print("Log likelihood function=",nb2_training_results.llf)
     #predicitons
     nb2_predictions = nb2_training_results.get_prediction(X_train)
     predictions_summary_frame = nb2_predictions.summary_frame()
@@ -70,7 +75,7 @@ if __name__== "__main__":
     expr1="""Visitantes ~ logPUD + IdOAPN + Season + covid"""
     df1=df.dropna(subset=["Visitantes","PUD"])
     newdf1=ajuste(df1,expr1,"model1")
-    print(newdf1)
+
     
     #model2
     expr2="""Visitantes ~ turistas_total+ IdOAPN +  Season + covid"""
@@ -78,11 +83,11 @@ if __name__== "__main__":
     df2.turistas_total=df2.turistas_total.astype(int)
     newdf2=ajuste(df2,expr2,"model2")
     
-    #model4
-    expr4="""Visitantes ~ logPUD + logIUD + IdOAPN + Season + covid"""
-    df4=df.dropna(subset=["Visitantes","IUD","PUD"])
-    df4["logIUD"]=np.log(df4.IUD+1)
-    newdf4=ajuste(df4,expr4,"model4")
+    # #model4
+    # expr4="""Visitantes ~ logPUD + logIUD + IdOAPN + Season + covid"""
+    # df4=df.dropna(subset=["Visitantes","IUD","PUD"])
+    # df4["logIUD"]=np.log(df4.IUD+1)
+    # newdf4=ajuste(df4,expr4,"model4")
 
     #model 5
     expr5="""Visitantes ~ logPUD + turistas_total+ IdOAPN+ Season + covid"""
