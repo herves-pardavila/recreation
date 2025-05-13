@@ -4,7 +4,7 @@ import numpy as np
 if __name__=="__main__":
     main_path="/media/david/EXTERNAL_USB/doctorado/"
     #load OAPNA data
-    visitantes=pd.read_csv(main_path+"/recreation/visitantes_parques_naturales_2015_2022_limpio.csv")
+    visitantes=pd.read_csv(main_path+"/recreation/visitantes_parques_naturales_2015_2023_limpio.csv")
     visitantes.Date=pd.to_datetime(visitantes.Date).dt.to_period("M")
     print(visitantes)
     #load tourist data
