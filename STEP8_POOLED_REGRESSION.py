@@ -11,6 +11,9 @@ from sklearn.metrics import mean_absolute_percentage_error
 
 import warnings
 warnings.filterwarnings("ignore")
+
+plt.close("all")
+
 def ajuste(df,expr,name):
     
    
@@ -83,11 +86,11 @@ if __name__== "__main__":
     df2.turistas_total=df2.turistas_total.astype(int)
     newdf2=ajuste(df2,expr2,"model2")
     
-    # #model4
-    # expr4="""Visitantes ~ logPUD + logIUD + IdOAPN + Season + covid"""
-    # df4=df.dropna(subset=["Visitantes","IUD","PUD"])
-    # df4["logIUD"]=np.log(df4.IUD+1)
-    # newdf4=ajuste(df4,expr4,"model4")
+    #model4
+    expr4="""Visitantes ~ logPUD + logIUD + IdOAPN + Season + covid"""
+    df4=df.dropna(subset=["Visitantes","IUD","PUD"])
+    df4["logIUD"]=np.log(df4.IUD+1)
+    newdf4=ajuste(df4,expr4,"model4")
 
     #model 5
     expr5="""Visitantes ~ logPUD + turistas_total+ IdOAPN+ Season + covid"""

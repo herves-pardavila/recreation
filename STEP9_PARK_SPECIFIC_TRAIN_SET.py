@@ -9,6 +9,8 @@ import time
 from sklearn.metrics import r2_score
 from sklearn.metrics import mean_absolute_percentage_error
 from datetime import datetime
+
+plt.close("all")
 def mape(df,model):
      df=df[["Visitantes",model]]
      print(df)
@@ -37,7 +39,7 @@ def ajuste(df,expr,name):
         #divide between training set and test set
         # np.random.seed(seed=1)
         # mask=np.random.rand(len(subdf))<0.7
-        df_train=subdf[subdf.Year.isin([2022])]
+        df_train=subdf[subdf.Year.isin([2022,2023])]
         df_test=subdf[subdf.Year==2021]
 
         y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
@@ -141,7 +143,8 @@ if __name__== "__main__":
     fig2=plt.figure()
     ax2=fig2.subplot_mosaic("""ABCD
                          EFGH
-                         IJJK""")
+                         IJKL
+                         MNOP""")
     
     fig2.subplots_adjust(hspace=0.35,left=0.1,right=0.95, top=0.9, bottom=0.1,wspace=0.25)
     fig2.text(x=0.45,y=0.025,s="Observed Visitors",fontsize=15)
@@ -184,17 +187,17 @@ if __name__== "__main__":
     ax2["B"].tick_params(axis='both',labelsize=15)
 
 
-    # ax2["D"].loglog(newdfD.Visitantes,newdfD.yhatmodel1,"o",color="pink")
-    # ax2["D"].loglog(newdfD.Visitantes,newdfD.yhatmodel2,"o",color="red")
-    # ax2["D"].loglog(newdfD.Visitantes,newdfD.yhatmodel4,"o",color="blue")
-    # ax2["D"].loglog(newdfD.Visitantes,newdfD.yhatmodel5,"o",color="black")
-    # ax2["D"].plot(np.linspace(min(newdfD.Visitantes),max(newdfD.Visitantes),100),np.linspace(min(newdfD.Visitantes),max(newdfD.Visitantes),100))
-    # ax2["D"].set_title(newdfD.IdOAPN.unique()[0],fontsize=15)
-    # ax2["D"].text(0.8,0.35,str(newdfD.R2devmodel1.min()),transform=ax2["D"].transAxes,color="pink",fontsize=12)
-    # ax2["D"].text(0.8,0.25,str(newdfD.R2devmodel2.min()),transform=ax2["D"].transAxes,color="red",fontsize=12)
-    # ax2["D"].text(0.8,0.15,str(newdfD.R2devmodel4.min()),transform=ax2["D"].transAxes,color="blue",fontsize=12)
-    # ax2["D"].text(0.8,0.05,str(newdfD.R2devmodel5.min()),transform=ax2["D"].transAxes,color="black",fontsize=12)
-    # ax2["D"].tick_params(axis='both',labelsize=15)
+    ax2["D"].loglog(newdfD.Visitantes,newdfD.yhatmodel1,"o",color="pink")
+    ax2["D"].loglog(newdfD.Visitantes,newdfD.yhatmodel2,"o",color="red")
+    ax2["D"].loglog(newdfD.Visitantes,newdfD.yhatmodel4,"o",color="blue")
+    ax2["D"].loglog(newdfD.Visitantes,newdfD.yhatmodel5,"o",color="black")
+    ax2["D"].plot(np.linspace(min(newdfD.Visitantes),max(newdfD.Visitantes),100),np.linspace(min(newdfD.Visitantes),max(newdfD.Visitantes),100))
+    ax2["D"].set_title(newdfD.IdOAPN.unique()[0],fontsize=15)
+    ax2["D"].text(0.8,0.35,str(newdfD.R2devmodel1.min()),transform=ax2["D"].transAxes,color="pink",fontsize=12)
+    ax2["D"].text(0.8,0.25,str(newdfD.R2devmodel2.min()),transform=ax2["D"].transAxes,color="red",fontsize=12)
+    ax2["D"].text(0.8,0.15,str(newdfD.R2devmodel4.min()),transform=ax2["D"].transAxes,color="blue",fontsize=12)
+    ax2["D"].text(0.8,0.05,str(newdfD.R2devmodel5.min()),transform=ax2["D"].transAxes,color="black",fontsize=12)
+    ax2["D"].tick_params(axis='both',labelsize=15)
 
     ax2["C"].loglog(newdfE.Visitantes,newdfE.yhatmodel1,"o",color="pink")
     ax2["C"].loglog(newdfE.Visitantes,newdfE.yhatmodel2,"o",color="red")
@@ -364,5 +367,5 @@ if __name__== "__main__":
     ax3["A"].text(0.2,0.6,"MAPE=%s"%str(np.round(mape(newdf,"yhatmodel5"),1)),transform=ax3["A"].transAxes,color="black",fontsize=12)
     
     fig3.legend(loc="upper center", ncols=5, fontsize=12,mode="expand")
-    fig3.savefig("/home/usuario/Documentos/recreation/imagenes_paper/mape.pdf")
+    #fig3.savefig("/home/usuario/Documentos/recreation/imagenes_paper/mape.pdf")
     plt.show()
