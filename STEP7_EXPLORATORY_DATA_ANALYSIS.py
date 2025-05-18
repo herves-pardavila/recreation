@@ -40,61 +40,69 @@ if __name__== "__main__":
     # print(sum_statistics)
     # sum_statistics.to_csv(main_path+"recreation/imagenes_paper/summary_statistics.csv",index=True)
     
-    # print(df[["Visitantes","PUD","IUD","turistas_total","turistas_corregido"]].corr("spearman"))
+    # print(df[["Visitantes","PUD","turistas_total"]].corr("spearman"))
     
-    dfmean=df[["IdOAPN","Visitantes","PUD","IUD","turistas_total","turistas_corregido","Month"]].groupby(by=["IdOAPN","Month"],as_index=False).mean()
+    
+    #===================== Overdispersion test===================
+    
+    dfmean=df[["IdOAPN","Visitantes","PUD","turistas_total","Month"]].groupby(by=["IdOAPN","Month"],as_index=False).mean()
     dfvar=df[["IdOAPN","Visitantes","Month"]].groupby(by=["IdOAPN","Month"],as_index=False).var()
     dfmean=dfmean.merge(dfvar,on=["IdOAPN","Month"],how="inner")
-    dfmean["mu/sigma"]=dfmean.Visitantes_x/dfmean.Visitantes_y
+    dfmean["mu/sigma2"]=dfmean.Visitantes_x/dfmean.Visitantes_y
     print(dfmean)
     print(dfmean.describe())
     dfmean=dfmean.groupby(by="IdOAPN",as_index=False).mean(numeric_only=True)
-    dfmean.rename(columns={"Visitantes_x":"Visitors (mu)","PUD":"FUD","turistas_total":"MPUD","turistas_corregido":"correctedMPUD"},inplace=True)
-    dfmean=dfmean.round({"Visitors (mu)":0,"FUD":1,"IUD":1,"MPUD":0,"correctedMPUD":0,"mu/sigma":4})
+    dfmean.rename(columns={"Visitantes_x":"Visitors (mu)","PUD":"Flickr","turistas_total":"Phones"},inplace=True)
+    dfmean=dfmean.round({"Visitors (mu)":0,"Flickr":1,"Phones":0,"mu/sigma2":4})
     dfmean.sort_values(by="Visitors (mu)",inplace=True,ascending=False)
     print(dfmean)
-    dfmean.to_csv(main_path+"recreation/imagenes_paper/tabla_overdispersion.csv",index=False)
+    #dfmean[["IdOAPN","Visitors (mu)", "Flickr","Phones","mu/sigma2"]].to_csv(main_path+"recreation/imagenes_paper/tabla_overdispersion.csv",index=False)
     
+    #================== Tabla 2- Pérdida de popularidad=========
     
-    print(df.Month.unique())
-    dfanual=df.groupby(by=["IdOAPN"],as_index=False).sum(numeric_only=True)
-    #print(dfanual.Month.unique())
-    fig=plt.figure()
-    ax=fig.add_subplot(111)
-    ax.loglog(dfanual.Visitantes,dfanual.PUD,"*",label="Flickr PUD")
-    ax.loglog(dfanual.Visitantes,dfanual.turistas_total,"*",label="INE data")
-    ax.loglog(dfanual.Visitantes,dfanual.turistas_corregido,"*",label="INE data corregido")
-    ax.loglog(dfanual.Visitantes,dfanual.IUD,"*",label="Instagram")
-    ax.loglog(np.arange(1e5,8e7,10),np.arange(1e5,8e7,10),label="1-1 line")
-    [plt.text(i,j,f"{k}") for (i,j,k) in zip(dfanual.Visitantes,dfanual.PUD,dfanual.IdOAPN)]
-    [plt.text(i,j,f"{k}") for (i,j,k) in zip(dfanual.Visitantes,dfanual.turistas_total,dfanual.IdOAPN)]
-    [plt.text(i,j,f"{k}") for (i,j,k) in zip(dfanual.Visitantes,dfanual.turistas_corregido,dfanual.IdOAPN)]
-    [plt.text(i,j,f"{k}") for (i,j,k) in zip(dfanual.Visitantes,dfanual.IUD,dfanual.IdOAPN)]
-    ax.set_xlabel("Visitors")
-    ax.set_ylabel("Estimated User-generated-data visitors")
-    fig.legend()
-    plt.show()
+    df_park_year=df.groupby(by=["Year","Month"],as_index=False).mean(numeric_only=True)
+    df_park_year=df.groupby(by="Year",as_index=False).mean(numeric_only=True)
+    print(df_park_year[["Year","Visitantes","PUD","turistas_total"]])
+    #==================================== Anual Statistics ===============
+    # dfanual=df.groupby(by=["IdOAPN"],as_index=False).sum(numeric_only=True)
+    # fig=plt.figure()
+    # ax=fig.add_subplot(111)
+    # ax.loglog(dfanual.Visitantes,dfanual.PUD,"*",label="Flickr PUD")
+    # ax.loglog(dfanual.Visitantes,dfanual.turistas_total,"*",label="INE data")
+    # ax.loglog(dfanual.Visitantes,dfanual.turistas_corregido,"*",label="INE data corregido")
+    # ax.loglog(dfanual.Visitantes,dfanual.IUD,"*",label="Instagram")
+    # ax.loglog(np.arange(1e5,8e7,10),np.arange(1e5,8e7,10),label="1-1 line")
+    # [plt.text(i,j,f"{k}") for (i,j,k) in zip(dfanual.Visitantes,dfanual.PUD,dfanual.IdOAPN)]
+    # [plt.text(i,j,f"{k}") for (i,j,k) in zip(dfanual.Visitantes,dfanual.turistas_total,dfanual.IdOAPN)]
+    # [plt.text(i,j,f"{k}") for (i,j,k) in zip(dfanual.Visitantes,dfanual.turistas_corregido,dfanual.IdOAPN)]
+    # [plt.text(i,j,f"{k}") for (i,j,k) in zip(dfanual.Visitantes,dfanual.IUD,dfanual.IdOAPN)]
+    # ax.set_xlabel("Visitors")
+    # ax.set_ylabel("Estimated User-generated-data visitors")
+    # fig.legend()
+    # plt.show()
  
-    #Monthly visitation per park and seasonality
-    dfmensual=df.groupby(by=["IdOAPN","Month"],as_index=False).sum(numeric_only=True)
-    print(dfmensual.Month.unique())
-    print(dfmensual)
-    dfmensualA=dfmensual[dfmensual.IdOAPN=="Aigüestortes i Estany de Sant Maurici"]
-    dfmensualB=dfmensual[dfmensual.IdOAPN=="Archipiélago de Cabrera"]
-    dfmensualC=dfmensual[dfmensual.IdOAPN=="Cabañeros"]
-    dfmensualD=dfmensual[dfmensual.IdOAPN=="Caldera de Taburiente"]
-    dfmensualE=dfmensual[dfmensual.IdOAPN=="Doñana"]
-    dfmensualF=dfmensual[dfmensual.IdOAPN=="Garajonay"]
-    dfmensualG=dfmensual[dfmensual.IdOAPN=="Islas Atlánticas de Galicia"]
-    dfmensualH=dfmensual[dfmensual.IdOAPN=="Monfragüe"]
-    dfmensualI=dfmensual[dfmensual.IdOAPN=="Ordesa y Monte Perdido"]
-    dfmensualJ=dfmensual[dfmensual.IdOAPN=="Picos de Europa"]
-    dfmensualK=dfmensual[dfmensual.IdOAPN=="Sierra Nevada"]
-    dfmensualL=dfmensual[dfmensual.IdOAPN=="Sierra de Guadarrama"]
-    dfmensualM=dfmensual[dfmensual.IdOAPN=="Sierra de las Nieves"]
-    dfmensualN=dfmensual[dfmensual.IdOAPN=="Tablas de Daimiel"]
-    dfmensualO=dfmensual[dfmensual.IdOAPN=="Teide National Park"]
-    dfmensualP=dfmensual[dfmensual.IdOAPN=="Timanfaya"]
+    
+      #=================================== Seasonality ==================
+    # #Monthly visitation per park and seasonality
+    # dfmensual=df.groupby(by=["IdOAPN","Month"],as_index=False).sum(numeric_only=True)
+    # print(dfmensual.Month.unique())
+    # print(dfmensual)
+    # dfmensualA=dfmensual[dfmensual.IdOAPN=="Aigüestortes i Estany de Sant Maurici"]
+    # dfmensualB=dfmensual[dfmensual.IdOAPN=="Archipiélago de Cabrera"]
+    # dfmensualC=dfmensual[dfmensual.IdOAPN=="Cabañeros"]
+    # dfmensualD=dfmensual[dfmensual.IdOAPN=="Caldera de Taburiente"]
+    # dfmensualE=dfmensual[dfmensual.IdOAPN=="Doñana"]
+    # dfmensualF=dfmensual[dfmensual.IdOAPN=="Garajonay"]
+    # dfmensualG=dfmensual[dfmensual.IdOAPN=="Islas Atlánticas de Galicia"]
+    # dfmensualH=dfmensual[dfmensual.IdOAPN=="Monfragüe"]
+    # dfmensualI=dfmensual[dfmensual.IdOAPN=="Ordesa y Monte Perdido"]
+    # dfmensualJ=dfmensual[dfmensual.IdOAPN=="Picos de Europa"]
+    # dfmensualK=dfmensual[dfmensual.IdOAPN=="Sierra Nevada"]
+    # dfmensualL=dfmensual[dfmensual.IdOAPN=="Sierra de Guadarrama"]
+    # dfmensualM=dfmensual[dfmensual.IdOAPN=="Sierra de las Nieves"]
+    # dfmensualN=dfmensual[dfmensual.IdOAPN=="Tablas de Daimiel"]
+    # dfmensualO=dfmensual[dfmensual.IdOAPN=="Teide National Park"]
+    # dfmensualP=dfmensual[dfmensual.IdOAPN=="Timanfaya"]
  
    #  fig2=plt.figure()
    #  ax2=fig2.subplot_mosaic("""ABCD

@@ -24,7 +24,7 @@ def scientific_notation(x, pos):
 def ajuste(df,expr,name):
     log_likelihood=[]
     newdf=pd.DataFrame()
-    null_expr1="""Visitantes ~ 1"""
+    null_expr1="""Visitantes ~ Season + covid"""
     
     for park in df.IdOAPN.unique():
         #print("===========================================")
