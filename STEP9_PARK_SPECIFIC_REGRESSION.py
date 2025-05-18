@@ -10,8 +10,17 @@ from sklearn.metrics import r2_score
 from sklearn.metrics import mean_squared_error 
 from datetime import datetime
 import warnings
+from matplotlib.ticker import MaxNLocator, FuncFormatter
 warnings.filterwarnings("ignore")
 plt.close("all")
+
+def scientific_notation(x, pos):
+    if x == 0:
+        return "0"
+    exponent = int(np.log10(abs(x)))
+    coefficient = x / 10**exponent
+    return f"{coefficient:.0f}·10$^{exponent}$"
+
 def ajuste(df,expr,name):
     log_likelihood=[]
     newdf=pd.DataFrame()
@@ -128,17 +137,16 @@ if __name__== "__main__":
     newdfO=newdf[newdf.IdOAPN=="Teide National Park"]
     newdfP=newdf[newdf.IdOAPN=="Timanfaya"]
 
-    fig2=plt.figure(figsize=(10,10))
-    ax2=fig2.subplot_mosaic("""ABC
-                          DEF
-                          GHI
-                          JKL
-                          MNO
-                          PPP""")
+    fig2=plt.figure(figsize=(20,30))
+    ax2=fig2.subplot_mosaic("""ABCD
+                          EFGH
+                          IJKL
+                          MNOP
+                          """)
     
-    fig2.subplots_adjust(hspace=0.3,wspace=0.1,left=0.075,right=0.95, top=0.9, bottom=0.075)
+    fig2.subplots_adjust(hspace=0.25,wspace=0.2,left=0.085,right=0.95, top=0.9, bottom=0.1)
     fig2.text(x=0.45,y=0.025,s="Observed Visitors",fontsize=35)
-    fig2.text(x=0.025,y=0.45,s="Estimated Visitors",rotation="vertical",fontsize=35)
+    fig2.text(x=0.025,y=0.4,s="Estimated Visitors",rotation="vertical",fontsize=35)
     
     ax2["A"].loglog(newdfA.Visitantes,newdfA.yhatmodel1,"o",color="red",label="Flickr",markersize=10)
     ax2["A"].loglog(newdfA.Visitantes,newdfA.yhatmodel2,"o",color="green",label="Phones",markersize=10)
@@ -147,11 +155,11 @@ if __name__== "__main__":
     ax2["A"].plot(np.linspace(min(newdfA.Visitantes),max(newdfA.Visitantes),100),
                   np.linspace(min(newdfA.Visitantes),max(newdfA.Visitantes),100),label="1-1 line",lw=5)
     ax2["A"].set_title(newdfA.IdOAPN.unique()[0],fontsize=20)
-    ax2["A"].text(0.6,0.05,str(newdfA.R2devmodel1.min()),transform=ax2["A"].transAxes,color="red",fontsize=23)
-    ax2["A"].text(0.7,0.05,str(newdfA.R2devmodel2.min()),transform=ax2["A"].transAxes,color="green",fontsize=23)
+    ax2["A"].text(0.4,0.04,str(newdfA.R2devmodel1.min()),transform=ax2["A"].transAxes,color="red",fontsize=23)
+    ax2["A"].text(0.6,0.04,str(newdfA.R2devmodel2.min()),transform=ax2["A"].transAxes,color="green",fontsize=23)
     #ax2["A"].text(0.8,0.05,str(newdfA.R2devmodel4.min()),transform=ax2["A"].transAxes,color="blue",fontsize=23)
-    ax2["A"].text(0.9,0.05,str(newdfA.R2devmodel5.min()),transform=ax2["A"].transAxes,color="black",fontsize=23)
-    ax2["A"].tick_params(axis='both',labelsize=20)
+    ax2["A"].text(0.8,0.04,str(newdfA.R2devmodel5.min()),transform=ax2["A"].transAxes,color="black",fontsize=23)
+    #ax2["A"].tick_params(axis='both',labelsize=20)
     
     ax2["B"].loglog(newdfB.Visitantes,newdfB.yhatmodel1,"o",color="red",markersize=10)
     ax2["B"].loglog(newdfB.Visitantes,newdfB.yhatmodel2,"o",color="green",markersize=10)
@@ -160,11 +168,11 @@ if __name__== "__main__":
     ax2["B"].plot(np.linspace(min(newdfB.Visitantes),max(newdfB.Visitantes),100),
                   np.linspace(min(newdfB.Visitantes),max(newdfB.Visitantes),100),lw=5)
     ax2["B"].set_title(newdfB.IdOAPN.unique()[0],fontsize=20)
-    ax2["B"].text(0.6,0.05,str(newdfB.R2devmodel1.min()),transform=ax2["B"].transAxes,color="red",fontsize=23)
-    ax2["B"].text(0.7,0.05,str(newdfB.R2devmodel2.min()),transform=ax2["B"].transAxes,color="green",fontsize=23)
+    ax2["B"].text(0.4,0.04,str(newdfB.R2devmodel1.min()),transform=ax2["B"].transAxes,color="red",fontsize=23)
+    ax2["B"].text(0.6,0.04,str(newdfB.R2devmodel2.min()),transform=ax2["B"].transAxes,color="green",fontsize=23)
     #ax2["B"].text(0.8,0.05,str(newdfB.R2devmodel4.min()),transform=ax2["B"].transAxes,color="blue",fontsize=23)
-    ax2["B"].text(0.9,0.05,str(newdfB.R2devmodel5.min()),transform=ax2["B"].transAxes,color="black",fontsize=23)
-    ax2["B"].tick_params(axis='both',labelsize=20)
+    ax2["B"].text(0.8,0.04,str(newdfB.R2devmodel5.min()),transform=ax2["B"].transAxes,color="black",fontsize=23)
+    #ax2["B"].tick_params(axis='both',labelsize=20)
     
     ax2["C"].loglog(newdfC.Visitantes,newdfC.yhatmodel1,"o",color="red",markersize=10)
     ax2["C"].loglog(newdfC.Visitantes,newdfC.yhatmodel2,"o",color="green",markersize=10)
@@ -173,11 +181,11 @@ if __name__== "__main__":
     ax2["C"].plot(np.linspace(min(newdfC.Visitantes),max(newdfC.Visitantes),100),
                   np.linspace(min(newdfC.Visitantes),max(newdfC.Visitantes),100),lw=5)
     ax2["C"].set_title(newdfC.IdOAPN.unique()[0],fontsize=20)
-    ax2["C"].text(0.6,0.05,str(newdfC.R2devmodel1.min()),transform=ax2["C"].transAxes,color="red",fontsize=23)
-    ax2["C"].text(0.7,0.05,str(newdfC.R2devmodel2.min()),transform=ax2["C"].transAxes,color="green",fontsize=23)
+    ax2["C"].text(0.4,0.04,str(newdfC.R2devmodel1.min()),transform=ax2["C"].transAxes,color="red",fontsize=23)
+    ax2["C"].text(0.6,0.04,str(newdfC.R2devmodel2.min()),transform=ax2["C"].transAxes,color="green",fontsize=23)
     #ax2["C"].text(0.8,0.05,str(newdfC.R2devmodel4.min()),transform=ax2["C"].transAxes,color="blue",fontsize=23)
-    ax2["C"].text(0.9,0.05,str(newdfC.R2devmodel5.min()),transform=ax2["C"].transAxes,color="black",fontsize=23)
-    ax2["C"].tick_params(axis='both',labelsize=20)
+    ax2["C"].text(0.8,0.04,str(newdfC.R2devmodel5.min()),transform=ax2["C"].transAxes,color="black",fontsize=23)
+    #ax2["C"].tick_params(axis='both',labelsize=20)
     
     
     ax2["D"].loglog(newdfD.Visitantes,newdfD.yhatmodel1,"o",color="red",markersize=10)
@@ -187,11 +195,11 @@ if __name__== "__main__":
     ax2["D"].plot(np.linspace(min(newdfD.Visitantes),max(newdfD.Visitantes),100),
                   np.linspace(min(newdfD.Visitantes),max(newdfD.Visitantes),100),lw=5)
     ax2["D"].set_title(newdfD.IdOAPN.unique()[0],fontsize=20)
-    ax2["D"].text(0.6,0.05,str(newdfD.R2devmodel1.min()),transform=ax2["D"].transAxes,color="red",fontsize=23)
-    ax2["D"].text(0.7,0.05,str(newdfD.R2devmodel2.min()),transform=ax2["D"].transAxes,color="green",fontsize=23)
+    ax2["D"].text(0.4,0.04,str(newdfD.R2devmodel1.min()),transform=ax2["D"].transAxes,color="red",fontsize=23)
+    ax2["D"].text(0.6,0.04,str(newdfD.R2devmodel2.min()),transform=ax2["D"].transAxes,color="green",fontsize=23)
     #ax2["D"].text(0.8,0.05,str(newdfD.R2devmodel4.min()),transform=ax2["D"].transAxes,color="blue",fontsize=23)
-    ax2["D"].text(0.9,0.05,str(newdfD.R2devmodel5.min()),transform=ax2["D"].transAxes,color="black",fontsize=23)
-    ax2["D"].tick_params(axis='both',labelsize=20)
+    ax2["D"].text(0.8,0.04,str(newdfD.R2devmodel5.min()),transform=ax2["D"].transAxes,color="black",fontsize=23)
+    #ax2["D"].tick_params(axis='both',labelsize=20)
     
     ax2["E"].loglog(newdfE.Visitantes,newdfE.yhatmodel1,"o",color="red",markersize=10)
     ax2["E"].loglog(newdfE.Visitantes,newdfE.yhatmodel2,"o",color="green",markersize=10)
@@ -199,12 +207,12 @@ if __name__== "__main__":
     ax2["E"].loglog(newdfE.Visitantes,newdfE.yhatmodel5,"o",color="black",markersize=10)
     ax2["E"].plot(np.linspace(min(newdfE.Visitantes),max(newdfE.Visitantes),100),
                   np.linspace(min(newdfE.Visitantes),max(newdfE.Visitantes),100),lw=5)
-    ax2["E"].set_title(newdfD.IdOAPN.unique()[0],fontsize=20)
-    ax2["E"].text(0.6,0.05,str(newdfE.R2devmodel1.min()),transform=ax2["E"].transAxes,color="red",fontsize=23)
-    ax2["E"].text(0.7,0.05,str(newdfE.R2devmodel2.min()),transform=ax2["E"].transAxes,color="green",fontsize=23)
+    ax2["E"].set_title(newdfE.IdOAPN.unique()[0],fontsize=20)
+    ax2["E"].text(0.4,0.04,str(newdfE.R2devmodel1.min()),transform=ax2["E"].transAxes,color="red",fontsize=23)
+    ax2["E"].text(0.6,0.04,str(newdfE.R2devmodel2.min()),transform=ax2["E"].transAxes,color="green",fontsize=23)
     #ax2["D"].text(0.8,0.05,str(newdfD.R2devmodel4.min()),transform=ax2["D"].transAxes,color="blue",fontsize=23)
-    ax2["E"].text(0.9,0.05,str(newdfE.R2devmodel5.min()),transform=ax2["E"].transAxes,color="black",fontsize=23)
-    ax2["E"].tick_params(axis='both',labelsize=20)
+    ax2["E"].text(0.8,0.04,str(newdfE.R2devmodel5.min()),transform=ax2["E"].transAxes,color="black",fontsize=23)
+    #ax2["E"].tick_params(axis='both',labelsize=20)
     
     
     ax2["F"].loglog(newdfF.Visitantes,newdfF.yhatmodel1,"o",color="red",markersize=10)
@@ -214,11 +222,12 @@ if __name__== "__main__":
     ax2["F"].plot(np.linspace(min(newdfF.Visitantes),max(newdfF.Visitantes),100),
                   np.linspace(min(newdfF.Visitantes),max(newdfF.Visitantes),100),lw=5)
     ax2["F"].set_title(newdfF.IdOAPN.unique()[0],fontsize=20)
-    ax2["F"].text(0.6,0.05,str(newdfF.R2devmodel1.min()),transform=ax2["F"].transAxes,color="red",fontsize=23)
-    ax2["F"].text(0.7,0.05,str(newdfF.R2devmodel2.min()),transform=ax2["F"].transAxes,color="green",fontsize=23)
+    ax2["F"].text(0.4,0.04,str(newdfF.R2devmodel1.min()),transform=ax2["F"].transAxes,color="red",fontsize=23)
+    ax2["F"].text(0.6,0.04,str(newdfF.R2devmodel2.min()),transform=ax2["F"].transAxes,color="green",fontsize=23)
     #ax2["F"].text(0.8,0.05,str(newdfF.R2devmodel4.min()),transform=ax2["F"].transAxes,color="blue",fontsize=23)
-    ax2["F"].text(0.9,0.05,str(newdfF.R2devmodel5.min()),transform=ax2["F"].transAxes,color="black",fontsize=23)
-    ax2["F"].tick_params(axis='both',labelsize=20)
+    ax2["F"].text(0.8,0.04,str(newdfF.R2devmodel5.min()),transform=ax2["F"].transAxes,color="black",fontsize=23)
+    #ax2["F"].tick_params(axis='both',labelsize=20)
+    
     
     ax2["G"].loglog(newdfG.Visitantes,newdfG.yhatmodel1,"o",color="red",markersize=10)
     ax2["G"].loglog(newdfG.Visitantes,newdfG.yhatmodel2,"o",color="green",markersize=10)
@@ -227,11 +236,11 @@ if __name__== "__main__":
     ax2["G"].plot(np.linspace(min(newdfG.Visitantes),max(newdfG.Visitantes),100),
                   np.linspace(min(newdfG.Visitantes),max(newdfG.Visitantes),100),lw=5)
     ax2["G"].set_title(newdfG.IdOAPN.unique()[0],fontsize=20)
-    ax2["G"].text(0.6,0.05,str(newdfG.R2devmodel1.min()),transform=ax2["G"].transAxes,color="red",fontsize=23)
-    ax2["G"].text(0.7,0.05,str(newdfG.R2devmodel2.min()),transform=ax2["G"].transAxes,color="green",fontsize=23)
+    ax2["G"].text(0.4,0.04,str(newdfG.R2devmodel1.min()),transform=ax2["G"].transAxes,color="red",fontsize=23)
+    ax2["G"].text(0.6,0.04,str(newdfG.R2devmodel2.min()),transform=ax2["G"].transAxes,color="green",fontsize=23)
     #ax2["G"].text(0.8,0.05,str(newdfG.R2devmodel4.min()),transform=ax2["G"].transAxes,color="blue",fontsize=23)
-    ax2["G"].text(0.9,0.05,str(newdfG.R2devmodel5.min()),transform=ax2["G"].transAxes,color="black",fontsize=23)
-    ax2["G"].tick_params(axis='both',labelsize=20)
+    ax2["G"].text(0.8,0.04,str(newdfG.R2devmodel5.min()),transform=ax2["G"].transAxes,color="black",fontsize=23)
+    #ax2["G"].tick_params(axis='both',labelsize=20)
     
     ax2["H"].loglog(newdfH.Visitantes,newdfH.yhatmodel1,"o",color="red",markersize=10)
     ax2["H"].loglog(newdfH.Visitantes,newdfH.yhatmodel2,"o",color="green",markersize=10)
@@ -240,11 +249,11 @@ if __name__== "__main__":
     ax2["H"].plot(np.linspace(min(newdfH.Visitantes),max(newdfH.Visitantes),100),
                   np.linspace(min(newdfH.Visitantes),max(newdfH.Visitantes),100),lw=5)
     ax2["H"].set_title(newdfH.IdOAPN.unique()[0],fontsize=20)
-    ax2["H"].text(0.6,0.05,str(newdfH.R2devmodel1.min()),transform=ax2["H"].transAxes,color="red",fontsize=23)
-    ax2["H"].text(0.7,0.05,str(newdfH.R2devmodel2.min()),transform=ax2["H"].transAxes,color="green",fontsize=23)
+    ax2["H"].text(0.4,0.04,str(newdfH.R2devmodel1.min()),transform=ax2["H"].transAxes,color="red",fontsize=23)
+    ax2["H"].text(0.6,0.04,str(newdfH.R2devmodel2.min()),transform=ax2["H"].transAxes,color="green",fontsize=23)
     #ax2["H"].text(0.8,0.05,str(newdfH.R2devmodel4.min()),transform=ax2["H"].transAxes,color="blue",fontsize=23)
-    ax2["H"].text(0.9,0.05,str(newdfH.R2devmodel5.min()),transform=ax2["H"].transAxes,color="black",fontsize=23)
-    ax2["H"].tick_params(axis='both',labelsize=20)
+    ax2["H"].text(0.8,0.04,str(newdfH.R2devmodel5.min()),transform=ax2["H"].transAxes,color="black",fontsize=23)
+    #ax2["H"].tick_params(axis='both',labelsize=20)
     
     
     ax2["I"].loglog(newdfI.Visitantes,newdfI.yhatmodel1,"o",color="red",markersize=10)
@@ -254,11 +263,11 @@ if __name__== "__main__":
     ax2["I"].plot(np.linspace(min(newdfI.Visitantes),max(newdfI.Visitantes),100),
                   np.linspace(min(newdfI.Visitantes),max(newdfI.Visitantes),100),lw=5)
     ax2["I"].set_title(newdfI.IdOAPN.unique()[0],fontsize=20)
-    ax2["I"].text(0.6,0.05,str(newdfI.R2devmodel1.min()),transform=ax2["I"].transAxes,color="red",fontsize=23)
-    ax2["I"].text(0.7,0.05,str(newdfI.R2devmodel2.min()),transform=ax2["I"].transAxes,color="green",fontsize=23)
+    ax2["I"].text(0.4,0.04,str(newdfI.R2devmodel1.min()),transform=ax2["I"].transAxes,color="red",fontsize=23)
+    ax2["I"].text(0.6,0.04,str(newdfI.R2devmodel2.min()),transform=ax2["I"].transAxes,color="green",fontsize=23)
     #ax2["I"].text(0.8,0.05,str(newdfI.R2devmodel4.min()),transform=ax2["I"].transAxes,color="blue",fontsize=23)
-    ax2["I"].text(0.9,0.05,str(newdfI.R2devmodel5.min()),transform=ax2["I"].transAxes,color="black",fontsize=23)
-    ax2["I"].tick_params(axis='both',labelsize=20)
+    ax2["I"].text(0.8,0.04,str(newdfI.R2devmodel5.min()),transform=ax2["I"].transAxes,color="black",fontsize=23)
+    #ax2["I"].tick_params(axis='both',labelsize=20)
     
     ax2["J"].loglog(newdfJ.Visitantes,newdfJ.yhatmodel1,"o",color="red",markersize=10)
     ax2["J"].loglog(newdfJ.Visitantes,newdfJ.yhatmodel2,"o",color="green",markersize=10)
@@ -267,11 +276,11 @@ if __name__== "__main__":
     ax2["J"].plot(np.linspace(min(newdfJ.Visitantes),max(newdfJ.Visitantes),100),
                   np.linspace(min(newdfJ.Visitantes),max(newdfJ.Visitantes),100),lw=5)
     ax2["J"].set_title(newdfJ.IdOAPN.unique()[0],fontsize=20)
-    ax2["J"].text(0.6,0.05,str(newdfJ.R2devmodel1.min()),transform=ax2["J"].transAxes,color="red",fontsize=23)
-    ax2["J"].text(0.7,0.05,str(newdfJ.R2devmodel2.min()),transform=ax2["J"].transAxes,color="green",fontsize=23)
+    ax2["J"].text(0.4,0.04,str(newdfJ.R2devmodel1.min()),transform=ax2["J"].transAxes,color="red",fontsize=23)
+    ax2["J"].text(0.6,0.04,str(newdfJ.R2devmodel2.min()),transform=ax2["J"].transAxes,color="green",fontsize=23)
     #ax2["J"].text(0.8,0.05,str(newdfJ.R2devmodel4.min()),transform=ax2["J"].transAxes,color="blue",fontsize=23)
-    ax2["J"].text(0.9,0.05,str(newdfJ.R2devmodel5.min()),transform=ax2["J"].transAxes,color="black",fontsize=23)
-    ax2["J"].tick_params(axis='both',labelsize=20)
+    ax2["J"].text(0.8,0.04,str(newdfJ.R2devmodel5.min()),transform=ax2["J"].transAxes,color="black",fontsize=23)
+    #ax2["J"].tick_params(axis='both',labelsize=20)
     
     ax2["K"].loglog(newdfK.Visitantes,newdfK.yhatmodel1,"o",color="red",markersize=10)
     ax2["K"].loglog(newdfK.Visitantes,newdfK.yhatmodel2,"o",color="green",markersize=10)
@@ -280,11 +289,11 @@ if __name__== "__main__":
     ax2["K"].plot(np.linspace(min(newdfK.Visitantes),max(newdfK.Visitantes),100),
                   np.linspace(min(newdfK.Visitantes),max(newdfK.Visitantes),100),lw=5)
     ax2["K"].set_title(newdfK.IdOAPN.unique()[0],fontsize=20)
-    ax2["K"].text(0.6,0.05,str(newdfK.R2devmodel1.min()),transform=ax2["K"].transAxes,color="red",fontsize=23)
-    ax2["K"].text(0.7,0.05,str(newdfK.R2devmodel2.min()),transform=ax2["K"].transAxes,color="green",fontsize=23)
+    ax2["K"].text(0.4,0.04,str(newdfK.R2devmodel1.min()),transform=ax2["K"].transAxes,color="red",fontsize=23)
+    ax2["K"].text(0.6,0.04,str(newdfK.R2devmodel2.min()),transform=ax2["K"].transAxes,color="green",fontsize=23)
     #ax2["K"].text(0.8,0.05,str(newdfK.R2devmodel4.min()),transform=ax2["K"].transAxes,color="blue",fontsize=23)
-    ax2["K"].text(0.9,0.05,str(newdfK.R2devmodel5.min()),transform=ax2["K"].transAxes,color="black",fontsize=23)
-    ax2["K"].tick_params(axis='both',labelsize=20)
+    ax2["K"].text(0.8,0.04,str(newdfK.R2devmodel5.min()),transform=ax2["K"].transAxes,color="black",fontsize=23)
+    #ax2["K"].tick_params(axis='both',labelsize=20)
     
     ax2["L"].loglog(newdfL.Visitantes,newdfL.yhatmodel1,"o",color="red",markersize=10)
     ax2["L"].loglog(newdfL.Visitantes,newdfL.yhatmodel2,"o",color="green",markersize=10)
@@ -293,11 +302,11 @@ if __name__== "__main__":
     ax2["L"].plot(np.linspace(min(newdfL.Visitantes),max(newdfL.Visitantes),100),
                   np.linspace(min(newdfL.Visitantes),max(newdfL.Visitantes),100),lw=5)
     ax2["L"].set_title(newdfL.IdOAPN.unique()[0],fontsize=20)
-    ax2["L"].text(0.6,0.05,str(newdfL.R2devmodel1.min()),transform=ax2["L"].transAxes,color="red",fontsize=23)
-    ax2["L"].text(0.7,0.05,str(newdfL.R2devmodel2.min()),transform=ax2["L"].transAxes,color="green",fontsize=23)
+    ax2["L"].text(0.4,0.04,str(newdfL.R2devmodel1.min()),transform=ax2["L"].transAxes,color="red",fontsize=23)
+    ax2["L"].text(0.6,0.04,str(newdfL.R2devmodel2.min()),transform=ax2["L"].transAxes,color="green",fontsize=23)
     #ax2["L"].text(0.8,0.05,str(newdfL.R2devmodel4.min()),transform=ax2["L"].transAxes,color="blue",fontsize=23)
-    ax2["L"].text(0.9,0.05,str(newdfL.R2devmodel5.min()),transform=ax2["L"].transAxes,color="black",fontsize=23)
-    ax2["L"].tick_params(axis='both',labelsize=20)
+    ax2["L"].text(0.8,0.04,str(newdfL.R2devmodel5.min()),transform=ax2["L"].transAxes,color="black",fontsize=23)
+    #ax2["L"].tick_params(axis='both',labelsize=20)
     
     
     ax2["M"].loglog(newdfM.Visitantes,newdfM.yhatmodel1,"o",color="red",markersize=10)
@@ -307,11 +316,11 @@ if __name__== "__main__":
     ax2["M"].plot(np.linspace(min(newdfM.Visitantes),max(newdfM.Visitantes),100),
                   np.linspace(min(newdfM.Visitantes),max(newdfM.Visitantes),100),lw=5)
     ax2["M"].set_title(newdfM.IdOAPN.unique()[0],fontsize=20)
-    ax2["M"].text(0.6,0.05,str(newdfM.R2devmodel1.min()),transform=ax2["M"].transAxes,color="red",fontsize=23)
-    ax2["M"].text(0.7,0.05,str(newdfM.R2devmodel2.min()),transform=ax2["M"].transAxes,color="green",fontsize=23)
+    ax2["M"].text(0.4,0.04,str(newdfM.R2devmodel1.min()),transform=ax2["M"].transAxes,color="red",fontsize=23)
+    ax2["M"].text(0.6,0.04,str(newdfM.R2devmodel2.min()),transform=ax2["M"].transAxes,color="green",fontsize=23)
     #ax2["M"].text(0.8,0.05,str(newdfM.R2devmodel4.min()),transform=ax2["M"].transAxes,color="blue",fontsize=23)
-    ax2["M"].text(0.9,0.05,str(newdfM.R2devmodel5.min()),transform=ax2["M"].transAxes,color="black",fontsize=23)
-    ax2["M"].tick_params(axis='both',labelsize=20)
+    ax2["M"].text(0.8,0.04,str(newdfM.R2devmodel5.min()),transform=ax2["M"].transAxes,color="black",fontsize=23)
+    #ax2["M"].tick_params(axis='both',labelsize=20)
     
     ax2["N"].loglog(newdfN.Visitantes,newdfN.yhatmodel1,"o",color="red",markersize=10)
     ax2["N"].loglog(newdfN.Visitantes,newdfN.yhatmodel2,"o",color="green",markersize=10)
@@ -320,11 +329,11 @@ if __name__== "__main__":
     ax2["N"].plot(np.linspace(min(newdfN.Visitantes),max(newdfN.Visitantes),100),
                   np.linspace(min(newdfN.Visitantes),max(newdfN.Visitantes),100),lw=5)
     ax2["N"].set_title(newdfN.IdOAPN.unique()[0],fontsize=20)
-    ax2["N"].text(0.6,0.05,str(newdfN.R2devmodel1.min()),transform=ax2["N"].transAxes,color="red",fontsize=23)
-    ax2["N"].text(0.7,0.05,str(newdfN.R2devmodel2.min()),transform=ax2["N"].transAxes,color="green",fontsize=23)
+    ax2["N"].text(0.4,0.04,str(newdfN.R2devmodel1.min()),transform=ax2["N"].transAxes,color="red",fontsize=23)
+    ax2["N"].text(0.6,0.04,str(newdfN.R2devmodel2.min()),transform=ax2["N"].transAxes,color="green",fontsize=23)
     #ax2["N"].text(0.8,0.05,str(newdfN.R2devmodel4.min()),transform=ax2["N"].transAxes,color="blue",fontsize=23)
-    ax2["N"].text(0.9,0.05,str(newdfN.R2devmodel5.min()),transform=ax2["N"].transAxes,color="black",fontsize=23)
-    ax2["N"].tick_params(axis='both',labelsize=20)
+    ax2["N"].text(0.8,0.04,str(newdfN.R2devmodel5.min()),transform=ax2["N"].transAxes,color="black",fontsize=23)
+    #ax2["N"].tick_params(axis='both',labelsize=20)
     
     
     ax2["O"].loglog(newdfO.Visitantes,newdfO.yhatmodel1,"o",color="red",markersize=10)
@@ -334,11 +343,11 @@ if __name__== "__main__":
     ax2["O"].plot(np.linspace(min(newdfO.Visitantes),max(newdfO.Visitantes),100),
                   np.linspace(min(newdfO.Visitantes),max(newdfO.Visitantes),100),lw=5)
     ax2["O"].set_title(newdfO.IdOAPN.unique()[0],fontsize=20)
-    ax2["O"].text(0.6,0.05,str(newdfO.R2devmodel1.min()),transform=ax2["O"].transAxes,color="red",fontsize=23)
-    ax2["O"].text(0.7,0.05,str(newdfO.R2devmodel2.min()),transform=ax2["O"].transAxes,color="green",fontsize=23)
+    ax2["O"].text(0.4,0.04,str(newdfO.R2devmodel1.min()),transform=ax2["O"].transAxes,color="red",fontsize=23)
+    ax2["O"].text(0.6,0.04,str(newdfO.R2devmodel2.min()),transform=ax2["O"].transAxes,color="green",fontsize=23)
     #ax2["O"].text(0.8,0.05,str(newdfO.R2devmodel4.min()),transform=ax2["O"].transAxes,color="blue",fontsize=23)
-    ax2["O"].text(0.9,0.05,str(newdfO.R2devmodel5.min()),transform=ax2["O"].transAxes,color="black",fontsize=23)
-    ax2["O"].tick_params(axis='both',labelsize=20)
+    ax2["O"].text(0.8,0.04,str(newdfO.R2devmodel5.min()),transform=ax2["O"].transAxes,color="black",fontsize=23)
+    #ax2["O"].tick_params(axis='both',labelsize=20)
 
     
     ax2["P"].loglog(newdfP.Visitantes,newdfP.yhatmodel1,"o",color="red",markersize=10)
@@ -348,11 +357,11 @@ if __name__== "__main__":
     ax2["P"].plot(np.linspace(min(newdfP.Visitantes),max(newdfP.Visitantes),100),
                   np.linspace(min(newdfP.Visitantes),max(newdfP.Visitantes),100),lw=5)
     ax2["P"].set_title(newdfP.IdOAPN.unique()[0],fontsize=20)
-    ax2["P"].text(0.6,0.05,str(newdfP.R2devmodel1.min()),transform=ax2["P"].transAxes,color="red",fontsize=23)
-    ax2["P"].text(0.7,0.05,str(newdfP.R2devmodel2.min()),transform=ax2["P"].transAxes,color="green",fontsize=23)
+    ax2["P"].text(0.4,0.04,str(newdfP.R2devmodel1.min()),transform=ax2["P"].transAxes,color="red",fontsize=23)
+    ax2["P"].text(0.6,0.04,str(newdfP.R2devmodel2.min()),transform=ax2["P"].transAxes,color="green",fontsize=23)
     #ax2["P"].text(0.8,0.05,str(newdfP.R2devmodel4.min()),transform=ax2["P"].transAxes,color="blue",fontsize=23)
-    ax2["P"].text(0.9,0.05,str(newdfP.R2devmodel5.min()),transform=ax2["P"].transAxes,color="black",fontsize=23)
-    ax2["P"].tick_params(axis='both',labelsize=20)
+    ax2["P"].text(0.8,0.04,str(newdfP.R2devmodel5.min()),transform=ax2["P"].transAxes,color="black",fontsize=23)
+    #ax2["P"].tick_params(axis='both',labelsize=20)
 
         
     
@@ -363,9 +372,17 @@ if __name__== "__main__":
     
     fig2.legend(loc="upper center", ncols=5, fontsize=25,mode="expand")
 
+    for ax in ax2.values():
+        
+        ax.xaxis.set_major_formatter(FuncFormatter(scientific_notation))
+        ax.yaxis.set_major_formatter(FuncFormatter(scientific_notation))
+        ax.tick_params(axis="both",which="both",labelsize=15)
 
 
-    
+      
+        
+        
+
 
     plt.show()
 

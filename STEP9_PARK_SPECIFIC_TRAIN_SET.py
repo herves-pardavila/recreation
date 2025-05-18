@@ -39,7 +39,7 @@ def ajuste(df,expr,name):
         #divide between training set and test set
         # np.random.seed(seed=1)
         # mask=np.random.rand(len(subdf))<0.7
-        df_train=subdf[subdf.Year.isin([2022,2023])]
+        df_train=subdf[subdf.Year.isin([2023,2022])]
         df_test=subdf[subdf.Year==2021]
 
         y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
