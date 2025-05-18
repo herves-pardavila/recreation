@@ -38,13 +38,15 @@ if __name__== "__main__":
 
     # turismo receptor
     
-    #datos ine 2022
+    #datos ine 2023
     df_receptor=pd.read_excel(main_path+"recreation/exp_tmov_receptor_mun_2023.xlsx",sheet_name=None)
     df_receptor=pd.concat([df_receptor["m01_2023"],df_receptor["m02_2023"],df_receptor["m03_2023"],df_receptor["m04_2023"],df_receptor["m05_2023"],df_receptor["m06_2023"],df_receptor["m07_2023"],df_receptor["m08_2023"],df_receptor["m09_2023"],df_receptor["m10_2023"],df_receptor["m11_2023"],df_receptor["m12_2023"]])
     df_recpetor=df_receptor[df_receptor.pais_orig=="Total"]
     df_receptor=df_receptor.groupby(["mes","mun_dest_cod"],as_index=False).sum(numeric_only=True)
     df_receptor.rename(columns={"mun_dest_cod":"dest_cod","turistas":"turistas_extranjeros"},inplace=True)
-
+    
+    df_ine_2023=df_receptor
+    
     #datos ine 2022
     df_receptor=pd.read_excel(main_path+"recreation/exp_tmov_receptor_mun_2022.xlsx",sheet_name=None)
     df_receptor=pd.concat([df_receptor["m01_2022"],df_receptor["m02_2022"],df_receptor["m03_2022"],df_receptor["m04_2022"],df_receptor["m05_2022"],df_receptor["m06_2022"],df_receptor["m07_2022"],df_receptor["m08_2022"],df_receptor["m09_2022"],df_receptor["m10_2022"],df_receptor["m11_2022"],df_receptor["m12_2022"]])
@@ -52,9 +54,7 @@ if __name__== "__main__":
     df_receptor=df_receptor.groupby(["mes","mun_dest_cod"],as_index=False).sum(numeric_only=True)
     df_receptor.rename(columns={"mun_dest_cod":"dest_cod","turistas":"turistas_extranjeros"},inplace=True)
 
-    #df_interno=pd.read_excel("/home/usuario/Documentos/recreation/exp_tmov_interno_mun_2022.xlsx",sheet_name=None)
-    #df_interno=pd.concat([df_interno["2022-01"],df_interno["2022-02"],df_interno["2022-03"],df_interno["2022-04"],df_interno["2022-05"],df_interno["2022-06"],df_interno["2022-07"],df_interno["2022-08"],df_interno["2022-09"],df_interno["2022-10"],df_interno["2022-11"],df_interno["2022-12"]])
-    #df_interno=df_interno.groupby(["dest_cod","mes"],as_index=False).sum(numeric_only=True)
+
 
     #df_ine_2022=pd.merge(df_interno[["dest_cod","mes","turistas"]],df_receptor[["dest_cod","mes","turistas_extranjeros"]],on=["dest_cod","mes"],how="outer")
     #df_ine_2022["turistas_total"]=df_ine_2022.turistas+df_ine_2022.turistas_extranjeros
@@ -111,7 +111,7 @@ if __name__== "__main__":
     print(df_ine_2019.info())
 
 
-    df_ine=pd.concat([df_ine_2022,df_ine_2021,df_ine_2020,df_ine_2019])
+    df_ine=pd.concat([df_ine_2023,df_ine_2022,df_ine_2021,df_ine_2020,df_ine_2019])
     df_ine.mes=pd.to_datetime(df_ine.mes).dt.to_period("M")
     
     print(df_ine)
