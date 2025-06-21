@@ -32,37 +32,59 @@ if __name__== "__main__":
     df.Season=df.Season.astype("category")
     df.covid=df.covid.astype("category")
     
+    df=df[df.Year==2020]
+    print(df)
+    print(df.info())
+    sum_statistics=df[["Visitantes","PUD","turistas_total"]].describe()
+    sum_statistics=sum_statistics.round({"Visitantes":0,"PUD":1,"IUD":1,"turistas_total":0,"turistas_corregido":0})
+    print(sum_statistics)
+    sum_statistics.to_csv(main_path+"recreation/imagenes_paper/summary_statistics.csv",index=True)
     
-    # print(df)
-    # print(df.info())
-    # sum_statistics=df[["Visitantes","PUD","turistas_total"]].describe()
-    # sum_statistics=sum_statistics.round({"Visitantes":0,"PUD":1,"IUD":1,"turistas_total":0,"turistas_corregido":0})
-    # print(sum_statistics)
-    # sum_statistics.to_csv(main_path+"recreation/imagenes_paper/summary_statistics.csv",index=True)
+    print(df[["Visitantes","PUD","turistas_total"]].corr("spearman"))
     
-    # print(df[["Visitantes","PUD","turistas_total"]].corr("spearman"))
+    y_FUD=y_FUD=np.array([0.71,0.78,0.71,0.77,0.72,0.63,0.69,0.64,0.6])
+    y_MPUD=np.array([0.43,0.23,0.31,0.31,0.3])
+    FUD_MPUD=np.array([0.21,0.23,0.28,0.15,0.14])
+    
+    fig=plt.figure()
+    ax=fig.add_subplot(111)
+    ax.set_xlabel("Year",fontsize=15)
+    ax.set_ylabel("Spearman's correlation coefficient",fontsize=15)
+    #fig.suptitle("Spearman's correlation coefficients",fontsize=15)
+    ax.tick_params(axis="both",which="both",labelsize=12)
+    
+    ax.plot(np.arange(2015,2024,1),y_FUD,"-o",label="Number of Visitors & FUD")
+    ax.plot(np.arange(2019,2024,1),y_MPUD,"-o",label="Number of Visitors & MPUD")
+    ax.plot(np.arange(2019,2024,1),FUD_MPUD,"-o",label="FUD & MPUD")
+    
+    fig.legend()
     
     
-    #===================== Overdispersion test===================
     
-    dfmean=df[["IdOAPN","Visitantes","PUD","turistas_total","Month"]].groupby(by=["IdOAPN","Month"],as_index=False).mean()
-    dfvar=df[["IdOAPN","Visitantes","Month"]].groupby(by=["IdOAPN","Month"],as_index=False).var()
-    dfmean=dfmean.merge(dfvar,on=["IdOAPN","Month"],how="inner")
-    dfmean["mu/sigma2"]=dfmean.Visitantes_x/dfmean.Visitantes_y
-    print(dfmean)
-    print(dfmean.describe())
-    dfmean=dfmean.groupby(by="IdOAPN",as_index=False).mean(numeric_only=True)
-    dfmean.rename(columns={"Visitantes_x":"Visitors (mu)","PUD":"Flickr","turistas_total":"Phones"},inplace=True)
-    dfmean=dfmean.round({"Visitors (mu)":0,"Flickr":1,"Phones":0,"mu/sigma2":4})
-    dfmean.sort_values(by="Visitors (mu)",inplace=True,ascending=False)
-    print(dfmean)
-    #dfmean[["IdOAPN","Visitors (mu)", "Flickr","Phones","mu/sigma2"]].to_csv(main_path+"recreation/imagenes_paper/tabla_overdispersion.csv",index=False)
+    
+    # #===================== Overdispersion test===================
+    
+    # dfmean=df[["IdOAPN","Visitantes","PUD","turistas_total","Month"]].groupby(by=["IdOAPN","Month"],as_index=False).mean()
+    # dfvar=df[["IdOAPN","Visitantes","Month"]].groupby(by=["IdOAPN","Month"],as_index=False).var()
+    # dfmean=dfmean.merge(dfvar,on=["IdOAPN","Month"],how="inner")
+    # dfmean["mu/sigma2"]=dfmean.Visitantes_x/dfmean.Visitantes_y
+    # print(dfmean)
+    # print(dfmean.describe())
+    # dfmean=dfmean.groupby(by="IdOAPN",as_index=False).mean(numeric_only=True)
+    # dfmean.rename(columns={"Visitantes_x":"Visitors (mu)","PUD":"Flickr","turistas_total":"Phones"},inplace=True)
+    # dfmean=dfmean.round({"Visitors (mu)":0,"Flickr":1,"Phones":0,"mu/sigma2":4})
+    # dfmean.sort_values(by="Visitors (mu)",inplace=True,ascending=False)
+    # print(dfmean)
+    # dfmean[["IdOAPN","Visitors (mu)", "Flickr","Phones","mu/sigma2"]].to_csv(main_path+"recreation/imagenes_paper/tabla_overdispersion.csv",index=False)
     
     #================== Tabla 2- Pérdida de popularidad=========
     
-    df_park_year=df.groupby(by=["Year","Month"],as_index=False).mean(numeric_only=True)
-    df_park_year=df.groupby(by="Year",as_index=False).mean(numeric_only=True)
-    print(df_park_year[["Year","Visitantes","PUD","turistas_total"]])
+    # df_park_year=df.groupby(by=["Year","Month"],as_index=False).sum(numeric_only=True)
+    # df_park_year=df.groupby(by="Year",as_index=False).sum(numeric_only=True)
+    # df_park_year.Visitantes=df_park_year.Visitantes/1e6
+    # df_park_year.turistas_total=df_park_year.turistas_total/1e6
+    
+    # print(df_park_year[["Year","Visitantes","PUD","turistas_total"]])
     #==================================== Anual Statistics ===============
     # dfanual=df.groupby(by=["IdOAPN"],as_index=False).sum(numeric_only=True)
     # fig=plt.figure()
@@ -82,34 +104,34 @@ if __name__== "__main__":
     # plt.show()
  
     
-      #=================================== Seasonality ==================
-    # #Monthly visitation per park and seasonality
-    # dfmensual=df.groupby(by=["IdOAPN","Month"],as_index=False).sum(numeric_only=True)
-    # print(dfmensual.Month.unique())
-    # print(dfmensual)
-    # dfmensualA=dfmensual[dfmensual.IdOAPN=="Aigüestortes i Estany de Sant Maurici"]
-    # dfmensualB=dfmensual[dfmensual.IdOAPN=="Archipiélago de Cabrera"]
-    # dfmensualC=dfmensual[dfmensual.IdOAPN=="Cabañeros"]
-    # dfmensualD=dfmensual[dfmensual.IdOAPN=="Caldera de Taburiente"]
-    # dfmensualE=dfmensual[dfmensual.IdOAPN=="Doñana"]
-    # dfmensualF=dfmensual[dfmensual.IdOAPN=="Garajonay"]
-    # dfmensualG=dfmensual[dfmensual.IdOAPN=="Islas Atlánticas de Galicia"]
-    # dfmensualH=dfmensual[dfmensual.IdOAPN=="Monfragüe"]
-    # dfmensualI=dfmensual[dfmensual.IdOAPN=="Ordesa y Monte Perdido"]
-    # dfmensualJ=dfmensual[dfmensual.IdOAPN=="Picos de Europa"]
-    # dfmensualK=dfmensual[dfmensual.IdOAPN=="Sierra Nevada"]
-    # dfmensualL=dfmensual[dfmensual.IdOAPN=="Sierra de Guadarrama"]
-    # dfmensualM=dfmensual[dfmensual.IdOAPN=="Sierra de las Nieves"]
-    # dfmensualN=dfmensual[dfmensual.IdOAPN=="Tablas de Daimiel"]
-    # dfmensualO=dfmensual[dfmensual.IdOAPN=="Teide National Park"]
-    # dfmensualP=dfmensual[dfmensual.IdOAPN=="Timanfaya"]
- 
+   #   # =================================== Seasonality ==================
+   #  #Monthly visitation per park and seasonality
+     # dfmensual=df.groupby(by=["IdOAPN","Month"],as_index=False).sum(numeric_only=True)
+     # print(dfmensual.Month.unique())
+     # print(dfmensual)
+     # dfmensualA=dfmensual[dfmensual.IdOAPN=="Aigüestortes i Estany de Sant Maurici"]
+     # dfmensualB=dfmensual[dfmensual.IdOAPN=="Archipiélago de Cabrera"]
+     # dfmensualC=dfmensual[dfmensual.IdOAPN=="Cabañeros"]
+     # dfmensualD=dfmensual[dfmensual.IdOAPN=="Caldera de Taburiente"]
+     # dfmensualE=dfmensual[dfmensual.IdOAPN=="Doñana"]
+     # dfmensualF=dfmensual[dfmensual.IdOAPN=="Garajonay"]
+     # dfmensualG=dfmensual[dfmensual.IdOAPN=="Islas Atlánticas de Galicia"]
+     # dfmensualH=dfmensual[dfmensual.IdOAPN=="Monfragüe"]
+     # dfmensualI=dfmensual[dfmensual.IdOAPN=="Ordesa y Monte Perdido"]
+     # dfmensualJ=dfmensual[dfmensual.IdOAPN=="Picos de Europa"]
+     # dfmensualK=dfmensual[dfmensual.IdOAPN=="Sierra Nevada"]
+     # dfmensualL=dfmensual[dfmensual.IdOAPN=="Sierra de Guadarrama"]
+     # dfmensualM=dfmensual[dfmensual.IdOAPN=="Sierra de las Nieves"]
+     # dfmensualN=dfmensual[dfmensual.IdOAPN=="Tablas de Daimiel"]
+     # dfmensualO=dfmensual[dfmensual.IdOAPN=="Teide National Park"]
+     # dfmensualP=dfmensual[dfmensual.IdOAPN=="Timanfaya"]
+     
    #  fig2=plt.figure()
    #  ax2=fig2.subplot_mosaic("""ABCD
-   #                       EFGH
-   #                       IJKL
-   #                       MNOP""")
- 
+   #                    EFGH
+   #                    IJKL
+   #                    MNOP""")
+     
    #  #fig2.subplots_adjust(hspace=0.45,wspace=0.3,top=0.9,bottom=0.1,left=0.05,right=0.95)
    #  fig2.text(x=0.45,y=0.025,s="Month",fontsize=35)
    #  fig2.text(x=0.025,y=0.3,s="Share of visitors each month",rotation="vertical",fontsize=35)
@@ -126,35 +148,35 @@ if __name__== "__main__":
    #  ax2["B"].plot(dfmensualB.Month,dfmensualB.PUD/dfmensualB.PUD.sum(),"-o",color="red")
    #  ax2["B"].set_title(str(dfmensualB.IdOAPN.iloc[0]),fontsize=25)
    #  # ax2["B"].set_xticklabels([1,2,3,4,5,6,7,8,9,10,11,12])
- 
+    
    #  ax2["C"].tick_params(axis='both',labelsize=15)
    #  ax2["C"].plot(dfmensualC.Month,dfmensualC.Visitantes/dfmensualC.Visitantes.sum(),"-o",color="black")
    #  ax2["C"].plot(dfmensualC.Month,dfmensualC.turistas_total/dfmensualC.turistas_total.sum(),"-o",color="green")
    #  ax2["C"].plot(dfmensualC.Month,dfmensualC.PUD/dfmensualC.PUD.sum(),"-o",color="red")
    #  ax2["C"].set_title(str(dfmensualC.IdOAPN.iloc[0]),fontsize=25)
    #  # ax2["C"].set_xticklabels([1,2,3,4,5,6,7,8,9,10,11,12])
-    
+
    #  ax2["D"].tick_params(axis='both',labelsize=15)
    #  ax2["D"].plot(dfmensualD.Month,dfmensualD.Visitantes/dfmensualD.Visitantes.sum(),"-o",color="black")
    #  ax2["D"].plot(dfmensualD.Month,dfmensualD.turistas_total/dfmensualD.turistas_total.sum(),"-o",color="green")
    #  ax2["D"].plot(dfmensualD.Month,dfmensualD.PUD/dfmensualD.PUD.sum(),"-o",color="red")
    #  ax2["D"].set_title(str(dfmensualD.IdOAPN.iloc[0]),fontsize=25)
    #  # ax2["D"].set_xticklabels([1,2,3,4,5,6,7,8,9,10,11,12])
-    
+
    #  ax2["E"].tick_params(axis='both',labelsize=15)
    #  ax2["E"].plot(dfmensualE.Month,dfmensualE.Visitantes/dfmensualE.Visitantes.sum(),"-o",color="black")
    #  ax2["E"].plot(dfmensualE.Month,dfmensualE.turistas_total/dfmensualE.turistas_total.sum(),"-o",color="green")
    #  ax2["E"].plot(dfmensualE.Month,dfmensualE.PUD/dfmensualE.PUD.sum(),"-o",color="red")
    #  ax2["E"].set_title(str(dfmensualE.IdOAPN.iloc[0]),fontsize=25)
    #  # ax2["E"].set_xticklabels([1,2,3,4,5,6,7,8,9,10,11,12])
-    
+
    #  ax2["F"].tick_params(axis='both',labelsize=15)
    #  ax2["F"].plot(dfmensualF.Month,dfmensualF.Visitantes/dfmensualF.Visitantes.sum(),"-o",color="black")
    #  ax2["F"].plot(dfmensualF.Month,dfmensualF.turistas_total/dfmensualF.turistas_total.sum(),"-o",color="green")
    #  ax2["F"].plot(dfmensualF.Month,dfmensualF.PUD/dfmensualF.PUD.sum(),"-o",color="red")
    #  ax2["F"].set_title(str(dfmensualF.IdOAPN.iloc[0]),fontsize=25)
    #  # ax2["F"].set_xticklabels([1,2,3,4,5,6,7,8,9,10,11,12])
- 
+    
    #  ax2["G"].tick_params(axis='both',labelsize=15)
    #  ax2["G"].plot(dfmensualG.Month,dfmensualG.Visitantes/dfmensualG.Visitantes.sum(),"-o",color="black")
    #  ax2["G"].plot(dfmensualG.Month,dfmensualG.turistas_total/dfmensualG.turistas_total.sum(),"-o",color="green")
@@ -162,42 +184,42 @@ if __name__== "__main__":
    #  #ax2["G"].plot(dfmensualG.Month,dfmensualG.IUD/dfmensualG.IUD.sum(),"-o",color="purple")
    #  ax2["G"].set_title(str(dfmensualG.IdOAPN.iloc[0]),fontsize=25)
    #  # ax2["G"].set_xticklabels([1,2,3,4,5,6,7,8,9,10,11,12])
- 
+    
    #  ax2["H"].tick_params(axis='both',labelsize=15)
    #  ax2["H"].plot(dfmensualH.Month,dfmensualH.Visitantes/dfmensualH.Visitantes.sum(),"-o",color="black")
    #  ax2["H"].plot(dfmensualH.Month,dfmensualH.turistas_total/dfmensualH.turistas_total.sum(),"-o",color="green")
    #  ax2["H"].plot(dfmensualH.Month,dfmensualH.PUD/dfmensualH.PUD.sum(),"-o",color="red")
    #  ax2["H"].set_title(str(dfmensualH.IdOAPN.iloc[0]),fontsize=25)
    #  # ax2["H"].set_xticklabels([1,2,3,4,5,6,7,8,9,10,11,12])
- 
+    
    #  ax2["I"].tick_params(axis='both',labelsize=15)
    #  ax2["I"].plot(dfmensualI.Month,dfmensualI.Visitantes/dfmensualI.Visitantes.sum(),"-o",color="black")
    #  ax2["I"].plot(dfmensualI.Month,dfmensualI.turistas_total/dfmensualI.turistas_total.sum(),"-o",color="green")
    #  ax2["I"].plot(dfmensualI.Month,dfmensualI.PUD/dfmensualI.PUD.sum(),"-o",color="red")
    #  ax2["I"].set_title(str(dfmensualI.IdOAPN.iloc[0]),fontsize=25)
    #  # ax2["I"].set_xticklabels([1,2,3,4,5,6,7,8,9,10,11,12])
- 
+    
    #  ax2["J"].tick_params(axis='both',labelsize=15)
    #  ax2["J"].plot(dfmensualJ.Month,dfmensualJ.Visitantes/dfmensualJ.Visitantes.sum(),"-o",color="black")
    #  ax2["J"].plot(dfmensualJ.Month,dfmensualJ.turistas_total/dfmensualJ.turistas_total.sum(),"-o",color="green")
    #  ax2["J"].plot(dfmensualJ.Month,dfmensualJ.PUD/dfmensualJ.PUD.sum(),"-o",color="red")
    #  ax2["J"].set_title(str(dfmensualJ.IdOAPN.iloc[0]),fontsize=25)
    #  # ax2["J"].set_xticklabels([1,2,3,4,5,6,7,8,9,10,11,12])
- 
+    
    #  ax2["K"].tick_params(axis='both',labelsize=15)
    #  ax2["K"].plot(dfmensualK.Month,dfmensualK.Visitantes/dfmensualK.Visitantes.sum(),"-o",color="black")
    #  ax2["K"].plot(dfmensualK.Month,dfmensualK.turistas_total/dfmensualK.turistas_total.sum(),"-o",color="green")
    #  ax2["K"].plot(dfmensualK.Month,dfmensualK.PUD/dfmensualK.PUD.sum(),"-o",color="red")
    #  ax2["K"].set_title(str(dfmensualK.IdOAPN.iloc[0]),fontsize=25)
    #  # ax2["K"].set_xticklabels([1,2,3,4,5,6,7,8,9,10,11,12])
- 
+    
    #  ax2["L"].tick_params(axis='both',labelsize=15)
    #  ax2["L"].plot(dfmensualL.Month,dfmensualL.Visitantes/dfmensualL.Visitantes.sum(),"-o",color="black")
    #  ax2["L"].plot(dfmensualL.Month,dfmensualL.turistas_total/dfmensualL.turistas_total.sum(),"-o",color="green")
    #  ax2["L"].plot(dfmensualL.Month,dfmensualL.PUD/dfmensualL.PUD.sum(),"-o",color="red")
    #  ax2["L"].set_title(str(dfmensualL.IdOAPN.iloc[0]),fontsize=25)
    #  # ax2["L"].set_xticklabels([1,2,3,4,5,6,7,8,9,10,11,12])
- 
+    
    #  ax2["M"].tick_params(axis='both',labelsize=15)
    #  ax2["M"].plot(dfmensualM.Month,dfmensualM.Visitantes/dfmensualM.Visitantes.sum(),"-o",color="black")
    #  ax2["M"].plot(dfmensualM.Month,dfmensualM.turistas_total/dfmensualM.turistas_total.sum(),"-o",color="green")
@@ -228,11 +250,20 @@ if __name__== "__main__":
    #  fig2.legend(loc="upper center", ncols=5, fontsize=25,mode="expand")
 
    #  for ax in ax2.values():
-        
+
    #      ax.set_xticks([2,5,8,11])
    #      ax.tick_params(axis="both",labelsize=20)
    #      ax.set_ylim(0,0.4)
-       
- 
+      
     
+
    #  plt.show()
+   
+   
+
+   #  plt.show()
+   
+     
+   
+   
+ 

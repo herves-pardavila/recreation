@@ -1,0 +1,112 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Mon May 19 21:01:47 2025
+
+@author: david
+"""
+
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+plt.close("all")
+
+MAPES_flickr=np.array([39.06,137.6,47.2,40.1,30.4,49.1,88.1,19.7,20.1,50.6,
+                       29.8,26.01,18.4,21.8,13.8,15.4])
+
+MAPES_phones=np.array([46.7,124,49,36,38.3,48,152,19,24,19,23,20,19,31,14,12])
+
+R2_flickr=np.array([0.73,0.56,0.53,0.17,0.44,0.41,0.74,0.27,0.84,0.77,0.44,0.38,
+                    0.54,0.64,0.45,0.74])
+
+R2_phones=np.array([0.8,0.73,0.43,0.19,0.51,0.51,0.85,0.34,0.89,0.91,0.35,0.41,
+                    0.54,0.52,0.69,0.86])
+
+seasonality_index=np.array([0.72,0.73,0.21,0.35,0.36,0.35,0.89,0.3,0.65,0.61,
+                            0.41,0.41,0.22,0.26,0.33,0.37])
+
+mean_visitors=np.array([47422,7700,8219,35024,21937,71992,37657,30410,48617,
+                        154573,60118,198271,5904,12599,329284,123960])
+
+main_path="/media/david/EXTERNAL_USB/doctorado/"
+#prepare the data
+df=pd.read_csv(main_path+"recreation/recreation_ready.csv")
+df=df[df.Visitantes != 0]
+#df=df[df.IdOAPN.isin(["Timanfaya","Islas Atlánticas de Galicia","Tablas de Daimiel","Monfragüe","Cabañeros","Archipiélago de Cabrera"])]
+#df=df[df.Year.isin([2015,2016,2017,2018])]
+df.Date=df.Date.astype("category")
+df.Month=df.Month.astype("category")
+df.Year=df.Year.astype("category")
+df.IdOAPN=df.IdOAPN.astype("category")
+df.Season=df.Season.astype("category")
+df.covid=df.covid.astype("category")
+
+df_park=df.groupby(by="IdOAPN",as_index=False).sum(numeric_only=True)
+
+
+df_park["international_index"]=df_park.turistas_extranjeros/df_park.turistas_total
+df_park["seasonality_index"]=seasonality_index
+df_park["R2_flickr"]=R2_flickr
+df_park["R2_phones"]=R2_phones
+df_park["MAPE_flickr"]=MAPES_flickr
+df_park["MAPE_phones"]=MAPES_phones
+
+
+dfmensual=df.groupby(by=["IdOAPN","Month"],as_index=False).sum(numeric_only=True)
+dfmensualA=dfmensual[dfmensual.IdOAPN=="Aigüestortes i Estany de Sant Maurici"]
+dfmensualB=dfmensual[dfmensual.IdOAPN=="Archipiélago de Cabrera"]
+dfmensualC=dfmensual[dfmensual.IdOAPN=="Cabañeros"]
+dfmensualD=dfmensual[dfmensual.IdOAPN=="Caldera de Taburiente"]
+dfmensualE=dfmensual[dfmensual.IdOAPN=="Doñana"]
+dfmensualF=dfmensual[dfmensual.IdOAPN=="Garajonay"]
+dfmensualG=dfmensual[dfmensual.IdOAPN=="Islas Atlánticas de Galicia"]
+dfmensualH=dfmensual[dfmensual.IdOAPN=="Monfragüe"]
+dfmensualI=dfmensual[dfmensual.IdOAPN=="Ordesa y Monte Perdido"]
+dfmensualJ=dfmensual[dfmensual.IdOAPN=="Picos de Europa"]
+dfmensualK=dfmensual[dfmensual.IdOAPN=="Sierra Nevada"]
+dfmensualL=dfmensual[dfmensual.IdOAPN=="Sierra de Guadarrama"]
+dfmensualM=dfmensual[dfmensual.IdOAPN=="Sierra de las Nieves"]
+dfmensualN=dfmensual[dfmensual.IdOAPN=="Tablas de Daimiel"]
+dfmensualO=dfmensual[dfmensual.IdOAPN=="Teide National Park"]
+dfmensualP=dfmensual[dfmensual.IdOAPN=="Timanfaya"]
+
+                     
+fig=plt.figure()
+fig.suptitle("Efecto de la Internacionalización")
+ax=fig.add_subplot(111)
+axtwin=ax.twinx()
+axtwin.set_ylabel("100-MAPE")
+ax.plot(df_park.international_index,R2_flickr,"o",label="flickr",color="red")
+ax.plot(df_park.international_index,R2_phones,"o",label="phones",color="green")
+axtwin.plot(df_park.international_index,100-MAPES_flickr,"*",label="flickr",color="red")
+axtwin.plot(df_park.international_index,100-MAPES_phones,"*",label="phones",color="green")
+ax.set_xlabel("International Index")
+ax.set_ylabel("R2dev")
+
+fig=plt.figure()
+fig.suptitle("Efecto de la Estacionalidad")
+ax=fig.add_subplot(111)
+axtwin=ax.twinx()
+axtwin.set_ylabel("100-MAPE")
+ax.plot(df_park.seasonality_index,R2_flickr,"o",label="flickr",color="red")
+ax.plot(df_park.seasonality_index,R2_phones,"o",label="phones",color="green")
+axtwin.plot(df_park.seasonality_index,100-MAPES_flickr,"*",label="flickr",color="red")
+axtwin.plot(df_park.seasonality_index,100-MAPES_phones,"*",label="phones",color="green")
+ax.set_xlabel("Seasonality Index")
+ax.set_ylabel("R2dev")
+
+
+#================== Correlaciones =================================
+
+print(df_park[["R2_flickr","R2_phones","MAPE_flickr","MAPE_phones",]].corr("spearman"))
+
+print(df_park[["R2_flickr","R2_phones","seasonality_index"]].corr("spearman"))
+print(df_park[["R2_flickr","R2_phones","international_index"]].corr("spearman"))
+print(df_park[["R2_flickr","R2_phones","Visitantes"]].corr("spearman"))
+
+
+print(df_park[["MAPE_flickr","MAPE_phones","seasonality_index"]].corr("spearman"))
+print(df_park[["MAPE_flickr","MAPE_phones","international_index"]].corr("spearman"))
+print(df_park[["MAPE_flickr","MAPE_phones","Visitantes"]].corr("spearman"))
+
