@@ -7,8 +7,8 @@ import pypopulation
 if __name__ == "__main__":
     
     path="/media/david/EXTERNAL_USB/doctorado/"
-    #visitor origins, given by park authority
-    df=pd.read_csv(path+"recreation/turismo_with_origins.csv")
+   
+    df=pd.read_csv(path+"recreation/turismo_with_origins.csv") #origenes por CCAA y paises
     df=df[df.NAMEUNIT.isin(["Bueu"])]
     #df=df[df.NAMEUNIT.isin(["Bueu"])] #concellos para la isla de oNs
     #df=df[df.NAMEUNIT.isin(["La Vall de Boí","Espot"])] #concellos para Aigüestortes
@@ -98,4 +98,4 @@ if __name__ == "__main__":
     #print(df[df.Año==2020])
     #print(df[df.Año==2021])
     print(df[df.Año==2019])
-    df.to_csv("INE_data_Carnota.csv",index=False)
+    df.to_csv(path+"recreation/ZonalTravelCost/INE_data_Bueu.csv",index=False)

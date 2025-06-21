@@ -14,9 +14,10 @@ from matplotlib import cm
 plt.close("all")
 
 if __name__== "__main__":
-    
+    path="/media/david/EXTERNAL_USB/doctorado/"
     #load the data
-    df=pd.read_csv("3travel_cost_Ons.csv")
+    #df=pd.read_csv(path+"3travel_cost_Ons.csv")
+    df=pd.read_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons_ready.csv")
     df=df[df.Año.isin([2022,2023])]
     #remove nans
     df.dropna(subset=[ "Lugar", "Numero", "distance (km)", "Población"], inplace = True)
@@ -42,7 +43,7 @@ if __name__== "__main__":
     #correlations
     print(df[["median_inc","distance (km)","TC"]].corr("spearman",numeric_only=True))
 
-    variable="turistasINE"
+    variable="Numero"
     df["y"]=df[variable]
     df["logy"]=np.log(df.y)
     df["Vrate"]=1000*df.y/df.Población
@@ -89,8 +90,8 @@ if __name__== "__main__":
     print("La sobredispersion es del",df.Y.mean()/df.Y.var())
     
     #poisson model
-    model="log-lin"
-    expr="""y~TC + median_inc"""
+    model="log-log"
+    expr="""y~lnTC + lnI"""
     null_expr="Y~1"
   
     y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
@@ -176,7 +177,7 @@ if __name__== "__main__":
     #calcular la superficie Q=Q(TC,I) experimental 
     
     VR=1000*predictions/df.Población
-    surf = ax3.plot_trisurf(X_train.TC, X_train.median_inc, VR, color="blue", alpha=0.6)
+    surf = ax3.plot_trisurf(X_train.lnTC, X_train.lnI, VR, color="blue", alpha=0.6)
    
     
 

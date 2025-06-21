@@ -7,6 +7,7 @@ import pypopulation
 if __name__ == "__main__":
     
     path="/media/david/EXTERNAL_USB/doctorado/"
+    
 
     #visitor origins, given by park authority
     df=pd.read_csv(path+"recreation/Islas Atlánticas/travel_cost_2023.csv") #cambiar el nombre del archivo aqui
@@ -86,7 +87,7 @@ if __name__ == "__main__":
     #print(df[df.Año==2022])
     #print(df[df.Año==2019])
 
-    df.to_csv("data_original_Ons.csv",index=False)
+    df.to_csv(path+"recreation/ZonalTravelCost/data_original_Ons.csv",index=False)
 
     
 
