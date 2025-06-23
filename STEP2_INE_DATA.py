@@ -8,10 +8,11 @@ if __name__ == "__main__":
     
     path="/media/david/EXTERNAL_USB/doctorado/"
    
-    df=pd.read_csv(path+"recreation/turismo_with_origins.csv") #origenes por CCAA y paises
-    df=df[df.NAMEUNIT.isin(["Bueu"])]
+    #df=pd.read_csv(path+"recreation/turismo_with_origins.csv") #origenes por CCAA y paises
+    df=pd.read_csv("3travel_cost_aiguestortes.csv")
+    #df=df[df.NAMEUNIT.isin(["Bueu"])]
     #df=df[df.NAMEUNIT.isin(["Bueu"])] #concellos para la isla de oNs
-    #df=df[df.NAMEUNIT.isin(["La Vall de Boí","Espot"])] #concellos para Aigüestortes
+    df=df[df.NAMEUNIT.isin(["La Vall de Boí","Espot"])] #concellos para Aigüestortes
     #df=df[df.NAMEUNIT.isin(["Manzaneda"])]
     print(df.NAMEUNIT.unique())
     df.mes=pd.to_datetime(df.mes,format="%Y-%m").dt.to_period("M")
@@ -31,14 +32,14 @@ if __name__ == "__main__":
 
     
     
-    df_galicia=df[df.Zona=="Galicia"] #Solo para Ons
+    #df_galicia=df[df.Zona=="Galicia"] #Solo para Ons
     df_españa=df[df.Zona=="España"]
     df_resto=df[df.Zona.isin(["Europa","Mundo"])]
 
     #ACORDARSE DE CAMBIAR LAS COORDENADAS DEL DESTINO
-   # destino=gpd.GeoSeries([Point(-8.775,42.32)],crs="EPSG:4326") #destino Ons
-    #destino=gpd.GeoSeries([Point(0.9203,42.5759)],crs="EPSG:4326") #destino Aiguestortes
-    destino=gpd.GeoSeries([Point(-9.097,42.828)],crs="EPSG:4326") #Carnota
+    #destino=gpd.GeoSeries([Point(-8.775,42.32)],crs="EPSG:4326") #destino Ons
+    destino=gpd.GeoSeries([Point(0.9203,42.5759)],crs="EPSG:4326") #destino Aiguestortes
+    #destino=gpd.GeoSeries([Point(-9.097,42.828)],crs="EPSG:4326") #Carnota
     
     destino= destino.to_crs("EPSG:3857")
     compute_distances = lambda x: x.distance(destino)[0]
@@ -50,9 +51,9 @@ if __name__ == "__main__":
     gdf["centroid"]=gdf.geometry.centroid
     destino= destino.to_crs(gdf.crs)
     gdf["distance (km)"]=1e-3*np.array(list(map(compute_distances,gdf["centroid"])))
-    df_galicia=pd.merge(df_galicia,gdf[["provincia","cd_prov","nut2","centroid","geometry","Income","Población","distance (km)"]],left_on="Lugar",right_on="provincia",how="left")
-    df_galicia.rename(columns={"Income":"median_inc"},inplace=True)
-    print(df_galicia)
+    #df_galicia=pd.merge(df_galicia,gdf[["provincia","cd_prov","nut2","centroid","geometry","Income","Población","distance (km)"]],left_on="Lugar",right_on="provincia",how="left")
+    #df_galicia.rename(columns={"Income":"median_inc"},inplace=True)
+    #print(df_galicia)
 
     #geometries of autonomous communities for spanish data
     gdf=gpd.read_file(path+"OneDrive/geo_data/Concellos/CCAA.shp")
@@ -97,5 +98,5 @@ if __name__ == "__main__":
     #print(df[df.Año==2022])
     #print(df[df.Año==2020])
     #print(df[df.Año==2021])
-    print(df[df.Año==2019])
-    df.to_csv(path+"recreation/ZonalTravelCost/INE_data_Bueu.csv",index=False)
+    #print(df[df.Año==2019])
+    df.to_csv(path+"recreation/ZonalTravelCost/INE_data_Aiguestortes.csv",index=False)

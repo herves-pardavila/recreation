@@ -17,7 +17,8 @@ if __name__== "__main__":
     path="/media/david/EXTERNAL_USB/doctorado/"
     #load the data
     #df=pd.read_csv(path+"3travel_cost_Ons.csv")
-    df=pd.read_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons_ready.csv")
+    df=pd.read_csv(path+"recreation/ZonalTravelCost/3travel_cost_Aiguestortes_ready.csv")
+    
     df=df[df.Año.isin([2022,2023])]
     #remove nans
     df.dropna(subset=[ "Lugar", "Numero", "distance (km)", "Población"], inplace = True)
@@ -43,7 +44,7 @@ if __name__== "__main__":
     #correlations
     print(df[["median_inc","distance (km)","TC"]].corr("spearman",numeric_only=True))
 
-    variable="Numero"
+    variable="turistasINE"
     df["y"]=df[variable]
     df["logy"]=np.log(df.y)
     df["Vrate"]=1000*df.y/df.Población
@@ -142,42 +143,42 @@ if __name__== "__main__":
     
 
    
-    fig2=plt.figure()
-    fig2.suptitle("Demand Curve for %s model with %s \n CS=%f €" %(model,
-                                                                    variable,CS),fontsize=15)
-    ax=fig2.add_subplot(111)
-    fig2.subplots_adjust(left=0.15,bottom=0.15,top=0.8)
-    ax.set_ylabel("Travel Cost (€)",fontsize=15)
-    ax.set_xlabel("Visitation Rate per 1000 habitants",fontsize=15)
-    #df.sort_values(by=["Vrate","TC"],inplace=True)
-    ax.plot(df.Vrate,df.TC,"o",label="observed")
-    ax.plot(1000*predictions/df.Población,df.TC,"o",label="predicted")
-    plt.tick_params(axis='both', which='both', labelsize=15)
+    # fig2=plt.figure()
+    # fig2.suptitle("Demand Curve for %s model with %s \n CS=%f €" %(model,
+    #                                                                 variable,CS),fontsize=15)
+    # ax=fig2.add_subplot(111)
+    # fig2.subplots_adjust(left=0.15,bottom=0.15,top=0.8)
+    # ax.set_ylabel("Travel Cost (€)",fontsize=15)
+    # ax.set_xlabel("Visitation Rate per 1000 habitants",fontsize=15)
+    # #df.sort_values(by=["Vrate","TC"],inplace=True)
+    # ax.plot(df.Vrate,df.TC,"o",label="observed")
+    # ax.plot(1000*predictions/df.Población,df.TC,"o",label="predicted")
+    # plt.tick_params(axis='both', which='both', labelsize=15)
     
-    path_for_figures="/media/david/EXTERNAL_USB/doctorado/recreation/ZonalTravelCost/"
-    fig2.savefig(path_for_figures+model+variable+"Carnota.png")
-    fig2.savefig(path_for_figures+model+variable+"Carnota.pdf")
-    fig2.legend(loc="center right",fontsize=20)
+    # path_for_figures="/media/david/EXTERNAL_USB/doctorado/recreation/ZonalTravelCost/"
+    # fig2.savefig(path_for_figures+model+variable+"Carnota.png")
+    # fig2.savefig(path_for_figures+model+variable+"Carnota.pdf")
+    # fig2.legend(loc="center right",fontsize=20)
     
-    #calcular la superficie teórica Q=Q(TC,I)
-    vector_TC=np.linspace(df.TC.min(),df.TC.max(), 100)
-    vector_I=np.linspace(df.median_inc.min(),df.median_inc.max(),100)
-    X,Y=np.meshgrid(vector_TC,vector_I)
+    # #calcular la superficie teórica Q=Q(TC,I)
+    # vector_TC=np.linspace(df.TC.min(),df.TC.max(), 100)
+    # vector_I=np.linspace(df.median_inc.min(),df.median_inc.max(),100)
+    # X,Y=np.meshgrid(vector_TC,vector_I)
     
-    Z=np.exp(nb1.params[0]+nb1.params[1]*X+nb1.params[2]*Y)
+    # Z=np.exp(nb1.params[0]+nb1.params[1]*X+nb1.params[2]*Y)
     
-    fig3=plt.figure()
-    ax3=fig3.add_subplot(projection="3d")
+    # fig3=plt.figure()
+    # ax3=fig3.add_subplot(projection="3d")
     
-    surf = ax3.plot_surface(X, Y, 1000*Z,color="red",alpha=0.6)
-    ax3.set_xlabel("Travel Cost")
-    ax3.set_ylabel("Income")
-    ax3.set_zlabel("VR (per 1000 habitants)")
+    # surf = ax3.plot_surface(X, Y, 1000*Z,color="red",alpha=0.6)
+    # ax3.set_xlabel("Travel Cost")
+    # ax3.set_ylabel("Income")
+    # ax3.set_zlabel("VR (per 1000 habitants)")
     
     #calcular la superficie Q=Q(TC,I) experimental 
     
-    VR=1000*predictions/df.Población
-    surf = ax3.plot_trisurf(X_train.lnTC, X_train.lnI, VR, color="blue", alpha=0.6)
+    # VR=1000*predictions/df.Población
+    # surf = ax3.plot_trisurf(X_train.lnTC, X_train.lnI, VR, color="blue", alpha=0.6)
    
     
 

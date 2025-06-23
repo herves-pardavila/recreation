@@ -12,7 +12,7 @@ from datetime import datetime
 if __name__== "__main__":
     path="/media/david/EXTERNAL_USB/doctorado/"
     #load the data
-    df=pd.read_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons.csv")
+    df=pd.read_csv(path+"recreation/ZonalTravelCost/3travel_cost_Aiguestortes.csv")
     #df=df[df.Año==2019]
     print(df)
     
@@ -35,7 +35,7 @@ if __name__== "__main__":
     print(df)
     print(df.info())
     df["TC"]=df["CT_(€)"]+df["OC_(€)"]
-    df.to_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons_ready.csv",index=False)
+    df.to_csv(path+"recreation/ZonalTravelCost/3travel_cost_Aiguestortes_ready.csv",index=False)
 
     fig=plt.figure()
     fig.suptitle("Demand Curve")

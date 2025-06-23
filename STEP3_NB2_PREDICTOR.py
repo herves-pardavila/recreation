@@ -13,7 +13,7 @@ if __name__== "__main__":
     
     path="/media/david/EXTERNAL_USB/doctorado/"
     #load the INE  data
-    dfINE=pd.read_csv(path+"recreation/ZonalTravelCost/INE_data_Bueu.csv")
+    dfINE=pd.read_csv(path+"recreation/ZonalTravelCost/INE_data_Aiguestortes.csv")
     print(dfINE)
     #set data types
     dfINE["turistasINE"]=dfINE.Numero.astype(int)
@@ -79,5 +79,5 @@ if __name__== "__main__":
 
     # print(df[df.Lugar=="Galicia"].yhat_full.sum())
     # print(df.yhat_full.sum())
-    df[["Año","Lugar","Zona","Numero","turistasINE","yhat_full","median_inc","Población","distance (km)"]].to_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons.csv",index=False)
+    df[["Año","Lugar","Zona","Numero","turistasINE","yhat_full","median_inc","Población","distance (km)"]].to_csv(path+"recreation/ZonalTravelCost/3travel_cost_Aiguestortes.csv",index=False)
     
