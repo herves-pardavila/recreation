@@ -14,12 +14,14 @@ from matplotlib import cm
 plt.close("all")
 
 if __name__== "__main__":
-    path="/media/david/EXTERNAL_USB/doctorado/"
+   
+    path="/home/david/Documents/recreation/"
     #load the data
     #df=pd.read_csv(path+"3travel_cost_Ons.csv")
-    df=pd.read_csv(path+"recreation/ZonalTravelCost/3travel_cost_Aiguestortes_ready.csv")
+    df=pd.read_csv(path+"ZonalTravelCost/3travel_cost_Aiguestortes_ready.csv")
     
-    df=df[df.Año.isin([2022,2023])]
+    df=df[df.Año.isin([2021,2022,2023])]
+    df=df.groupby(["Lugar","Zona"],as_index=False).mean(numeric_only=True)
     #remove nans
     df.dropna(subset=[ "Lugar", "Numero", "distance (km)", "Población"], inplace = True)
 
@@ -44,7 +46,7 @@ if __name__== "__main__":
     #correlations
     print(df[["median_inc","distance (km)","TC"]].corr("spearman",numeric_only=True))
 
-    variable="turistasINE"
+    variable="Numero"
     df["y"]=df[variable]
     df["logy"]=np.log(df.y)
     df["Vrate"]=1000*df.y/df.Población
@@ -125,12 +127,16 @@ if __name__== "__main__":
     #print("AIC=",nb2_training_results.aic)
     
     if model == "log-lin":
-        CS=-1/(nb1.params[1]) #modelo log-lin
+        CS=-1/(nb1.params[1]) #modelo log-lig
+        sCS=((1/nb1.params[1])**2)*nb1.bse[1] #+ 2* ((1/nb1.params[1])**6)*nb1.bse[1]**4
+        
     elif model == "log-log":
         CS=-1*df.TC.mean()/(nb1.params[1]+1) #modelo log-log
-    print("Consumer Surplus=",CS)
+        sCS=((df.TC.mean()/((nb1.params[1]+1)**2)))*nb1.bse[1]
+        
     
-    predictions=nb1.predict(X_train)
+    print("Consumer Surplus= %f (%f)" %(CS,sCS))
+    #predictions=nb1.predict(X_train)
     
     
     # #compute psuedo-R2
