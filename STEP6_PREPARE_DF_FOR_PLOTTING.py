@@ -4,7 +4,7 @@ from datetime import datetime
 if __name__=="__main__":
     
     
-    main_path="/media/david/EXTERNAL_USB/doctorado/"
+    main_path="/home/david/Documents/"
     df=pd.read_csv(main_path+"recreation/recreation_INE_FUD_IUD.csv")
     df.Date=pd.to_datetime(df.Date)
     df["Month"]=df.Date.dt.month
