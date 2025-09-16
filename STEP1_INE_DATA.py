@@ -18,7 +18,10 @@ if __name__ == "__main__":
     df_interno=df_interno[df_interno.Año.isin([2022,2023])] # ELEGIR CORRECTAMENTE LOS AÑOS
     df_interno["Zona"]= "España"    
     
+    
+    
     df_interno.rename(columns={"CCAA y provincia de origen.2":"Lugar","Total":"turistasINE"},inplace=True)  
+    
     df_interno=df_interno[["mes","Año","Lugar","Zona","turistasINE"]]
     df_interno=df_interno.groupby(by=["Lugar","Año","Zona"],as_index=False).sum(numeric_only=True) #convertimos en datos anuales
     
