@@ -13,7 +13,11 @@ from statsmodels.othermod.betareg import BetaModel
 from matplotlib import cm
 import geopandas as gpd
 plt.close("all")
-
+def CI(mean,std):
+    lower=mean-1.96*std
+    upper=mean+1.96*std
+    print([lower,upper])
+    return
 if __name__== "__main__":
    
     path=r"F:/doctorado/"
@@ -140,14 +144,14 @@ if __name__== "__main__":
     print("Consumer Surplus= %f (%f)" %(CS,sCS))
    
     
-   #merge new variables with the geodatabase
+   # #merge new variables with the geodatabase
    
    
-    gdf=gpd.read_file(path +"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Ons.gpkg")
-    newdf=pd.merge(gdf,df[["Lugar","CT_(€)", "OC_(€)","TC","Vrate"]],how="left",on="Lugar")
+   #  gdf=gpd.read_file(path +"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Ons.gpkg")
+   #  newdf=pd.merge(gdf,df[["Lugar","CT_(€)", "OC_(€)","TC","Vrate"]],how="left",on="Lugar")
     
-    new_gdf=gpd.GeoDataFrame(data=newdf,crs=gdf.crs,geometry=newdf.geometry)
-    new_gdf.to_file(path +"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Ons_ready.gpkg")
+   #  new_gdf=gpd.GeoDataFrame(data=newdf,crs=gdf.crs,geometry=newdf.geometry)
+   #  new_gdf.to_file(path +"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Ons_ready.gpkg")
     
 
         
