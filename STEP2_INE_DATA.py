@@ -101,3 +101,5 @@ if __name__ == "__main__":
     #print(df[df.Año==2021])
     #print(df[df.Año==2019])
     df.to_csv(path+"recreation/ZonalTravelCost/INE_data_Bueu.csv",index=False)
+    
+    

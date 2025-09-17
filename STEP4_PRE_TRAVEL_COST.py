@@ -1,4 +1,5 @@
 import pandas as pd
+import geopandas as gpd
 # import numpy as np
 # from patsy import dmatrices
 # import statsmodels.api as sm
@@ -36,7 +37,7 @@ if __name__== "__main__":
     print(df)
     print(df.info())
     df["TC"]=df["CT_(€)"]+df["OC_(€)"]
-    df.to_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons_ready.csv",index=False)
+    #df.to_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons_ready.csv",index=False)
 
     # fig=plt.figure()
     # fig.suptitle("Demand Curve")
@@ -50,3 +51,15 @@ if __name__== "__main__":
     # ax.set_xlim(0,10e4)
     # fig.legend() 
     # plt.show()
+    
+    #============= PARTE GEO ==================================
+    gdf_comunidades=gpd.read_file(path+"OneDrive/geo_data/Concellos/CCAA.shp")
+    gdf_paises = gpd.read_file(path+"OneDrive/geo_data/shp_mapa_paises_mundo_2014/Mapa_paises_mundo.shp")
+    
+    newdf= pd.merge(df,gdf_paises[["PAIS","geometry"]],how="left",left_on = "Lugar",right_on = "PAIS")
+    newdf = pd.merge(newdf, gdf_comunidades[["text","geometry"]],left_on=["Lugar"],right_on=["text"],how="outer")
+    newdf.loc[newdf.geometry_x==None,"geometry_x"]=newdf.loc[newdf.geometry_x==None,"geometry_y"]
+    newdf.drop(columns="geometry_y",inplace=True)
+    
+    new_gdf=gpd.GeoDataFrame(data=newdf,crs=gdf_comunidades.crs,geometry="geometry_x")
+    new_gdf.to_file(path+"recreation/ZonalTravelCost/3travel_cost_Ons.gpkg",driver="GPKG")

@@ -115,7 +115,9 @@ if __name__== "__main__":
     print("Value of alpha=",aux_olsr_results.params[0])
 
     #NB1 regression
+    print("\n")
     print("========================= Negative Binomial 1 Regression ===================== ")
+    print("\n")
     #exog=sm.add_constant(X_train)
 
     y_train=y_train.iloc[:,0]
@@ -139,52 +141,7 @@ if __name__== "__main__":
     #predictions=nb1.predict(X_train)
     
     
-    # #compute psuedo-R2
-    # #negative binomial regression with intercept only to compute pseudo R2 using deviance
-    # y_train_null, X_train_null = dmatrices(null_expr, df_train, return_type='dataframe')
-    # nb1_intercept_only= sm.NegativeBinomialP(y_train_null, X_train_null,p=1,exposure=np.array(df["pop"]))
-    # nb1_intercept_only=nb1_intercept_only.fit(method="nm",maxiter=50000,maxfun=50000)
-    # pseudoR2=1-(nb1.deviance/nb1_intercept_only.deviance)
-   
     
-
-   
-    # fig2=plt.figure()
-    # fig2.suptitle("Demand Curve for %s model with %s \n CS=%f €" %(model,
-    #                                                                 variable,CS),fontsize=15)
-    # ax=fig2.add_subplot(111)
-    # fig2.subplots_adjust(left=0.15,bottom=0.15,top=0.8)
-    # ax.set_ylabel("Travel Cost (€)",fontsize=15)
-    # ax.set_xlabel("Visitation Rate per 1000 habitants",fontsize=15)
-    # #df.sort_values(by=["Vrate","TC"],inplace=True)
-    # ax.plot(df.Vrate,df.TC,"o",label="observed")
-    # ax.plot(1000*predictions/df.Población,df.TC,"o",label="predicted")
-    # plt.tick_params(axis='both', which='both', labelsize=15)
-    
-    # path_for_figures="/media/david/EXTERNAL_USB/doctorado/recreation/ZonalTravelCost/"
-    # fig2.savefig(path_for_figures+model+variable+"Carnota.png")
-    # fig2.savefig(path_for_figures+model+variable+"Carnota.pdf")
-    # fig2.legend(loc="center right",fontsize=20)
-    
-    # #calcular la superficie teórica Q=Q(TC,I)
-    # vector_TC=np.linspace(df.TC.min(),df.TC.max(), 100)
-    # vector_I=np.linspace(df.median_inc.min(),df.median_inc.max(),100)
-    # X,Y=np.meshgrid(vector_TC,vector_I)
-    
-    # Z=np.exp(nb1.params[0]+nb1.params[1]*X+nb1.params[2]*Y)
-    
-    # fig3=plt.figure()
-    # ax3=fig3.add_subplot(projection="3d")
-    
-    # surf = ax3.plot_surface(X, Y, 1000*Z,color="red",alpha=0.6)
-    # ax3.set_xlabel("Travel Cost")
-    # ax3.set_ylabel("Income")
-    # ax3.set_zlabel("VR (per 1000 habitants)")
-    
-    #calcular la superficie Q=Q(TC,I) experimental 
-    
-    # VR=1000*predictions/df.Población
-    # surf = ax3.plot_trisurf(X_train.lnTC, X_train.lnI, VR, color="blue", alpha=0.6)
    
     
 
