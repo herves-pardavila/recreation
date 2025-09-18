@@ -16,7 +16,7 @@ if __name__ == "__main__":
     
     #Para las islas atlánticas de Galicia hay que agrupar los datos de las 3 provincias gallegas (no sale Pontevedra)
     df_galicia=df[df.Zona=="Galicia"]
-    #df_galicia=df_galicia[df.Lugar!="Pontevedra"] #eliminamos Pontevedra pues no sale en los datos del INE
+    df_galicia=df_galicia[df.Lugar!="Pontevedra"] #eliminamos Pontevedra pues no sale en los datos del INE
     df_galicia["Lugar"]="Galicia"
     df_galicia=df_galicia.groupby(by=["Año","Lugar","Zona","Isla"],as_index=False).sum(numeric_only=True)
     df_galicia["Zona"]="España"

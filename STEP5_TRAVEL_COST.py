@@ -26,13 +26,13 @@ if __name__== "__main__":
 
     
 
-    variable="turistasINE"
+    variable="Numero"
     df.dropna(subset=[variable]+[ "Lugar", "distance (km)", "Población"], inplace = True)
     #set data types
     df.Año=df.Año.astype("category")
     df.Lugar=df.Lugar.astype("category")
-    #df["Numero"]=df.Numero.astype(int)
-    df.turistasINE=df.turistasINE.astype(int)
+    df["Numero"]=df.Numero.astype(int)
+    #df.turistasINE=df.turistasINE.astype(int)
     df.Población=df.Población.astype(int)
     df["Income"]=df.RBMPP.astype(float)
     df.TC=df.TC.astype(float)
@@ -55,7 +55,7 @@ if __name__== "__main__":
     df["pop"]=df.Población
     df["lnpop"]=np.log(df.Población)
     df["lnTC"]=np.log(df.TC)
-    df["lnI"]=np.log(df.RBMPP)
+    df["lnI"]=np.log(df.Income)
     df["Y"]=df.y
     
     # #homocedasticity test
