@@ -100,8 +100,8 @@ if __name__== "__main__":
     print("La sobredispersion es del",df.Y.mean()/df.Y.std())
     
     #poisson model
-    model="log-log"
-    expr="""y~lnTC + lnI"""
+    model="log-lin"
+    expr="""y~TC + Income"""
     null_expr="Y~1"
   
     y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
