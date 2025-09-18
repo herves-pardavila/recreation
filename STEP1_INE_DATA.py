@@ -42,25 +42,25 @@ if __name__ == "__main__":
    #UNIR LA PARTE GEO CON LA PARTE DE DATOS DE TURSMIO
    
     newdf=pd.merge(df_interno,gdf[["Provincias","CODIGOINE","Población",
-                                  "Mean_I","Median_I","distance (km)"]],
+                                  "RBMPP","distance (km)"]],
                                   left_on="Lugar",right_on="Provincias",
                                   how="left")
     newdf[["Lugar","Año","Zona","CODIGOINE","turistasINE","Población",
-           "Mean_I","Median_I","distance (km)"]].to_csv(path +"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Ons.csv",
+           "RBMPP","distance (km)"]].to_csv(path +"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Ons.csv",
                                                         index=False)
     
     newgdf=pd.merge(df_interno,gdf[["Provincias","CODIGOINE","Población",
-                                  "Mean_I","Median_I","distance (km)","geometry"]],
+                                  "RBMPP","distance (km)","geometry"]],
                                   left_on="Lugar",right_on="Provincias",
                                   how="right")
     
     
 
     newgdf= gpd.GeoDataFrame(data=newgdf[["Lugar","Año","Zona","CODIGOINE","turistasINE","Población",
-            "Mean_I","Median_I","distance (km)","geometry"]],crs=gdf.crs,geometry=newgdf.geometry)
+            "RBMPP","distance (km)","geometry"]],crs=gdf.crs,geometry=newgdf.geometry)
     
     
-    variable="turistasINE"
+    variable="RBMPP"
     
     fig=plt.figure()
     ax=fig.add_subplot(111)

@@ -18,7 +18,7 @@ if __name__== "__main__":
     
     df["distance"]=df["distance (km)"].astype(float)
     
-    df["median_inc"]=df.Median_I/365
+    df["RBMPP"]=df.RBMPP/365
     df["CT_(€)"]=0
     
     #cost of travel
@@ -26,7 +26,7 @@ if __name__== "__main__":
    
 
     #opoprtunity cost
-    df["OC_(€)"]=(1/3)*df.median_inc
+    df["OC_(€)"]=(1/3)*df.RBMPP
 
    
     print(df)
