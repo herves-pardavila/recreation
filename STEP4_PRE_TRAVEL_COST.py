@@ -37,7 +37,7 @@ if __name__== "__main__":
     print(df)
     print(df.info())
     df["TC"]=df["CT_(€)"]+df["OC_(€)"]
-    #df.to_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons_ready.csv",index=False)
+    df.to_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons_ready.csv",index=False)
 
     # fig=plt.figure()
     # fig.suptitle("Demand Curve")

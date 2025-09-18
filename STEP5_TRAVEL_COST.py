@@ -34,18 +34,18 @@ if __name__== "__main__":
     #df["Numero"]=df.Numero.astype(int)
     df.turistasINE=df.turistasINE.astype(int)
     df.Población=df.Población.astype(int)
-    df.median_inc=df.median_inc.astype(float)
+    df["Income"]=df.RBMPP.astype(float)
     df.TC=df.TC.astype(float)
-    df["median_inc2"]=df.median_inc*df.median_inc
+
   
     print(df)
     print(df.info())
     
     #summary statistics
-    sum_statistics=df[["Numero","turistasINE","median_inc","TC"]].describe()
+    sum_statistics=df[["Numero","turistasINE","RBMPP","TC"]].describe()
     print(sum_statistics)
     #correlations
-    print(df[["median_inc","distance (km)","TC"]].corr("spearman",numeric_only=True))
+    print(df[["RBMPP","distance (km)","TC"]].corr("spearman",numeric_only=True))
 
     
     df["y"]=df[variable]
@@ -55,7 +55,7 @@ if __name__== "__main__":
     df["pop"]=df.Población
     df["lnpop"]=np.log(df.Población)
     df["lnTC"]=np.log(df.TC)
-    df["lnI"]=np.log(df.median_inc)
+    df["lnI"]=np.log(df.RBMPP)
     df["Y"]=df.y
     
     # #homocedasticity test
