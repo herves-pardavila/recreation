@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import pypopulation
 if __name__ == "__main__":
     
-    path=r"D:/doctorado/"
+    path=r"F:/doctorado/"
     
     #visitor origins, given by park authority
     df=pd.read_csv(path+"recreation/Islas Atlánticas/travel_cost_2023.csv") #cambiar el nombre del archivo aqui
@@ -39,7 +39,7 @@ if __name__ == "__main__":
     gdf=gdf.to_crs(destino.crs)
     gdf["centroid"]=gdf.geometry.centroid
     gdf["distance (km)"]=1e-3*np.array(list(map(compute_distances,gdf["centroid"])))
-    df_españa=pd.merge(df_españa,gdf[["text","centroid","geometry","median_inc","Población","distance (km)"]],left_on="Lugar",right_on="text",how="left")
+    df_españa=pd.merge(df_españa,gdf[["text","centroid","geometry","RBMPP","Población","distance (km)"]],left_on="Lugar",right_on="text",how="left")
     print(df_españa)
 
     #geometry of countries for world data
@@ -48,9 +48,9 @@ if __name__ == "__main__":
     gdf=gdf.to_crs("EPSG:3857")
     gdf["centroid"]=gdf.geometry.centroid
     gdf["distance (km)"]=1e-3*np.array(list(map(compute_distances,gdf["centroid"])))
-    gdf["median_inc"]=gdf["Median Inc"]*1/1.137
+    gdf["RBMPP"]=gdf["ANNIPC"]*1/1.184 #cambiar de dolares estadounidenses a euros del 2021
     print(gdf)
-    gdf=gdf[["CNTR_ID","PAIS","distance (km)","median_inc","geometry"]]
+    gdf=gdf[["CNTR_ID","PAIS","distance (km)","RBMPP","geometry"]]
     df_resto=pd.merge(df_resto,gdf,left_on="Lugar",right_on="PAIS",how="left")
     #add population of countries
     for code in df_resto.CNTR_ID.unique():
@@ -68,8 +68,8 @@ if __name__ == "__main__":
 
 
     #concatenate back
-    df=pd.concat([df_españa[["Año","Zona","Lugar","Porcentaje","Numero","median_inc","Población","distance (km)"]],
-                  df_resto[["Año","Zona","Lugar","Porcentaje","Numero","median_inc","Población","distance (km)"]]])
+    df=pd.concat([df_españa[["Año","Zona","Lugar","Porcentaje","Numero","RBMPP","Población","distance (km)"]],
+                  df_resto[["Año","Zona","Lugar","Porcentaje","Numero","RBMPP","Población","distance (km)"]]])
     print(df[["Lugar","Numero"]])
     print(df.info())
     df.dropna(subset="distance (km)",inplace=True)

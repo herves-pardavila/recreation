@@ -18,8 +18,8 @@ if __name__== "__main__":
     print(df)
     
     df["distance"]=df["distance (km)"].astype(float)
-    df.loc[df.Lugar=="Andorra","median_inc"]=41640
-    df.median_inc=df.median_inc/365
+    df.loc[df.Lugar=="Andorra","RBMPP"]=44720/1.184
+    df.RBMPP=df.RBMPP/365
     df["CT_(€)"]=0
     
     #cost of travel
@@ -30,9 +30,9 @@ if __name__== "__main__":
     
 
     #opoprtunity cost
-    df["OC_(€)"]=2*(1/3)*df.median_inc
-    df.loc[df.Zona=="España","OC_(€)"]=(1/3)*df.median_inc
-    df.loc[df.Lugar.isin(["Francia","Andorra","Portugal"]),"OC_(€)"]=(1/3)*df.median_inc
+    df["OC_(€)"]=2*(1/3)*df.RBMPP
+    df.loc[df.Zona=="España","OC_(€)"]=(1/3)*df.RBMPP
+    df.loc[df.Lugar.isin(["Francia","Andorra","Portugal"]),"OC_(€)"]=(1/3)*df.RBMPP
    
     print(df)
     print(df.info())

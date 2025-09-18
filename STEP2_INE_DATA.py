@@ -61,7 +61,7 @@ if __name__ == "__main__":
     gdf=gdf.to_crs(destino.crs)
     gdf["centroid"]=gdf.geometry.centroid
     gdf["distance (km)"]=1e-3*np.array(list(map(compute_distances,gdf["centroid"])))
-    df_españa=pd.merge(df_españa,gdf[["text","centroid","geometry","median_inc","Población","distance (km)"]],left_on="Lugar",right_on="text",how="left")
+    df_españa=pd.merge(df_españa,gdf[["text","centroid","geometry","RBMPP","Población","distance (km)"]],left_on="Lugar",right_on="text",how="left")
     print(df_españa)
 
     #geometry of countries for world data
@@ -70,8 +70,8 @@ if __name__ == "__main__":
     gdf=gdf.to_crs("EPSG:3857")
     gdf["centroid"]=gdf.geometry.centroid
     gdf["distance (km)"]=1e-3*np.array(list(map(compute_distances,gdf["centroid"])))
-    gdf["median_inc"]=gdf["Median Inc"]*1/1.137
-    gdf=gdf[["CNTR_ID","PAIS","distance (km)","median_inc","geometry"]]
+    gdf["RBMPP"]=gdf["ANNIPC"]*1/1.184 #cambiar de dolares estadounidenses a euros del 2021
+    gdf=gdf[["CNTR_ID","PAIS","distance (km)","RBMPP","geometry"]]
     df_resto=pd.merge(df_resto,gdf,left_on="Lugar",right_on="PAIS",how="left")
     #add population of countries
     for code in df_resto.CNTR_ID.unique():
@@ -89,8 +89,8 @@ if __name__ == "__main__":
 
 
     #concatenate back
-    df=pd.concat([df_españa[["Año","Zona","Lugar","Numero","median_inc","Población","distance (km)"]],
-                   df_resto[["Año","Zona","Lugar","Numero","median_inc","Población","distance (km)"]]])
+    df=pd.concat([df_españa[["Año","Zona","Lugar","Numero","RBMPP","Población","distance (km)"]],
+                   df_resto[["Año","Zona","Lugar","Numero","RBMPP","Población","distance (km)"]]])
     print(df[["Lugar","Numero"]])
     
     df.loc[df.Lugar.isin(["Brasil","Estados Unidos"]),"Zona"]="Mundo"

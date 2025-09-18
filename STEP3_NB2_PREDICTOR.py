@@ -25,7 +25,7 @@ if __name__== "__main__":
     print(df)
 
     #merge both
-    df=pd.merge(df,dfINE[["Lugar","turistasINE","Zona","Año","median_inc","Población","distance (km)"]],on=["Lugar","Zona","Año","median_inc","Población","distance (km)"],how="outer")
+    df=pd.merge(df,dfINE[["Lugar","turistasINE","Zona","Año","RBMPP","Población","distance (km)"]],on=["Lugar","Zona","Año","RBMPP","Población","distance (km)"],how="outer")
     print("================================================================================================")
     #df=df[df.Año == 2019]
     print(df)
@@ -80,5 +80,5 @@ if __name__== "__main__":
     # print(df[df.Lugar=="Galicia"].yhat_full.sum())
     # print(df.yhat_full.sum())
     df.drop_duplicates(subset=["Lugar","Zona","Año"],inplace=True)
-    df[["Año","Lugar","Zona","Numero","turistasINE","median_inc","Población","distance (km)"]].to_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons.csv",index=False)
+    df[["Año","Lugar","Zona","Numero","turistasINE","RBMPP","Población","distance (km)"]].to_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons.csv",index=False)
     
