@@ -20,19 +20,20 @@ if __name__== "__main__":
     #df=pd.read_csv(path+"3travel_cost_Ons.csv")
     df=pd.read_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons_ready.csv")
     df=df[df.Año.isin([2022,2023])]
-    df=df.groupby(["Lugar","Zona"],as_index=False).mean(numeric_only=True)
+    
+    df=df.groupby(["Lugar","Zona","Población","TC","RBMPP"],as_index=False).sum(numeric_only=True)
     #remove nans
     
 
     
 
-    variable="Numero"
+    variable="turistasINE"
+    df=df.loc[df[variable]>0]
     df.dropna(subset=[variable]+[ "Lugar", "distance (km)", "Población"], inplace = True)
     #set data types
     df.Año=df.Año.astype("category")
     df.Lugar=df.Lugar.astype("category")
-    df["Numero"]=df.Numero.astype(int)
-    #df.turistasINE=df.turistasINE.astype(int)
+    df[variable]=df[variable].astype(int)
     df.Población=df.Población.astype(int)
     df["Income"]=df.RBMPP.astype(float)
     df.TC=df.TC.astype(float)
