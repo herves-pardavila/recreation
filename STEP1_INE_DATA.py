@@ -11,6 +11,8 @@ if __name__ == "__main__":
 
     df_interno=pd.read_csv(path+"recreation/ZonalTravelCost/datos_provinciales/turismo_interno_Bueu_Sanxenxo_origen_provincias_2022_2024.csv",
                            sep=";",encoding="latin-1",na_values=["","."]) #origenes por CCAA y paises
+    
+    df_interno=df_interno.loc[df_interno["Municipio de destino"]=="36004 Bueu"]
     df_interno = df_interno.groupby(by=["CCAA y provincia de origen.2","Periodo"],as_index=False).sum(numeric_only=True)
     df_interno["mes"] = df_interno["Periodo"].str.replace(r"M", "-", regex=True)
     df_interno.mes=pd.to_datetime(df_interno.mes,format="%Y-%m").dt.to_period("M")
