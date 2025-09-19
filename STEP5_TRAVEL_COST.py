@@ -24,22 +24,20 @@ if __name__== "__main__":
     #load the data
     #df=pd.read_csv(path+"3travel_cost_Ons.csv")
     df=pd.read_csv(path+"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Ons_ready.csv")
-    df=df.loc[df.turistasINE>0]
-    df=df[df.Lugar != "Pontevedra"]
+    
+    
     df=df[df.Año.isin([2022,2023])]
     df=df.groupby(["Lugar","Zona","Población","RBMPP","TC"],as_index=False).sum(numeric_only=True)
+    df=df.loc[df.turistasINE>0]
     #remove nans
-    
-
-    
 
     variable="turistasINE"
     df.dropna(subset=[variable]+["Lugar", "distance (km)", "Población","RBMPP"], inplace = True)
     #set data types
     df.Año=df.Año.astype("category")
     df.Lugar=df.Lugar.astype("category")
-    #df["Numero"]=df.Numero.astype(int)
-    df.turistasINE=df.turistasINE.astype(int)
+    df[variable]=df[variable].astype(int)
+    
     df.Población=df.Población.astype(int)
     df["Income"]=df.RBMPP.astype(float)
     df.TC=df.TC.astype(float)
@@ -101,8 +99,8 @@ if __name__== "__main__":
     print("La sobredispersion es del",df.Y.mean()/df.Y.std())
     
     #poisson model
-    model="log-log"
-    expr="""y~lnTC + lnI"""
+    model="log-lin"
+    expr="""y~TC + Income"""
     null_expr="Y~1"
   
     y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
