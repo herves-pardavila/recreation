@@ -11,7 +11,7 @@ if __name__ == "__main__":
     df=pd.read_csv(path+"recreation/turismo_with_origins.csv") #origenes por CCAA y paises
   
     
-    df=df[df.NAMEUNIT.isin(["Bueu","Portonovo","Sanxenxo"])] #concellos para la isla de Ons
+    df=df[df.NAMEUNIT.isin(["Bueu"])] #concellos para la isla de Ons
     #df=df[df.NAMEUNIT.isin(["La Vall de Boí","Espot"])] #concellos para Aigüestortes
     #df=df[df.NAMEUNIT.isin(["Manzaneda"])]
 
