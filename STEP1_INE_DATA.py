@@ -19,7 +19,7 @@ if __name__ == "__main__":
                           df_interno["2022-09"],df_interno["2022-10"],
                           df_interno["2022-11"],df_interno["2022-12"]])
     
-    df_Ons_2022=df_interno.loc[df_interno.dest.isin(["Bueu","Sanxenxo"]),["mes","mun_orig_cod","mun_orig","dest_cod","dest","turistas"]]
+    df_Ons_2022=df_interno.loc[df_interno.dest.isin(["Bueu"]),["mes","mun_orig_cod","mun_orig","dest_cod","dest","turistas"]]
     
     df_interno=pd.read_excel(path+"recreation/ZonalTravelCost/datos_municipales/exp_tmov_interno_mun_2023.xlsx",
                            sheet_name=None) #origenes por CCAA y paises
@@ -31,7 +31,7 @@ if __name__ == "__main__":
                           df_interno["2023-09"],df_interno["2023-10"],
                           df_interno["2023-11"],df_interno["2023-12"]])
     
-    df_Ons_2023=df_interno.loc[df_interno.dest.isin(["Bueu","Sanxenxo"]),["mes","mun_orig_cod","mun_orig","dest_cod","dest","turistas"]]
+    df_Ons_2023=df_interno.loc[df_interno.dest.isin(["Bueu"]),["mes","mun_orig_cod","mun_orig","dest_cod","dest","turistas"]]
     
     df_Ons =pd.concat([df_Ons_2022,df_Ons_2023])
     
@@ -81,12 +81,12 @@ if __name__ == "__main__":
     newgdf.to_file(path +"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Ons.gpkg",
                   driver="GPKG",index=False)
     
-   #  variable="turistasINE"
-    
-   #  fig=plt.figure()
-   #  ax=fig.add_subplot(111)
-   #  newgdf.plot(column=variable, ax= ax)
-   #  plt.show()
+    variable="turistasINE"
+       
+    fig=plt.figure()
+    ax=fig.add_subplot(111)
+    newgdf.plot(column=variable, ax= ax)
+    plt.show()
 
    
     

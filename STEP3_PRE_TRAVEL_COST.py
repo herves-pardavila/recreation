@@ -12,13 +12,13 @@ import matplotlib.pyplot as plt
 if __name__== "__main__":
     path=r"F:/doctorado/"
     #load the data
-    df=pd.read_csv(path+"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Ons.csv")
+    df=pd.read_csv(path+"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Ons_with_Income.csv")
     #df=df[df.Año==2019]
     print(df)
     
     df["distance"]=df["distance (km)"].astype(float)
     
-    df["median_inc"]=df.Median_I/365
+    df.RBMPP=df.RBMPP/365
     df["CT_(€)"]=0
     
     #cost of travel
@@ -26,7 +26,7 @@ if __name__== "__main__":
    
 
     #opoprtunity cost
-    df["OC_(€)"]=(1/3)*df.median_inc
+    df["OC_(€)"]=(1/3)*df.RBMPP
 
    
     print(df)
@@ -41,7 +41,7 @@ if __name__== "__main__":
     
     newdf = pd.concat([df,df_externo],axis=0,join="inner",ignore_index=False)
     
-    newdf.to_csv(path+"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Ons_ready.csv",index=False)
+    newdf.to_csv(path+"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Ons_ready.csv",index=False)
 
     fig=plt.figure()
     fig.suptitle("Demand Curve")
