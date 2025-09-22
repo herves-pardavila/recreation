@@ -12,7 +12,11 @@ from datetime import datetime
 from statsmodels.othermod.betareg import BetaModel
 from matplotlib import cm
 plt.close("all")
-
+def CI(mean,std):
+    lower=mean-1.96*std
+    upper=mean+1.96*std
+    print([lower,upper])
+    return
 if __name__== "__main__":
    
     path=r"F:/doctorado/"
@@ -27,7 +31,7 @@ if __name__== "__main__":
 
     
 
-    variable="turistasINE"
+    variable="Numero"
     df=df.loc[df[variable]>0]
     df.dropna(subset=[variable]+[ "Lugar", "distance (km)", "Población"], inplace = True)
     #set data types

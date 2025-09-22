@@ -10,7 +10,7 @@ import pandas as pd
 
 if __name__ == "__main__":
     
-    path=r"D:/doctorado/"
+    path=r"F:/doctorado/"
     #load the data
     #df=pd.read_csv(path+"3travel_cost_Ons.csv")
     df=pd.read_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons_ready.csv")
