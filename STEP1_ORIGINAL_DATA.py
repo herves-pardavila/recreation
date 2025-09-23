@@ -9,26 +9,17 @@ if __name__ == "__main__":
     path=r"F:/doctorado/"
     
     #visitor origins, given by park authority
-    df=pd.read_csv(path+"recreation/Islas Atlánticas/travel_cost_2023.csv") #cambiar el nombre del archivo aqui
-    #df=pd.read_csv(path+"recreation/aiguestortes/procedencias_aiguestortes.csv",sep=",",na_values="") 
-    df=df[df.Isla=="Ons"] #solo para Ons, para Aiguestortes comentar esta linea
+   
+    df=pd.read_csv(path+"recreation/aiguestortes/procedencias_aiguestortes.csv",sep=",",na_values="") 
+
     print(df.Lugar.unique())
-    
-    #Para las islas atlánticas de Galicia hay que agrupar los datos de las 3 provincias gallegas (no sale Pontevedra)
-    df_galicia=df[df.Zona=="Galicia"]
-    #df_galicia=df_galicia[df.Lugar!="Pontevedra"] #eliminamos Pontevedra pues no sale en los datos del INE
-    df_galicia["Lugar"]="Galicia"
-    df_galicia=df_galicia.groupby(by=["Año","Lugar","Zona","Isla"],as_index=False).sum(numeric_only=True)
-    df_galicia["Zona"]="España"
-    print(df_galicia)
+
 
     df_españa=df[df.Zona.isin(["España"])]
-    df_españa=pd.concat([df_galicia,df_españa]) # solo necesario para islas atlanticas de galicia
     df_resto=df[df.Zona.isin(["Europa","Mundo"])]
 
-    #ACORDARSE DE CAMBIAR LAS COORDENADAS DEL DESTINO
-    destino=gpd.GeoSeries([Point(-8.775,42.32)],crs="EPSG:4326") #destino Ons
-    #destino=gpd.GeoSeries([Point(0.9203,42.5759)],crs="EPSG:4326") #destino Aiguestortes
+    #COORDENADAS DEL DESTINO
+    destino=gpd.GeoSeries([Point(0.9203,42.5759)],crs="EPSG:4326") #destino Aiguestortes
     destino= destino.to_crs("EPSG:3857")
     compute_distances = lambda x: x.distance(destino)[0]
 
@@ -77,7 +68,7 @@ if __name__ == "__main__":
     #print(df[df.Año==2022])
     #print(df[df.Año==2019])
 
-    df.to_csv(path+"recreation/ZonalTravelCost/data_original_Ons.csv",index=False)
+    df.to_csv(path+"recreation/ZonalTravelCost/data_original_Aiguestortes.csv",index=False)
 
     
 

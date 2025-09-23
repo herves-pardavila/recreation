@@ -22,7 +22,7 @@ if __name__== "__main__":
     path=r"F:/doctorado/"
     #load the data
     #df=pd.read_csv(path+"3travel_cost_Ons.csv")
-    df=pd.read_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons_ready.csv")
+    df=pd.read_csv(path+"recreation/ZonalTravelCost/3travel_cost_Aiguestortes_ready.csv")
     df=df[df.Año.isin([2022,2023])]
     
     df=df.groupby(["Lugar","Zona","Población","TC","RBMPP"],as_index=False).sum(numeric_only=True)
@@ -31,7 +31,7 @@ if __name__== "__main__":
 
     
 
-    variable="Numero"
+    variable="turistasINE"
     df=df.loc[df[variable]>0]
     df.dropna(subset=[variable]+[ "Lugar", "distance (km)", "Población"], inplace = True)
     #set data types

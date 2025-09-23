@@ -13,7 +13,7 @@ import geopandas as gpd
 if __name__== "__main__":
     path=r"F:/doctorado/"
     #load the data
-    df=pd.read_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons.csv")
+    df=pd.read_csv(path+"recreation/ZonalTravelCost/3travel_cost_Aiguestortes.csv")
     #df=df[df.Año==2019]
     print(df)
     
@@ -37,7 +37,7 @@ if __name__== "__main__":
     print(df)
     print(df.info())
     df["TC"]=df["CT_(€)"]+df["OC_(€)"]
-    df.to_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons_ready.csv",index=False)
+    df.to_csv(path+"recreation/ZonalTravelCost/3travel_cost_Aiguestortes_ready.csv",index=False)
 
     # fig=plt.figure()
     # fig.suptitle("Demand Curve")
@@ -62,4 +62,4 @@ if __name__== "__main__":
     newdf.drop(columns="geometry_y",inplace=True)
     
     new_gdf=gpd.GeoDataFrame(data=newdf,crs=gdf_comunidades.crs,geometry="geometry_x")
-    new_gdf.to_file(path+"recreation/ZonalTravelCost/3travel_cost_Ons.gpkg",driver="GPKG")
+    new_gdf.to_file(path+"recreation/ZonalTravelCost/3travel_cost_Aiguestortes.gpkg",driver="GPKG")
