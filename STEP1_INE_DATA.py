@@ -9,10 +9,10 @@ if __name__ == "__main__":
     path=r"F:/doctorado/"
    
 
-    df_interno=pd.read_csv(path+"recreation/ZonalTravelCost/datos_provinciales/turismo_interno_Bueu_Sanxenxo_origen_provincias_2022_2024.csv",
+    df_interno=pd.read_csv(path+"recreation/ZonalTravelCost/datos_provinciales/turismo_interno_Espot_ValldeBoi_origen_provincias_2022_2024.csv",
                            sep=";",encoding="latin-1",na_values=["","."]) #origenes por CCAA y paises
     
-    df_interno=df_interno.loc[df_interno["Municipio de destino"]=="36004 Bueu"]
+    
     df_interno = df_interno.groupby(by=["CCAA y provincia de origen.2","Periodo"],as_index=False).sum(numeric_only=True)
     df_interno["mes"] = df_interno["Periodo"].str.replace(r"M", "-", regex=True)
     df_interno.mes=pd.to_datetime(df_interno.mes,format="%Y-%m").dt.to_period("M")
@@ -30,7 +30,7 @@ if __name__ == "__main__":
     
 
     #PARTE GEO
-    destino=gpd.GeoSeries([Point(-8.775,42.32)],crs="EPSG:4326") #destino Ons    
+    destino=gpd.GeoSeries([Point(0.9203,42.5759)],crs="EPSG:4326") #destino Aiguestortes   
     destino= destino.to_crs("EPSG:3857")
     compute_distances = lambda x: x.distance(destino)[0]   
     #geometries of spanish provinces for galician data
@@ -48,7 +48,7 @@ if __name__ == "__main__":
                                   left_on="Lugar",right_on="Provincias",
                                   how="left")
     newdf[["Lugar","Año","Zona","CODIGOINE","turistasINE","Población",
-           "RBMPP","distance (km)"]].to_csv(path +"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Ons.csv",
+           "RBMPP","distance (km)"]].to_csv(path +"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Aiguestortes.csv",
                                                         index=False)
     
     newgdf=pd.merge(df_interno,gdf[["Provincias","CODIGOINE","Población",
@@ -69,6 +69,6 @@ if __name__ == "__main__":
     newgdf.plot(column=variable, ax= ax)
     plt.show()
 
-    newgdf.to_file(path +"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Ons.gpkg",
+    newgdf.to_file(path +"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Aiguestortes.gpkg",
                    driver="GPKG",index=False)
     
