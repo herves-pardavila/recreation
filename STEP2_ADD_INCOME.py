@@ -19,12 +19,13 @@ if __name__== "__main__":
     for root,dird,files in os.walk(path_income_tables):
         for file in files:
             print(file)
-            newdf = pd.read_csv(root+file,encoding="latin-1",sep=";",decimal=".",
+            newdf = pd.read_csv(root+file,encoding="latin-1",sep=";",thousands=".",
                                 names=["Municipios","Distritos","Secciones",
                                        "Indicadores de renta media y mediana",
                                        "Periodo","Total"],skiprows=1,na_values=[".",".."])
             newdf=newdf.loc[newdf["Indicadores de renta media y mediana"]=="Renta bruta media por persona"]
             newdf=newdf.loc[newdf.Periodo==2021]
+            newdf=newdf.loc[pd.isna(newdf.Distritos) & pd.isna(newdf.Secciones)]
             newdf2=newdf.groupby(by=["Municipios","Indicadores de renta media y mediana","Periodo"],as_index=False).mean(numeric_only=True)
             df=pd.concat([df,newdf2],ignore_index=True)
         df=df[["Municipios","Indicadores de renta media y mediana","Periodo",
@@ -37,12 +38,12 @@ if __name__== "__main__":
     #Hacemos el merge con los datos del STEP1
 
     df2 = pd.read_csv(path +"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Ons.csv")    
-    
+   
     df=pd.merge(df2,df,how="left",on="mun_orig_cod")
+    df.rename(columns = {"Total":"RBMPP","POBLACION_":"Población"},inplace=True)
     
-    df.rename(columns = {"Total":"RBMPP"},inplace=True)
     
-    df.to_csv(df[["Lugar","Año","Zona","turistasINE","POBLACION_","distance (km)",
+    df.to_csv(df[["Lugar","Año","Zona","turistasINE","Población","distance (km)",
                  "RBMPP"]].to_csv(path  +"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Ons_with_Income.csv"),
               index=False)
     

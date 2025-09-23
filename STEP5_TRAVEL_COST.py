@@ -23,35 +23,36 @@ if __name__== "__main__":
     path=r"F:/doctorado/"
     #load the data
     #df=pd.read_csv(path+"3travel_cost_Ons.csv")
-    df=pd.read_csv(path+"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Ons_ready.csv")
-    df=df[df.Lugar != "Pontevedra"]
+    df=pd.read_csv(path+"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Ons_ready.csv")
+    
     df=df[df.Año.isin([2022,2023])]
-    df=df.groupby(["Lugar","Zona"],as_index=False).mean(numeric_only=True)
+    df=df.groupby(["Lugar","Zona","Población","RBMPP","TC"],as_index=False).sum(numeric_only=True)
+    df=df.loc[df.turistasINE>0]
     #remove nans
     
 
     
 
     variable="turistasINE"
-    df.dropna(subset=[variable]+[ "Lugar", "distance (km)", "Población","median_inc"], inplace = True)
+    df.dropna(subset=[variable]+[ "Lugar", "distance (km)", "Población","RBMPP"], inplace = True)
     #set data types
     df.Año=df.Año.astype("category")
     df.Lugar=df.Lugar.astype("category")
-    #df["Numero"]=df.Numero.astype(int)
+    
     df.turistasINE=df.turistasINE.astype(int)
     df.Población=df.Población.astype(int)
-    df.median_inc=df.median_inc.astype(float)
+    df["Income"]=df.RBMPP.astype(float)
     df.TC=df.TC.astype(float)
-    df["median_inc2"]=df.median_inc*df.median_inc
+   
   
     print(df)
     print(df.info())
     
     #summary statistics
-    sum_statistics=df[["turistasINE","median_inc","TC"]].describe()
+    sum_statistics=df[["turistasINE","RBMPP","TC"]].describe()
     print(sum_statistics)
     #correlations
-    print(df[["median_inc","distance (km)","TC"]].corr("spearman",numeric_only=True))
+    print(df[["RBMPP","distance (km)","TC"]].corr("spearman",numeric_only=True))
 
     
     df["y"]=df[variable]
@@ -61,7 +62,7 @@ if __name__== "__main__":
     df["pop"]=df.Población
     df["lnpop"]=np.log(df.Población)
     df["lnTC"]=np.log(df.TC)
-    df["lnI"]=np.log(df.median_inc)
+    df["lnI"]=np.log(df.RBMPP)
     df["Y"]=df.y
     
     # #homocedasticity test
@@ -101,7 +102,7 @@ if __name__== "__main__":
     
     #poisson model
     model="log-log"
-    expr="""y~lnTC + lnI"""
+    expr="""y~lnTC +lnI"""
     null_expr="Y~1"
   
     y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
