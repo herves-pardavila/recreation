@@ -37,13 +37,13 @@ if __name__== "__main__":
       
     #Hacemos el merge con los datos del STEP1
 
-    df2 = pd.read_csv(path +"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Ons.csv")    
+    df2 = pd.read_csv(path +"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Aiguestortes.csv")    
    
     df=pd.merge(df2,df,how="left",on="mun_orig_cod")
     df.rename(columns = {"Total":"RBMPP","POBLACION_":"Población"},inplace=True)
     
     
     df.to_csv(df[["Lugar","Año","Zona","turistasINE","Población","distance (km)",
-                 "RBMPP"]].to_csv(path  +"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Ons_with_Income.csv"),
+                 "RBMPP"]].to_csv(path  +"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Aiguestortes_with_Income.csv"),
               index=False)
     

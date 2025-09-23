@@ -8,7 +8,11 @@ if __name__ == "__main__":
     
     path=r"F:/doctorado/"
    
-
+    
+    #municipios=["Bueu"] #concellos para Ons
+    
+    municipios =["La Vall de Boí","Espot"] #concellos para Aigüestortes
+    
     df_interno=pd.read_excel(path+"recreation/ZonalTravelCost/datos_municipales/exp_tmov_interno_mun_2022.xlsx",
                            sheet_name=None) #origenes por CCAA y paises
     
@@ -19,7 +23,7 @@ if __name__ == "__main__":
                           df_interno["2022-09"],df_interno["2022-10"],
                           df_interno["2022-11"],df_interno["2022-12"]])
     
-    df_Ons_2022=df_interno.loc[df_interno.dest.isin(["Bueu"]),["mes","mun_orig_cod","mun_orig","dest_cod","dest","turistas"]]
+    df_Ons_2022=df_interno.loc[df_interno.dest.isin(municipios),["mes","mun_orig_cod","mun_orig","dest_cod","dest","turistas"]]
     
     df_interno=pd.read_excel(path+"recreation/ZonalTravelCost/datos_municipales/exp_tmov_interno_mun_2023.xlsx",
                            sheet_name=None) #origenes por CCAA y paises
@@ -31,7 +35,7 @@ if __name__ == "__main__":
                           df_interno["2023-09"],df_interno["2023-10"],
                           df_interno["2023-11"],df_interno["2023-12"]])
     
-    df_Ons_2023=df_interno.loc[df_interno.dest.isin(["Bueu"]),["mes","mun_orig_cod","mun_orig","dest_cod","dest","turistas"]]
+    df_Ons_2023=df_interno.loc[df_interno.dest.isin(municipios),["mes","mun_orig_cod","mun_orig","dest_cod","dest","turistas"]]
     
     df_Ons =pd.concat([df_Ons_2022,df_Ons_2023])
     
@@ -46,7 +50,8 @@ if __name__ == "__main__":
 
 
     #PARTE GEO
-    destino=gpd.GeoSeries([Point(-8.775,42.32)],crs="EPSG:4326") #destino Ons    
+    #destino=gpd.GeoSeries([Point(-8.775,42.32)],crs="EPSG:4326") #destino Ons
+    destino=gpd.GeoSeries([Point(0.9203,42.5759)],crs="EPSG:4326") #destino Aiguestortes
     destino= destino.to_crs("EPSG:3857")
     compute_distances = lambda x: x.distance(destino)[0]   
     #geometries of spanish municipalities
@@ -64,7 +69,7 @@ if __name__ == "__main__":
                                   left_on="mun_orig_cod",right_on="new_codes",
                                   how="left")
     newdf[["Lugar","Año","Zona","mun_orig_cod","turistasINE","POBLACION_",
-            "distance (km)"]].to_csv(path +"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Ons.csv",
+            "distance (km)"]].to_csv(path +"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Aiguestortes.csv",
                                                         index=False)
        
     newgdf=pd.merge(df_Ons,gdf[["NAMEUNIT","new_codes","NOMBRE_ACT",
@@ -78,10 +83,10 @@ if __name__ == "__main__":
                                           "turistasINE","POBLACION_","distance (km)",
                                           "geometry"]],crs=gdf.crs,geometry=newgdf.geometry)
     
-    newgdf.to_file(path +"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Ons.gpkg",
+    newgdf.to_file(path +"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Aiguestortes.gpkg",
                   driver="GPKG",index=False)
     
-    variable="turistasINE"
+    variable="POBLACION_"
        
     fig=plt.figure()
     ax=fig.add_subplot(111)
