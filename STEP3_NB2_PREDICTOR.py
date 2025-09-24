@@ -13,13 +13,13 @@ if __name__== "__main__":
     
     path=r"F:/doctorado/"
     #load the INE  data
-    dfINE=pd.read_csv(path+"recreation/ZonalTravelCost/INE_data_Aiguestortes.csv")
+    dfINE=pd.read_csv(path+"recreation/ZonalTravelCost/INE_data_Cabañeros.csv")
     print(dfINE)
     #set data types
     dfINE["turistasINE"]=dfINE.Numero.astype(int)
     dfINE.Zona=dfINE.Zona.astype("category")
     #load the real data
-    df=pd.read_csv(path+"recreation/ZonalTravelCost/data_original_Aiguestortes.csv")
+    df=pd.read_csv(path+"recreation/ZonalTravelCost/data_original_Cabañeros.csv")
     df.Numero=df.Numero.astype(int)
     df.Zona=df.Zona.astype("category")
     print(df)
@@ -81,5 +81,5 @@ if __name__== "__main__":
     # print(df.yhat_full.sum())
     df.drop_duplicates(subset=["Lugar","Zona","Año"],inplace=True)
     df=df[df.Año.isin([2022,2023])] # ELEGIR CORRECTAMENTE LOS AÑOS
-    df[["Año","Lugar","Zona","Numero","turistasINE","RBMPP","Población","distance (km)"]].to_csv(path+"recreation/ZonalTravelCost/3travel_cost_Aiguestortes.csv",index=False)
+    df[["Año","Lugar","Zona","Numero","turistasINE","RBMPP","Población","distance (km)"]].to_csv(path+"recreation/ZonalTravelCost/3travel_cost_Cabañeros.csv",index=False)
     

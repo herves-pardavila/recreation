@@ -11,16 +11,24 @@ if __name__ == "__main__":
     df=pd.read_csv(path+"recreation/turismo_with_origins.csv") #origenes por CCAA y paises
   
     
+    municipios=["La Vall de Boí","Espot"] #concellos para Aigüestortes
+    municipios=["Los Navalucillos","Hontanar","Navas de Estena",
+                "Horcajo de los Montes","Alcoba","Retuerta del Bullaque"]  #concellos para Cabañeros
     
-    df=df[df.NAMEUNIT.isin(["La Vall de Boí","Espot"])] #concellos para Aigüestortes
     
+    años=[2022] #Cabañeros
+    #años=[2022,2023] #Aiguestortes
+    
+    df=df[df.NAMEUNIT.isin(municipios)]
+   
+    print(df.NAMEUNIT.unique())
 
     df.mes=pd.to_datetime(df.mes,format="%Y-%m").dt.to_period("M")
     df["Año"]=df.mes.dt.year
-    df=df[df.Año.isin([2022,2023])] # ELEGIR CORRECTAMENTE LOS AÑOS
+    df=df[df.Año.isin(años)] # ELEGIR CORRECTAMENTE LOS AÑOS
     df["Numero"]=np.nansum([df.turistas,df.turistas_extranjeros],axis=0)
     df.loc[pd.isna(df.turistas_extranjeros),"Zona"]="España"
-    df.loc[~pd.isna(df.turistas_extranjeros),"Zona"]="Europa"
+    df.loc[~pd.isna(df.turistas_extranjeros),"Zona"]="Mundo"
     df.rename(columns={"Origen":"Lugar"},inplace=True)  
     df=df[["mes","Año","Lugar","Zona","Numero","NAMEUNIT"]]
     df=df.groupby(by=["Lugar","Año","Zona","NAMEUNIT"],as_index=False).sum(numeric_only=True) #convertimos en datos anuales
@@ -36,7 +44,8 @@ if __name__ == "__main__":
 
     #ACORDARSE DE CAMBIAR LAS COORDENADAS DEL DESTINO
    
-    destino=gpd.GeoSeries([Point(0.9203,42.5759)],crs="EPSG:4326") #destino Aiguestortes
+    #destino=gpd.GeoSeries([Point(0.9203,42.5759)],crs="EPSG:4326") #destino Aiguestortes
+    destino=gpd.GeoSeries([Point(-4.5,39.4)],crs="EPSG:4326") #destino Cabañeros
  
     
     destino= destino.to_crs("EPSG:3857")
@@ -87,6 +96,6 @@ if __name__ == "__main__":
     #print(df[df.Año==2020])
     #print(df[df.Año==2021])
     #print(df[df.Año==2019])
-    df.to_csv(path+"recreation/ZonalTravelCost/INE_data_Aiguestortes.csv",index=False)
+    df.to_csv(path+"recreation/ZonalTravelCost/INE_data_Cabañeros.csv",index=False)
     
     

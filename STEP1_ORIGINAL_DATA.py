@@ -10,7 +10,7 @@ if __name__ == "__main__":
     
     #visitor origins, given by park authority
    
-    df=pd.read_csv(path+"recreation/aiguestortes/procedencias_aiguestortes.csv",sep=",",na_values="") 
+    df=pd.read_csv(path+"recreation/cabañeros/procedencias_cabañeros.csv",sep=",",na_values="") 
 
     print(df.Lugar.unique())
 
@@ -19,7 +19,8 @@ if __name__ == "__main__":
     df_resto=df[df.Zona.isin(["Europa","Mundo"])]
 
     #COORDENADAS DEL DESTINO
-    destino=gpd.GeoSeries([Point(0.9203,42.5759)],crs="EPSG:4326") #destino Aiguestortes
+    #destino=gpd.GeoSeries([Point(0.9203,42.5759)],crs="EPSG:4326") #destino Aiguestortes
+    destino=gpd.GeoSeries([Point(-4.5,39.4)],crs="EPSG:4326") #destino Cabañeros
     destino= destino.to_crs("EPSG:3857")
     compute_distances = lambda x: x.distance(destino)[0]
 
@@ -68,7 +69,7 @@ if __name__ == "__main__":
     #print(df[df.Año==2022])
     #print(df[df.Año==2019])
 
-    df.to_csv(path+"recreation/ZonalTravelCost/data_original_Aiguestortes.csv",index=False)
+    df.to_csv(path+"recreation/ZonalTravelCost/data_original_Cabañeros.csv",index=False)
 
     
 
