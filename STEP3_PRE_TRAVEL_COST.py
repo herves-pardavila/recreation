@@ -12,7 +12,7 @@ import matplotlib.pyplot as plt
 if __name__== "__main__":
     path=r"F:/doctorado/"
     #load the data
-    df=pd.read_csv(path+"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Aiguestortes_with_Income.csv")
+    df=pd.read_csv(path+"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Cabañeros_with_Income.csv")
     #df=df[df.Año==2019]
     print(df)
     
@@ -36,12 +36,12 @@ if __name__== "__main__":
 
 
     #====== FALTAN UNIR LOS TURISTAS INTERNACIONALES========================
-    df_externo=pd.read_csv(path + "recreation/ZonalTravelCost/3travel_cost_Aiguestortes_ready.csv")
+    df_externo=pd.read_csv(path + "recreation/ZonalTravelCost/3travel_cost_Cabañeros_ready.csv")
     df_externo = df_externo[df_externo.Zona != "España"]
     
     newdf = pd.concat([df,df_externo],axis=0,join="inner",ignore_index=False)
     
-    newdf.to_csv(path+"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Aiguestortes_ready.csv",index=False)
+    newdf.to_csv(path+"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Cabañeros_ready.csv",index=False)
 
     fig=plt.figure()
     fig.suptitle("Demand Curve")
