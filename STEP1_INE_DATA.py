@@ -9,15 +9,21 @@ if __name__ == "__main__":
     path=r"F:/doctorado/"
    
 
-    df_interno=pd.read_csv(path+"recreation/ZonalTravelCost/datos_provinciales/turismo_interno_Espot_ValldeBoi_origen_provincias_2022_2024.csv",
-                           sep=";",encoding="latin-1",na_values=["","."]) #origenes por CCAA y paises
+    # df_interno=pd.read_csv(path+"recreation/ZonalTravelCost/datos_provinciales/turismo_interno_Espot_ValldeBoi_origen_provincias_2022_2024.csv",
+    #                        sep=";",encoding="latin-1",na_values=["","."]) #origenes por CCAA y paises para Aiguestortes
     
+    
+    df_interno=pd.read_csv(path+"recreation/ZonalTravelCost/datos_provinciales/turismo_interno_Cabañeros_origen_provincias_2022_2023.csv",
+                           sep=";",encoding="latin-1",na_values=["","."]) #origenes por CCAA y paises para Cabeñeros
+    
+    #años=[2022,2023] #Aiguestortes
+    años=[2022] #Cabañeros
     
     df_interno = df_interno.groupby(by=["CCAA y provincia de origen.2","Periodo"],as_index=False).sum(numeric_only=True)
     df_interno["mes"] = df_interno["Periodo"].str.replace(r"M", "-", regex=True)
     df_interno.mes=pd.to_datetime(df_interno.mes,format="%Y-%m").dt.to_period("M")
     df_interno["Año"]=df_interno.mes.dt.year
-    df_interno=df_interno[df_interno.Año.isin([2022,2023])] # ELEGIR CORRECTAMENTE LOS AÑOS
+    df_interno=df_interno[df_interno.Año.isin(años)] # ELEGIR CORRECTAMENTE LOS AÑOS
     df_interno["Zona"]= "España"    
     
     
@@ -30,7 +36,8 @@ if __name__ == "__main__":
     
 
     #PARTE GEO
-    destino=gpd.GeoSeries([Point(0.9203,42.5759)],crs="EPSG:4326") #destino Aiguestortes   
+    #destino=gpd.GeoSeries([Point(0.9203,42.5759)],crs="EPSG:4326") #destino Aiguestortes   
+    destino=gpd.GeoSeries([Point(-4.5,39.4)],crs="EPSG:4326") #destino Cabañeros
     destino= destino.to_crs("EPSG:3857")
     compute_distances = lambda x: x.distance(destino)[0]   
     #geometries of spanish provinces for galician data
@@ -48,7 +55,7 @@ if __name__ == "__main__":
                                   left_on="Lugar",right_on="Provincias",
                                   how="left")
     newdf[["Lugar","Año","Zona","CODIGOINE","turistasINE","Población",
-           "RBMPP","distance (km)"]].to_csv(path +"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Aiguestortes.csv",
+           "RBMPP","distance (km)"]].to_csv(path +"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Cabañeros.csv",
                                                         index=False)
     
     newgdf=pd.merge(df_interno,gdf[["Provincias","CODIGOINE","Población",
@@ -62,13 +69,13 @@ if __name__ == "__main__":
             "RBMPP","distance (km)","geometry"]],crs=gdf.crs,geometry=newgdf.geometry)
     
     
-    variable="RBMPP"
+    variable="turistasINE"
     
     fig=plt.figure()
     ax=fig.add_subplot(111)
     newgdf.plot(column=variable, ax= ax)
     plt.show()
 
-    newgdf.to_file(path +"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Aiguestortes.gpkg",
+    newgdf.to_file(path +"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Cabañeros.gpkg",
                    driver="GPKG",index=False)
     
