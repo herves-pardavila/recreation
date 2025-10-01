@@ -28,8 +28,8 @@ if __name__== "__main__":
     
     df=df[df.Año.isin([2022,2023])]
     df=df.groupby(["Lugar","Zona","Población","RBMPP","TC"],as_index=False).sum(numeric_only=True)
-    #df=df.loc[(df.turistasINE>0) & (df.Zona == "España")]
-    df=df.loc[(df.turistasINE>0)]
+    df=df.loc[(df.Zona == "España")]
+    #df=df.loc[(df.turistasINE>0)]
     #remove nans
 
     variable="turistasINE"
@@ -88,9 +88,7 @@ if __name__== "__main__":
   
     
     
-    
-    df.loc[df.Zona=="Europa","Zona"]="Mundo"
-    df.Zona=df.Zona.astype("category")
+ 
     #np.random.seed(seed=1)
     #mask=np.random.rand(len(df))<0.999
     #df_train=df[mask]
@@ -102,8 +100,8 @@ if __name__== "__main__":
     print("La sobredispersion es del",df.Y.mean()/df.Y.std())
     
     #poisson model
-    model="log-log"
-    expr="""y~lnTC + lnI + Zona"""
+    model="log-lin"
+    expr="""y~TC + Income + Zona"""
     null_expr="Y~1"
   
     y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
@@ -135,12 +133,12 @@ if __name__== "__main__":
     #print("AIC=",nb2_training_results.aic)
     
     if model == "log-lin":
-        CS=-1/(nb1.params[1]) #modelo log-lig
-        sCS=((1/nb1.params[1])**2)*nb1.bse[1] #+ 2* ((1/nb1.params[1])**6)*nb1.bse[1]**4
+        CS=-1/(nb1.params["TC"]) #modelo log-lig
+        sCS=((1/nb1.params["TC"])**2)*nb1.bse["TC"] #+ 2* ((1/nb1.params[1])**6)*nb1.bse[1]**4
         
     elif model == "log-log":
-        CS=-1*df.TC.mean(skipna=True)/(nb1.params[1]+1) #modelo log-log
-        sCS=((df.TC.mean()/((nb1.params[1]+1)**2)))*nb1.bse[1]
+        CS=-1*df.TC.mean(skipna=True)/(nb1.params["lnTC"]+1) #modelo log-log
+        sCS=((df.TC.mean()/((nb1.params["lnTC"]+1)**2)))*nb1.bse["lnTC"]
         
     
     print("Consumer Surplus= %f (%f)" %(CS,sCS))
