@@ -33,6 +33,8 @@ if __name__== "__main__":
     df["OC_(€)"]=2*(1/3)*df.RBMPP
     df.loc[df.Zona=="España","OC_(€)"]=(1/3)*df.RBMPP
     df.loc[df.Lugar.isin(["Francia","Andorra","Portugal"]),"OC_(€)"]=(1/3)*df.RBMPP
+    
+    df.turistasINE
    
     print(df)
     print(df.info())

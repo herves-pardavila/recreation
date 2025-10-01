@@ -29,13 +29,14 @@ if __name__== "__main__":
     #remove nans
     
     variable="Numero"
-    df=df.loc[(df[variable]>0) & (df.Zona=="España")]
+    df=df.loc[(df[variable]>0)]
     df.dropna(subset=[variable]+[ "Lugar", "distance (km)", "Población"], inplace = True)
     #set data types
     df.Año=df.Año.astype("category")
     df.Lugar=df.Lugar.astype("category")
     df[variable]=df[variable].astype(int)
     df.Población=df.Población.astype(int)
+    df.Zona=df.Zona.astype("category")
     df["Income"]=df.RBMPP.astype(float)
     df.TC=df.TC.astype(float)
 
@@ -83,8 +84,7 @@ if __name__== "__main__":
     
     
     
-    df.loc[df.Zona=="Europa","Zona"]="Mundo"
-    df.Zona=df.Zona.astype("category")
+   
     #np.random.seed(seed=1)
     #mask=np.random.rand(len(df))<0.999
     #df_train=df[mask]
@@ -97,7 +97,7 @@ if __name__== "__main__":
     
     #poisson model
     model="log-log"
-    expr="""y~lnTC + lnI"""
+    expr="""y~ lnTC + lnI + Zona"""
     null_expr="Y~1"
   
     y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
@@ -131,12 +131,12 @@ if __name__== "__main__":
     #print("AIC=",nb2_training_results.aic)
     
     if model == "log-lin":
-        CS=-1/(nb1.params[1]) #modelo log-lig
-        sCS=((1/nb1.params[1])**2)*nb1.bse[1] #+ 2* ((1/nb1.params[1])**6)*nb1.bse[1]**4
+        CS=-1/(nb1.params["TC"]) #modelo log-lig
+        sCS=((1/nb1.params["TC"])**2)*nb1.bse["TC"] #+ 2* ((1/nb1.params[1])**6)*nb1.bse[1]**4
         
     elif model == "log-log":
-        CS=-1*df.TC.mean()/(nb1.params[1]+1) #modelo log-log
-        sCS=((df.TC.mean()/((nb1.params[1]+1)**2)))*nb1.bse[1]
+        CS=-1*df.TC.mean()/(nb1.params["lnTC"]+1) #modelo log-log
+        sCS=((df.TC.mean()/((nb1.params["lnTC"]+1)**2)))*nb1.bse["lnTC"]
         
     
     print("Consumer Surplus= %f (%f)" %(CS,sCS))
