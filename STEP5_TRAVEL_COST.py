@@ -28,7 +28,8 @@ if __name__== "__main__":
     
     df=df[df.Año.isin([2022,2023])]
     df=df.groupby(["Lugar","Zona","Población","RBMPP","TC"],as_index=False).sum(numeric_only=True)
-    df=df.loc[df.turistasINE>0]
+    #df=df.loc[(df.turistasINE>0) & (df.Zona == "España")]
+    df=df.loc[(df.turistasINE>0)]
     #remove nans
 
     variable="turistasINE"
@@ -36,6 +37,8 @@ if __name__== "__main__":
     #set data types
     df.Año=df.Año.astype("category")
     df.Lugar=df.Lugar.astype("category")
+    df.Zona=df.Zona.astype("category")
+    
     df[variable]=df[variable].astype(int)
     
     df.Población=df.Población.astype(int)
@@ -99,8 +102,8 @@ if __name__== "__main__":
     print("La sobredispersion es del",df.Y.mean()/df.Y.std())
     
     #poisson model
-    model="log-lin"
-    expr="""y~TC + Income"""
+    model="log-log"
+    expr="""y~lnTC + lnI + Zona"""
     null_expr="Y~1"
   
     y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
