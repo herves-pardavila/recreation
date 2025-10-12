@@ -11,7 +11,7 @@ import pandas as pd
 
 if __name__== "__main__":
     
-    path=r"F:/doctorado/"
+    path=r"D:/doctorado/"
     #load the INE  data
     dfINE=pd.read_csv(path+"recreation/ZonalTravelCost/INE_data_Bueu.csv")
     print(dfINE)

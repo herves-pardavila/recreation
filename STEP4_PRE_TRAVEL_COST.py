@@ -11,7 +11,7 @@ import geopandas as gpd
 # from datetime import datetime
 
 if __name__== "__main__":
-    path=r"F:/doctorado/"
+    path=r"D:/doctorado/"
     #load the data
     df=pd.read_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons.csv")
     #df=df[df.Año==2019]
@@ -24,17 +24,20 @@ if __name__== "__main__":
     
     #cost of travel
     df["CT_(€)"]=df.distance*0.12
-    df.loc[df.Zona=="España","CT_(€)"]=df.distance*0.26
+    #df["CT_(€)"]=df.distance*0.26 #todos los españoles españoles excepto Baleares y Canarias
+    df.loc[df.Zona=="España","CT_(€)"]=df.distance*0.26 
+    df.loc[df.Lugar.isin(["Illes Balears","Canarias"]),"CT_(€)"]=df.distance*0.146*0.25 #precio del vuelo subvencionado un 75%
+    
     df.loc[df.Lugar.isin(["Andorra","Francia","Portugal"]),"CT_(€)"]=df.distance*0.26
     df.loc[df.Lugar.isin(["Reino Unido","Italia","Suiza","Bélgica","Irlanda","Países Bajos"]),"CT_(€)"]=df.distance*0.2
     
 
     #opoprtunity cost
     df["OC_(€)"]=2*(1/3)*df.RBMPP
-    df.loc[df.Zona=="España","OC_(€)"]=(1/3)*df.RBMPP
-    df.loc[df.Lugar.isin(["Francia","Andorra","Portugal"]),"OC_(€)"]=(1/3)*df.RBMPP
+    df.loc[df.Lugar=="Galicia","OC_(€)"]=(1/3)*df.RBMPP
+    #df.loc[df.Lugar.isin(["Francia","Andorra","Portugal"]),"OC_(€)"]=(1/3)*df.RBMPP
     
-    df.turistasINE
+   
    
     print(df)
     print(df.info())

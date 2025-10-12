@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import pypopulation
 if __name__ == "__main__":
     
-    path=r"F:/doctorado/"
+    path=r"D:/doctorado/"
    
     df=pd.read_csv(path+"recreation/turismo_with_origins.csv") #origenes por CCAA y paises
   
@@ -18,6 +18,7 @@ if __name__ == "__main__":
     df.mes=pd.to_datetime(df.mes,format="%Y-%m").dt.to_period("M")
     df["Año"]=df.mes.dt.year
     df=df[df.Año.isin([2021,2022,2023])] # ELEGIR CORRECTAMENTE LOS AÑOS
+    df.turistas=df.turistas/0.75 #para el turismo interno, las compañías telefónicas que participaron en el estudio del INE representa un 75% del mercado
     df["Numero"]=np.nansum([df.turistas,df.turistas_extranjeros],axis=0)
     df.loc[pd.isna(df.turistas_extranjeros),"Zona"]="España"
     df.loc[~pd.isna(df.turistas_extranjeros),"Zona"]="Europa"

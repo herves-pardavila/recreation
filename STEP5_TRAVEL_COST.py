@@ -19,7 +19,7 @@ def CI(mean,std):
     return
 if __name__== "__main__":
    
-    path=r"F:/doctorado/"
+    path=r"D:/doctorado/"
     #load the data
     #df=pd.read_csv(path+"3travel_cost_Ons.csv")
     df=pd.read_csv(path+"recreation/ZonalTravelCost/3travel_cost_Ons_ready.csv")
@@ -29,7 +29,7 @@ if __name__== "__main__":
     #remove nans
     
     variable="turistasINE"
-    df=df.loc[(df[variable]>0) & (df.Zona=="España")]
+    df=df.loc[df[variable]>0]
     df.dropna(subset=[variable]+[ "Lugar", "distance (km)", "Población"], inplace = True)
     #set data types
     df.Año=df.Año.astype("category")
