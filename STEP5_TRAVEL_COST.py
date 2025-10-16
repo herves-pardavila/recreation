@@ -20,7 +20,7 @@ def CI(mean,std):
     return
 if __name__== "__main__":
    
-    path=r"F:/doctorado/"
+    path=r"D:/doctorado/"
     #load the data
     #df=pd.read_csv(path+"3travel_cost_Ons.csv")
     df=pd.read_csv(path+"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Ons_ready.csv")
@@ -28,8 +28,10 @@ if __name__== "__main__":
     
     df=df[df.Año.isin([2022,2023])]
     df=df.groupby(["Lugar","Zona","Población","RBMPP","TC"],as_index=False).sum(numeric_only=True)
-    df=df.loc[(df.Zona == "España") & (df.turistasINE>0)]
-    #df=df.loc[(df.turistasINE>0)]
+    #df=df.loc[(df.Zona == "España")]
+    df=df.loc[ (df.turistasINE>0)]
+    df=df.loc[ (df.Lugar!="Pontevedra")]
+    
     #remove nans
 
     variable="turistasINE"
@@ -101,7 +103,11 @@ if __name__== "__main__":
     
     #poisson model
     model="log-log"
-    expr="""y ~ lnTC + lnI"""
+# %%
+# %%
+    expr="""y ~ lnTC + lnI """
+
+
     null_expr="Y~1"
   
     y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
