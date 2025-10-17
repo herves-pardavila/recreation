@@ -103,9 +103,7 @@ if __name__== "__main__":
     
     #poisson model
     model="log-log"
-# %%
-# %%
-    expr="""y ~ lnTC + lnI """
+    expr="""y ~ lnTC + lnI+Zona"""
 
 
     null_expr="Y~1"
@@ -120,7 +118,7 @@ if __name__== "__main__":
 
     #auxiliary regression model
     df_train['BB_LAMBDA'] = poisson_training_results.mu
-    df_train['AUX_OLS_DEP'] = df_train.apply(lambda x: ((x['Y'] - x['BB_LAMBDA'])**2 - x['BB_LAMBDA']) /1, axis=1)
+    df_train['AUX_OLS_DEP'] = df_train.apply(lambda x: ((x['Y'] - x['BB_LAMBDA'])**2 - x['BB_LAMBDA']) /x['BB_LAMBDA'], axis=1)
     ols_expr = """AUX_OLS_DEP ~ BB_LAMBDA -1"""
     aux_olsr_results = smf.ols(ols_expr, df_train).fit()
     print(aux_olsr_results.summary())
@@ -133,7 +131,7 @@ if __name__== "__main__":
     y_train=y_train.iloc[:,0]
     #print(y_train)
     #print(X_train)
-    nb1=sm.NegativeBinomialP(y_train,X_train.iloc[:,:],p=1,exposure=np.array(df["pop"]))
+    nb1=sm.NegativeBinomialP(y_train,X_train.iloc[:,:],p=2,exposure=np.array(df["pop"]))
     nb1=nb1.fit(method="nm",maxiter=50000,maxfun=50000)
     print(nb1.summary())
     #print("AIC=",nb2_training_results.aic)
