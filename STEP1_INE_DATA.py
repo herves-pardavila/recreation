@@ -6,13 +6,13 @@ import matplotlib.pyplot as plt
 import pypopulation
 if __name__ == "__main__":
     
-    path=r"F:/doctorado/"
+    path=r"D:/doctorado/"
    
     
-    #municipios=["Bueu"] #concellos para Ons
+    municipios=["Bueu"] #concellos para Ons
     #municipios =["La Vall de Boí","Espot"] #concellos para Aigüestortes
-    municipios=["Los Navalucillos","Hontanar","Navas de Estena",
-                "Horcajo de los Montes","Alcoba","Retuerta del Bullaque"]  #concellos para Cabañeros
+    #municipios=["Los Navalucillos","Hontanar","Navas de Estena",
+    #            "Horcajo de los Montes","Alcoba","Retuerta del Bullaque"]  #concellos para Cabañeros
     
     
     df_interno=pd.read_excel(path+"recreation/ZonalTravelCost/datos_municipales/exp_tmov_interno_mun_2022.xlsx",
@@ -52,9 +52,9 @@ if __name__ == "__main__":
 
 
     #PARTE GEO
-    #destino=gpd.GeoSeries([Point(-8.775,42.32)],crs="EPSG:4326") #destino Ons
+    destino=gpd.GeoSeries([Point(-8.775,42.32)],crs="EPSG:4326") #destino Ons
     #destino=gpd.GeoSeries([Point(0.9203,42.5759)],crs="EPSG:4326") #destino Aiguestortes
-    destino=gpd.GeoSeries([Point(-4.5,39.4)],crs="EPSG:4326") #destino Cabañeros
+    #destino=gpd.GeoSeries([Point(-4.5,39.4)],crs="EPSG:4326") #destino Cabañeros
     destino= destino.to_crs("EPSG:3857")
     compute_distances = lambda x: x.distance(destino)[0]   
     #geometries of spanish municipalities
@@ -70,7 +70,7 @@ if __name__ == "__main__":
     newdf=pd.merge(df_Ons,gdf[["NAMEUNIT","new_codes","NOMBRE_ACT",
                                   "POBLACION_","distance (km)"]],
                                   left_on="mun_orig_cod",right_on="new_codes",
-                                  how="left")
+                                  how="right")
     newdf[["Lugar","Año","Zona","mun_orig_cod","turistasINE","POBLACION_",
             "distance (km)"]].to_csv(path +"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Cabañeros.csv",
                                                         index=False)
