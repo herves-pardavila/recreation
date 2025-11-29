@@ -104,17 +104,22 @@ if __name__== "__main__":
     expr="""y ~ lnTC + lnI"""
     null_expr="Y~1"
   
+    # # Poisson regression
     y_train, X_train = dmatrices(expr, df_train, return_type='dataframe')
     #y_test, X_test = dmatrices(expr, df_test, return_type='dataframe')
-    poisson_training_results = sm.GLM(y_train, X_train, family=sm.families.Poisson(),exposure=df["pop"]).fit()
+    poisson_training_results = st.discrete.truncated_model.GeneralizedPoisson(y_train, X_train.iloc[:,:],
+                                                                              offset=np.log(df["pop"]),
+                                                                              truncation=30,missing="drop").fit(method="nm",
+                                                                                                 maxiter=50000,
+                                                                                                 maxfun=50000)
     print(poisson_training_results.summary())
     print("AIC=",poisson_training_results.aic)
-    print("Mean mu=",poisson_training_results.mu)
+    #print("Mean mu=",poisson_training_results.mu)
     
 
     # #auxiliary regression model
     # df_train['BB_LAMBDA'] = poisson_training_results.mu
-    # df_train['AUX_OLS_DEP'] = df_train.apply(lambda x: ((x['Y'] - x['BB_LAMBDA'])**2 - x['BB_LAMBDA']) / 1, axis=1)
+    # df_train['AUX_OLS_DEP'] = df_train.apply(lambda x: ((x['Y'] - x['BB_LAMBDA'])**2 - x['BB_LAMBDA']) /1, axis=1)
     # ols_expr = """AUX_OLS_DEP ~ BB_LAMBDA -1"""
     # aux_olsr_results = smf.ols(ols_expr, df_train).fit()
     # print(aux_olsr_results.summary())
@@ -125,23 +130,26 @@ if __name__== "__main__":
     #exog=sm.add_constant(X_train)
 
     y_train=y_train.iloc[:,0]
-    #print(y_train)
-    #print(X_train)
-    nb1=sm.NegativeBinomialP(y_train,X_train.iloc[:,:],p=1,exposure=np.array(df["pop"]))
-    nb1=nb1.fit(method="nm",maxiter=50000,maxfun=50000)
+    exposure = df_train.loc[y_train.index, "pop"].to_numpy().ravel()
+    nb1=st.discrete.truncated_model.TruncatedLFNegativeBinomialP(y_train.to_numpy().ravel(),
+                                                                 X_train.iloc[:,:],
+                                                                 p=2,
+                                                                 offset=np.log(exposure),
+                                                                 truncation=29)
+    nb1=nb1.fit(method="newton",maxiter=50000,maxfun=50000)
     print(nb1.summary())
     #print("AIC=",nb2_training_results.aic)
     
-    if model == "log-lin":
-        CS=-1/(nb1.params["TC"]) #modelo log-lig
-        sCS=((1/nb1.params["TC"])**2)*nb1.bse["TC"] #+ 2* ((1/nb1.params[1])**6)*nb1.bse[1]**4
+    # if model == "log-lin":
+    #     CS=-1/(nb1.params["TC"]) #modelo log-lig
+    #     sCS=((1/nb1.params["TC"])**2)*nb1.bse["TC"] #+ 2* ((1/nb1.params[1])**6)*nb1.bse[1]**4
         
-    elif model == "log-log":
-        CS=-1*df.TC.mean()/(nb1.params["lnTC"]+1) #modelo log-log
-        sCS=((df.TC.mean()/((nb1.params["lnTC"]+1)**2)))*nb1.bse["lnTC"]
+    # elif model == "log-log":
+    #     CS=-1*df.TC.mean()/(nb1.params["lnTC"]+1) #modelo log-log
+    #     sCS=((df.TC.mean()/((nb1.params["lnTC"]+1)**2)))*nb1.bse["lnTC"]
         
     
-    print("Consumer Surplus= %f (%f)" %(CS,sCS))
+    # print("Consumer Surplus= %f (%f)" %(CS,sCS))
    
     
    # #merge new variables with the geodatabase

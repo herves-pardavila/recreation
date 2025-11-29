@@ -43,10 +43,10 @@ if __name__ == "__main__":
     
     df_Ons.mes=pd.to_datetime(df_Ons.mes,format="%Y-%m").dt.to_period("M")
     df_Ons["Año"]=df_Ons.mes.dt.year
-    df_Ons["Zona"]= "España"    
+    #df_Ons["Zona"]= "España"    
     df_Ons.rename(columns={"mun_orig":"Lugar","turistas":"turistasINE"},inplace=True)  
-    df_Ons=df_Ons[["mes","Año","Lugar","Zona","mun_orig_cod","turistasINE"]]
-    df_Ons=df_Ons.groupby(by=["Lugar","Año","Zona","mun_orig_cod"],as_index=False).sum(numeric_only=True) #convertimos en datos anuales
+    df_Ons=df_Ons[["mes","Año","Lugar","mun_orig_cod","turistasINE"]]
+    df_Ons=df_Ons.groupby(by=["Lugar","Año","mun_orig_cod"],as_index=False).sum(numeric_only=True) #convertimos en datos anuales
     
     
 
@@ -61,35 +61,39 @@ if __name__ == "__main__":
     gdf=gpd.read_file(path+"OneDrive/recreation/INE/data/municipios.shp")
     gdf.to_crs("EPSG:3857",inplace=True)
     gdf["centroid"]=gdf.geometry.centroid
-    gdf=gdf[gdf.centroid!= None]
+    gdf["Zona"]="Resto"
+    gdf.loc[gdf.PROVINCIA.isin(["A Coru?a","Lugo","Pontevedra","Ourense"]),"Zona"]="Galicia"
+    gdf.loc[gdf.PROVINCIA.isin(["Illes Balears","Santa Cruz de Tenerife","Las Palmas"]),"Zona"]="Isleños"
+    gdf.rename(columns={"NAMEUNIT":"Lugar","new_codes":"mun_orig_cod"},inplace=True)
+    #gdf=gdf[gdf.centroid!= None]
     gdf["distance (km)"]=1e-3*np.array(list(map(compute_distances,gdf["centroid"])))
    
     
     #UNIR LA PARTE GEO CON LA PARTE DE DATOS DE TURSMIO
    
-    newdf=pd.merge(df_Ons,gdf[["NAMEUNIT","new_codes","NOMBRE_ACT",
-                                  "POBLACION_","distance (km)"]],
-                                  left_on="mun_orig_cod",right_on="new_codes",
-                                  how="right")
-    newdf[["Lugar","Año","Zona","mun_orig_cod","turistasINE","POBLACION_",
-            "distance (km)"]].to_csv(path +"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Cabañeros.csv",
-                                                        index=False)
-       
-    newgdf=pd.merge(df_Ons,gdf[["NAMEUNIT","new_codes","NOMBRE_ACT",
-                                  "POBLACION_","distance (km)","geometry"]],
-                                  left_on="mun_orig_cod",right_on="new_codes",
-                                  how="right")
-       
+    newdf=pd.merge(df_Ons,gdf[["Lugar","mun_orig_cod","POBLACION_","distance (km)",
+                               "PROVINCIA","Zona"]],on=["Lugar","mun_orig_cod"],
+                               how="right")
     
+    newdf.loc[pd.isna(newdf.turistasINE),"turistasINE"]=0.0
+    
+    newdf[["Lugar","Año","Zona","PROVINCIA","mun_orig_cod","turistasINE",
+           "POBLACION_", "distance (km)"]].to_csv(path +"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Ons.csv",index=False)
+       
+    newgdf=pd.merge(df_Ons,gdf[["Lugar","mun_orig_cod","POBLACION_","distance (km)",
+                                "PROVINCIA","Zona","geometry"]],on=["Lugar","mun_orig_cod"],
+                                how="right")
+       
+    newgdf.loc[pd.isna(newgdf.turistasINE),"turistasINE"]=0.0
 
-    newgdf= gpd.GeoDataFrame(data=newgdf[["Lugar","Año","Zona","mun_orig_cod",
+    newgdf= gpd.GeoDataFrame(data=newgdf[["Lugar","Año","Zona","PROVINCIA","mun_orig_cod",
                                           "turistasINE","POBLACION_","distance (km)",
                                           "geometry"]],crs=gdf.crs,geometry=newgdf.geometry)
     
-    # newgdf.to_file(path +"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Cabañeros.gpkg",
-    #               driver="GPKG",index=False)
-    
-    variable="POBLACION_"
+    newgdf.to_file(path +"recreation/ZonalTravelCost/datos_municipales/3travel_cost_Cabañeros.gpkg",
+               driver="GPKG",index=False)
+ 
+    variable="distance (km)"
        
     fig=plt.figure()
     ax=fig.add_subplot(111)
