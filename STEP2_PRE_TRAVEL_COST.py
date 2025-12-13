@@ -9,8 +9,23 @@ import matplotlib.pyplot as plt
 # from scipy import stats
 # from datetime import datetime
 
+
+def CT_Avion(dataframe):
+    
+    for i in range(len(dataframe)):
+        print(i)
+        if pd.isna(dataframe.loc[i, "Distancia Avion (km) Ons"]):
+            continue
+        elif dataframe.iloc[i][["Distancia Avion (km) Ons"]].between(801,1200):
+            dataframe.loc[i,"CT_(€)"]=0.138
+        elif dataframe.iloc[i][["Distancia Avion (km) Ons"]].between(1601,2000):
+            dataframe.loc[i, "CT_(€)"]=0.1025
+        else:
+            print("Caso no comtemplado en la función CT_Avion, REVISAR!")
+    return dataframe
+
 if __name__== "__main__":
-    path=r"F:/doctorado/"
+    path=r"D:/doctorado/"
     #load the data
     df=pd.read_csv(path+"recreation/ZonalTravelCost/datos_provinciales/3travel_cost_Ons.csv")
     #df=df[df.Año==2019]

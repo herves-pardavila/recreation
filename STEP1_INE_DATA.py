@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import pypopulation
 if __name__ == "__main__":
     
-    path=r"F:/doctorado/"
+    path=r"D:/doctorado/"
    
 
     df_interno=pd.read_csv(path+"recreation/ZonalTravelCost/datos_provinciales/turismo_interno_Bueu_Sanxenxo_origen_provincias_2022_2024.csv",
